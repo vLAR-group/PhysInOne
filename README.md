@@ -52,7 +52,7 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 |----------|------|
 | 📄 Paper | [arXiv](https://arxiv.org/pdf/2604.09415) |
 | 🌐 Project Page | [vlar-group.github.io/PhysInOne](https://vlar-group.github.io/PhysInOne.html) |
-| 🤗 Dataset | [Hugging Face](https://huggingface.co/datasets/vLAR-group/PhysInOne) |
+| 🤗 Dataset | [Hugging Face](https://huggingface.co/datasets/vLAR/PhysInOne) |
 
 ## Code
 
