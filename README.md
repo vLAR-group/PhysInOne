@@ -46,6 +46,25 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 - Motion transfer
 - And more...
 
+## 🚀 Release Timetable
+
+| Component             | Progress                      | Status       | Notes                             |
+| --------------------- | ----------------------------- | ------------ | --------------------------------- |
+| SubSet                | `██████████`100%              | Released     |                                   |
+| Rendered Data - Train | `█░░░░░░░░░` 5%(5277/122,988) | In progress  | Last updated: May 21              |
+| Rendered Data - Test  | `░░░░░░░░░░` 0%(0/15411)      | In progress  |                                   |
+| Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
+| 3D Assets             | `░░░░░░░░░░` 0%               | Not released | Expected around June              |
+| Leaderboard           | `░░░░░░░░░░` 0%               | Ongoing      | Link will be added when available |
+| Baseline code         | `░░░░░░░░░░` 0%               | Not released | Expected around June              |
+| Data processing       | `░░░░░░░░░░` 0%               | Not released | Expected around June              |
+
+Due to the large scale of PhysInOne, the rendered data and annotations are split across multiple Hugging Face repositories. Below is the list:
+
+- PhysInOneP01: https://huggingface.co/datasets/PhysInOneP01/PhysInOneP01
+
+For large-scale downloading and filtering, please refer to the **How to Download** section below.
+
 ## Links
 
 | Resource | Link |
