@@ -105,8 +105,9 @@ def main():
     video_pred = torch.randn(B, C, T, H, W)
     video_gt = torch.randn(B, C, T, H, W)
 
-    score = compute_pmf(video_pred, video_gt)
-    
+    score = compute_pmf(video_pred, video_gt, device='cpu') 
+    # If you want to use gpu, set device='cuda'
+    # score = compute_pmf(video_pred, video_gt, device='cuda') 
     if isinstance(score, torch.Tensor):
         score = score.item()
         
