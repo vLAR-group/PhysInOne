@@ -16,7 +16,7 @@ def read_long_description():
     return "Power Spectrum-based Metric for Video Similarity (PMF)"
 
 setup(
-    name="PhysInOne",  # Changed to avoid namespace conflicts with existing 'pmf' packages
+    name="pmf",  # Changed to avoid namespace conflicts with existing 'pmf' packages
     version=get_version(),
     author="Your Name",
     long_description=read_long_description(),
