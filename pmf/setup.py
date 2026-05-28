@@ -1,52 +1,29 @@
 #!/usr/bin/env python
-from setuptools import setup, find_packages
-import os
-import re
+"""Setup script for PMF package — flat structure with package_dir."""
 
-# --- Metadata Helpers ---
-def get_version():
-    # Optional: read version from a file or hardcode it
-    return "0.1.0"
-
-def read_long_description():
-    readme_path = os.path.join(os.path.dirname(__file__), "README.md")
-    if os.path.exists(readme_path):
-        with open(readme_path, "r", encoding="utf-8") as f:
-            return f.read()
-    return "Power Spectrum-based Metric for Video Similarity (PMF)"
+from setuptools import setup
 
 setup(
-    name="pmf",  # Changed to avoid namespace conflicts with existing 'pmf' packages
-    version=get_version(),
+    name="pmf",
+    version="0.1.0",
     author="vLAR Group",
-    long_description=read_long_description(),
-    url="https://github.com/vLAR-group/PhysInOne.git",
+    description="Power-spectrum Metric for Frequency-domain video similarity",
+    url="https://github.com/vLAR-group/PhysInOne",
+    
+    # Critical: declare the package and map it to current directory
     packages=["pmf"],
-    package_dir={"pmf": "."},  # Tell setuptools: the 'pmf' package is in current dir,
+    package_dir={"pmf": "."},
+    
     python_requires=">=3.11",
-    install_requires=[
-        "torch>=1.10.0",
-    ],
-    extras_require={
-        "dev": [
-            "pytest>=7.0",
-            "ruff",
-            "mypy",
-        ]
-    },
+    install_requires=["torch>=1.10.0"],
+    
+    license="MIT",
+    keywords=["video-similarity", "fft", "pytorch", "physics-aware"],
     classifiers=[
         "Development Status :: 3 - Alpha",
-        "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
-        "Topic :: Multimedia :: Video",
     ],
-    license="MIT",
-    keywords="video-similarity, fft, pmf, pytorch, metric",
+    zip_safe=False,
 )
