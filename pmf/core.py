@@ -100,7 +100,7 @@ def _compute_3d_energy_difference(
     return transformed_tv_distance
 
 
-def pmf(ground_truth: torch.Tensor, output: torch.Tensor, device: str = 'cpu') -> torch.Tensor:
+def compute_pmf(ground_truth: torch.Tensor, output: torch.Tensor, device: str = 'cpu') -> torch.Tensor:
     """
     Compute the PMF similarity metric between two videos.
     
