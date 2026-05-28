@@ -18,11 +18,11 @@ def read_long_description():
 setup(
     name="pmf",  # Changed to avoid namespace conflicts with existing 'pmf' packages
     version=get_version(),
-    author="Your Name",
+    author="vLAR Group",
     long_description=read_long_description(),
-    long_description_content_type="text/markdown",
     url="https://github.com/vLAR-group/PhysInOne.git",
-    packages=find_packages(exclude=["tests*", "docs*"]),
+    packages=["pmf"],
+    package_dir={"pmf": "."},  # Tell setuptools: the 'pmf' package is in current dir,
     python_requires=">=3.11",
     install_requires=[
         "torch>=1.10.0",
