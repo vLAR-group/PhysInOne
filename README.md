@@ -76,7 +76,8 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 ## 💻 Code
 
 ### PMF Metric
-The **PMF (Power-spectrum Metric for Frequency)** module evaluates video similarity in the frequency domain using 3D FFT-based energy distributions. It is designed for physics-aware video generation, future prediction, and motion transfer tasks in the PhysInOne benchmark.
+The **PMF (Physical Motion Fidelity)** evaluates video similarity in the frequency domain using 3D FFT-based energy distributions. 
+It is designed for physics-aware video generation, future prediction, and motion transfer tasks in the PhysInOne benchmark.
 
 #### Install via pip (Recommended)
 ```bash
@@ -90,7 +91,7 @@ pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu12
 pip install git+https://github.com/vLAR-group/PhysInOne.git#subdirectory=pmf
 ```
 
-#### Usage
+#### Demo
 ```bash
 #!/usr/bin/env python
 """Test PMF metric with random tensors."""
@@ -106,7 +107,6 @@ def main():
 
     score = compute_pmf(video_pred, video_gt)
     
-    # ✅ Safely convert tensor to Python scalar for formatting
     if isinstance(score, torch.Tensor):
         score = score.item()
         
