@@ -82,9 +82,9 @@ The **PMF (Power-spectrum Metric for Frequency)** module evaluates video similar
 ```bash
 # Step 1: Install PyTorch first (choose your variant)
 # CPU only:
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-# CUDA 12.1:
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+# CUDA 12.6:
+pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu126
 
 # Step 2: Install pmf from this repo
 pip install git+https://github.com/vLAR-group/PhysInOne.git#subdirectory=pmf
@@ -115,7 +115,7 @@ print(f"PMF similarity score: {score:.4f}")
 
 🚧 **Coming Soon** 🚧
 
-Data processing and code will be released soon. Stay tuned!
+Data processing code will be released soon. Stay tuned!
 
 ## Citation
 
