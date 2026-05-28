@@ -92,24 +92,28 @@ pip install git+https://github.com/vLAR-group/PhysInOne.git#subdirectory=pmf
 
 #### Usage
 ```bash
+#!/usr/bin/env python
+"""Test PMF metric with random tensors."""
+
 import torch
-from pmf import pmf
+from pmf import compute_pmf
 
-# Set random seed for reproducibility (optional)
-torch.manual_seed(42)
+def main():
+    torch.manual_seed(42)
+    B, C, T, H, W = 1, 3, 16, 128, 128
+    video_pred = torch.randn(B, C, T, H, W)
+    video_gt = torch.randn(B, C, T, H, W)
 
-# Create random tensor inputs with shape [B, C, T, H, W]
-# B: batch size, C: channels, T: temporal frames, H: height, W: width
-B, C, T, H, W = 1, 3, 16, 128, 128
+    score = compute_pmf(video_pred, video_gt)
+    
+    # ✅ Safely convert tensor to Python scalar for formatting
+    if isinstance(score, torch.Tensor):
+        score = score.item()
+        
+    print(f"PMF similarity score: {score:.4f}")
 
-# Simulate predicted and ground-truth video tensors
-video_pred = torch.randn(B, C, T, H, W)  # e.g., model output
-video_gt   = torch.randn(B, C, T, H, W)  # e.g., reference video
-
-# Compute frequency-domain similarity using PMF metric
-score = pmf(video_pred, video_gt)
-
-print(f"PMF similarity score: {score:.4f}")
+if __name__ == "__main__":
+    main()
 ```
 
 
