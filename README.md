@@ -55,7 +55,7 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | Component             | Progress                      | Status       | Notes                             |
 | --------------------- | ----------------------------- | ------------ | --------------------------------- |
 | SubSet                | `██████████`100%              | Released     |                                   |
-| Rendered Data - Train | `████████░░` 82%(101277/122,988) | In progress  | Last updated: Jul 9               |
+| Rendered Data - Train | `█████████░` 89%(109847/122,988) | In progress  | Last updated: Jul 13              |
 | Rendered Data - Test  | `░░░░░░░░░░` 0%(0/15411)      | In progress  |                                   |
 | Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
 | 3D Assets             | `░░░░░░░░░░` 0%               | Not released | Expected around July              |
@@ -76,20 +76,21 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 
 Due to the large scale of PhysInOne, the rendered data and annotations are split across multiple Hugging Face repositories.
 
-- PhysInOneP01: https://huggingface.co/datasets/PhysInOneP01/PhysInOneP01 4.48 TB
-- PhysInOneP02: https://huggingface.co/datasets/PhysInOneP02/PhysInOneP02 7.04 TB
-- PhysInOneP03: https://huggingface.co/datasets/PhysInOneP03/PhysInOneP03 7.55 TB
-- PhysInOneP04: https://huggingface.co/datasets/PhysInOneP04/PhysInOneP04 7.55 TB
-- PhysInOneP05: https://huggingface.co/datasets/PhysInOneP05/PhysInOneP05 7.13 TB
-- PhysInOneP06: https://huggingface.co/datasets/PhysInOneP06/PhysInOneP06 7.16 TB
-- PhysInOneP07: https://huggingface.co/datasets/PhysInOneP07/PhysInOneP07 7.17 TB
-- PhysInOneP08: https://huggingface.co/datasets/PhysInOneP08/PhysInOneP08 7.18 TB
-- PhysInOneP09: https://huggingface.co/datasets/PhysInOneP09/PhysInOneP09 7.16 TB
-- PhysInOneP10: https://huggingface.co/datasets/PhysInOneP10/PhysInOneP10 7.20 TB
+- PhysInOneP01: https://huggingface.co/datasets/PhysInOneP01/PhysInOneP01 4.48 TB ( Complete )
+- PhysInOneP02: https://huggingface.co/datasets/PhysInOneP02/PhysInOneP02 7.04 TB ( Complete )
+- PhysInOneP03: https://huggingface.co/datasets/PhysInOneP03/PhysInOneP03 7.55 TB ( Complete )
+- PhysInOneP04: https://huggingface.co/datasets/PhysInOneP04/PhysInOneP04 7.55 TB ( Complete )
+- PhysInOneP05: https://huggingface.co/datasets/PhysInOneP05/PhysInOneP05 7.13 TB ( Complete )
+- PhysInOneP06: https://huggingface.co/datasets/PhysInOneP06/PhysInOneP06 7.16 TB ( Complete )
+- PhysInOneP07: https://huggingface.co/datasets/PhysInOneP07/PhysInOneP07 7.17 TB ( Complete )
+- PhysInOneP08: https://huggingface.co/datasets/PhysInOneP08/PhysInOneP08 7.18 TB ( Complete )
+- PhysInOneP09: https://huggingface.co/datasets/PhysInOneP09/PhysInOneP09 7.16 TB ( Complete )
+- PhysInOneP10: https://huggingface.co/datasets/PhysInOneP10/PhysInOneP10 7.20 TB ( Complete )
 - PhysInOneP11: https://huggingface.co/datasets/PhysInOneP11/PhysInOneP11 6.13 TB
-- PhysInOneP12: https://huggingface.co/datasets/PhysInOneP12/PhysInOneP12 6.62 TB
-- PhysInOneP13: https://huggingface.co/datasets/PhysInOneP13/PhysInOneP13 6.62 TB
-- PhysInOneP14: https://huggingface.co/datasets/PhysInOneP14/PhysInOneP14 0.00 TB
+- PhysInOneP12: https://huggingface.co/datasets/PhysInOneP12/PhysInOneP12 6.62 TB ( Complete )
+- PhysInOneP13: https://huggingface.co/datasets/PhysInOneP13/PhysInOneP13 6.62 TB ( Complete )
+- PhysInOneP14: https://huggingface.co/datasets/PhysInOneP14/PhysInOneP14 6.66 TB
+- PhysInOneP15: https://huggingface.co/datasets/PhysInOneP15/PhysInOneP15 0.00 TB
 
 
 
