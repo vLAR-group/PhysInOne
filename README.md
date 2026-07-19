@@ -55,7 +55,7 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | Component             | Progress                      | Status       | Notes                             |
 | --------------------- | ----------------------------- | ------------ | --------------------------------- |
 | SubSet                | `██████████`100%              | Released     |                                   |
-| Rendered Data - Train | `█████████░` 89%(109847/122,988) | In progress  | Last updated: Jul 13              |
+| Rendered Data - Train | `██████████` 95%(109847/115,371) | In progress  | Last updated: Jul 19              |
 | Rendered Data - Test  | `░░░░░░░░░░` 0%(0/15411)      | In progress  |                                   |
 | Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
 | 3D Assets             | `░░░░░░░░░░` 0%               | Not released | Expected around July              |
@@ -86,11 +86,11 @@ Due to the large scale of PhysInOne, the rendered data and annotations are split
 - PhysInOneP08: https://huggingface.co/datasets/PhysInOneP08/PhysInOneP08 7.18 TB ( Complete )
 - PhysInOneP09: https://huggingface.co/datasets/PhysInOneP09/PhysInOneP09 7.16 TB ( Complete )
 - PhysInOneP10: https://huggingface.co/datasets/PhysInOneP10/PhysInOneP10 7.20 TB ( Complete )
-- PhysInOneP11: https://huggingface.co/datasets/PhysInOneP11/PhysInOneP11 6.13 TB
+- PhysInOneP11: https://huggingface.co/datasets/PhysInOneP11/PhysInOneP11 7.45 TB ( Complete )
 - PhysInOneP12: https://huggingface.co/datasets/PhysInOneP12/PhysInOneP12 6.62 TB ( Complete )
 - PhysInOneP13: https://huggingface.co/datasets/PhysInOneP13/PhysInOneP13 6.62 TB ( Complete )
-- PhysInOneP14: https://huggingface.co/datasets/PhysInOneP14/PhysInOneP14 6.66 TB
-- PhysInOneP15: https://huggingface.co/datasets/PhysInOneP15/PhysInOneP15 0.00 TB
+- PhysInOneP14: https://huggingface.co/datasets/PhysInOneP14/PhysInOneP14 6.66 TB ( Complete )
+- PhysInOneP15: https://huggingface.co/datasets/PhysInOneP15/PhysInOneP15 3.87 TB
 
 
 
