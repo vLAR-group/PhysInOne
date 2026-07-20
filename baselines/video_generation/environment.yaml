@@ -1,0 +1,31 @@
+name: PhysInOne-Application-VideoGeneration
+channels:
+  - pytorch
+  - conda-forge
+  - nvidia
+  - defaults
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+    - torch==2.10.0
+    - torchvision
+    - torchaudio
+    - peft
+    - xformers==0.0.34
+    - wandb==0.22.2
+    - tensorboard==2.20.0
+    - opencv-python==4.10.0.84
+    - pillow==11.1.0
+    - scikit-image==0.25.2
+    - imageio==2.37.0
+    - imageio-ffmpeg==0.6.0
+    - einops==0.8.1
+    - kornia==0.8.1
+    - numpy==1.26.4
+    - pandas==2.3.3
+    - scipy==1.16.2
+    - timm==1.0.24
+    - tqdm==4.66.5
+    - ftfy
+    - av

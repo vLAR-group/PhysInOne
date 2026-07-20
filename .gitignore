@@ -82,3 +82,5 @@ Thumbs.db
 data/
 outputs/
 checkpoints/
+hf_cache/
+models/
