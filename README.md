@@ -138,8 +138,13 @@ if __name__ == "__main__":
     main()
 ```
 
+## Baselines
 
-🚧 **Coming Soon** 🚧
+We provide baseline implementations under the `./baselines` directory for your reference. We welcome your feedback, please feel free to contact us if you need anything..
+
+> **📅 Update Schedule:** This section is actively being updated throughout July and August.
+
+## 🚧 **Coming Soon** 🚧
 
 Data processing code will be released soon. Stay tuned!
 
