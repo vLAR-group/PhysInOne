@@ -118,6 +118,8 @@ class PhysInOne(torch.utils.data.Dataset):
         for disk in list_subset_names(data_dir):  # e.g., ['disk1', 'disk2']
             if not disk.startswith("disk"):
                 continue
+            if disk not in ["disk35", "disk36"]:
+                continue
 
             split_root = os.path.join(data_dir, disk, RENDER, split_dir)
             for complexity in list_subset_names(split_root):  # e.g., 'SinglePhysics'

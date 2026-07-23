@@ -61,7 +61,7 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | 3D Assets             | `░░░░░░░░░░` 0%               | Not released | Expected around July              |
 | Leaderboard           | `░░░░░░░░░░` 0%               | Ongoing      | Link will be added when available |
 | PMF                   | `██████████`100%              | Released     |                                   |
-| Baselines             | `███░░░░░░░`25%               | In progress | Last updated: Jul 20              |
+| Baselines             | `███░░░░░░░`25%               | In progress | Last updated: Jul 23              |
 | Data processing       | `░░░░░░░░░░` 0%               | Not released | Expected around July              |
 
 ## Links

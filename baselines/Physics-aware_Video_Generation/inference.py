@@ -150,7 +150,7 @@ def log_validation(validation_dataloader, pipe, args, accelerator, weight_dtype,
             for n, frame in enumerate(out_frames):
                 # torchvision.io.write_jpeg requires the tensor to be on CPU and in (C, H, W) format
                 frame_cwh = frame.cpu().permute(2, 0, 1)
-                torchvision.io.write_jpeg(frame_cwh, os.path.join(rgb_dir, f"{n:03d}.jpg"))
+                torchvision.io.write_jpeg(frame_cwh, os.path.join(rgb_dir, f"{n:04d}.jpg"))
         else:
             raise ValueError(f"Invalid output format: {args.output_format}")
         with open(os.path.join(sample_output_dir, "caption.txt"), "w", encoding="utf-8") as f:
