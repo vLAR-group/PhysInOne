@@ -55,7 +55,7 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | Component             | Progress                      | Status       | Notes                             |
 | --------------------- | ----------------------------- | ------------ | --------------------------------- |
 | SubSet                | `██████████`100%              | Released     |                                   |
-| Rendered Data - Train | `██████████` 95%(115371/120660) | In progress  | Last updated: Jul 19              |
+| Rendered Data - Train | `██████████` 99%(120077/120660) | In progress  | Last updated: Aug 19              |
 | Rendered Data - Test  | `░░░░░░░░░░` 0%(0/15411)      | In progress  |                                   |
 | Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
 | 3D Assets             | `░░░░░░░░░░` 0%               | Not released | Expected around Aug              |
@@ -90,7 +90,7 @@ Due to the large scale of PhysInOne, the rendered data and annotations are split
 - PhysInOneP12: https://huggingface.co/datasets/PhysInOneP12/PhysInOneP12 6.62 TB ( Complete )
 - PhysInOneP13: https://huggingface.co/datasets/PhysInOneP13/PhysInOneP13 6.62 TB ( Complete )
 - PhysInOneP14: https://huggingface.co/datasets/PhysInOneP14/PhysInOneP14 6.66 TB ( Complete )
-- PhysInOneP15: https://huggingface.co/datasets/PhysInOneP15/PhysInOneP15 3.87 TB
+- PhysInOneP15: https://huggingface.co/datasets/PhysInOneP15/PhysInOneP15 7.91 TB
 
 
 
