@@ -7,6 +7,7 @@
     <a href="https://arxiv.org/pdf/2604.09415"><img src="https://img.shields.io/badge/arXiv-2604.09415-b31b1b.svg" alt="arXiv"></a>
     <a href="https://vlar-group.github.io/PhysInOne.html"><img src="https://img.shields.io/badge/Project-Page-blue" alt="Project Page"></a>
     <a href="https://huggingface.co/datasets/vLAR/PhysInOne"><img src="https://img.shields.io/badge/🤗-Dataset-yellow" alt="Dataset"></a>
+    <a href="https://huggingface.co/datasets/vLAR/PhysInOne"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fdatasets%2FvLAR%2FPhysInOne%3Fexpand%3DdownloadsAllTime&amp;query=%24.downloadsAllTime&amp;label=HF%20downloads&amp;logo=huggingface&amp;color=FFD21E&amp;cacheSeconds=3600" alt="Hugging Face downloads"></a>
     <a href="#license"><img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg" alt="License"></a>
   </p>
 </p>
