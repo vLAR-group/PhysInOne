@@ -152,9 +152,9 @@ from pmf import compute_pmf
 
 def main():
     torch.manual_seed(42)
-    B, C, T, H, W = 1, 3, 16, 128, 128
-    video_pred = torch.randn(B, C, T, H, W)
-    video_gt = torch.randn(B, C, T, H, W)
+    B, T, C, H, W = 1, 81, 3, 128, 128
+    video_pred = torch.randn(B, T, C, H, W)
+    video_gt = torch.randn(B, T, C, H, W)
 
     score = compute_pmf(video_pred, video_gt, device='cpu') 
     # If you want to use gpu, set device='cuda'
