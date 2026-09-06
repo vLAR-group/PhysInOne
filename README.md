@@ -7,7 +7,7 @@
     <a href="https://arxiv.org/pdf/2604.09415"><img src="https://img.shields.io/badge/arXiv-2604.09415-b31b1b.svg" alt="arXiv"></a>
     <a href="https://vlar-group.github.io/PhysInOne.html"><img src="https://img.shields.io/badge/Project-Page-blue" alt="Project Page"></a>
     <a href="https://huggingface.co/datasets/vLAR/PhysInOne"><img src="https://img.shields.io/badge/🤗-Dataset-yellow" alt="Dataset"></a>
-    <a href="https://huggingface.co/datasets/vLAR/PhysInOne"><img src="https://img.shields.io/badge/All%20repo%20downloads-790%2C070-FFD21E?logo=huggingface" alt="All PhysInOne repositories: 790,070 historical downloads (snapshot Aug 25, 2026)"></a>
+    <a href="https://huggingface.co/datasets/vLAR/PhysInOne"><img src="https://img.shields.io/badge/All%20repo%20downloads-999%2C927-FFD21E?logo=huggingface" alt="All PhysInOne repositories: 999,927 historical downloads (snapshot Sep 5, 2026)"></a>
     <a href="#license"><img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg" alt="License"></a>
   </p>
 </p>
@@ -57,10 +57,10 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | --------------------- | ----------------------------- | ------------ | --------------------------------- |
 | SubSet                | `██████████`100%              | Released     |                                   |
 | Rendered Data - Train | `██████████` 100%(122988/122988) | Released     | Last updated: Aug 21              |
-| Rendered Data - Test  | `░░░░░░░░░░` 0%(0/15411)      | In progress  |                                   |
+| Rendered Data - Test  | `██████████` 100%               | Released     | All Leaderboard user inputs released; GT excluded |
 | Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
-| 3D Assets             | `░░░░░░░░░░` 0%               | Not released | Expected around Aug              |
-| Leaderboard           | `░░░░░░░░░░` 0%               | Ongoing      | Link will be added when available |
+| 3D Assets             | `██░░░░░░░░` 20%              | Partially released | Validation assets for 1,000 scenes |
+| Leaderboard           | `██████████` 100%              | Released     | Public evaluation inputs for all four tasks; GT excluded |
 | PMF                   | `██████████`100%              | Released     |                                   |
 | Baselines             | `███░░░░░░░`25%               | In progress | Last updated: Jul 23              |
 | Data processing       | `░░░░░░░░░░` 0%               | Not released | Expected around Aug              |
@@ -72,12 +72,33 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | 📄 Paper        | [arXiv](https://arxiv.org/pdf/2604.09415)                                     |
 | 🌐 Project Page | [vlar-group.github.io/PhysInOne](https://vlar-group.github.io/PhysInOne.html) |
 | 🤗 Dataset      | [Hugging Face](https://huggingface.co/datasets/vLAR/PhysInOne)                |
+| 🏆 Leaderboard Data | [Public evaluation inputs](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Leaderboard) |
+| 🧊 3D Assets | [PhysicBenchmark project assets](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/3D%20Assets/PhysicBenchmark) |
+
+### 🏆 Leaderboard Evaluation Data
+
+All user-facing evaluation inputs required by the public Leaderboard have been released for the four benchmark tasks. Ground-truth outputs remain private and are not included in the public download.
+
+| Task | Public package count |
+| ---- | -------------------- |
+| Video Generation | 75,865 files |
+| Future Prediction | 103 scene ZIP archives |
+| Physical Properties Estimation | 72 scene ZIP archives and 2 shared support files |
+| Motion Transfer | 217 scene ZIP archives |
+
+Use the [Leaderboard download script](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/scripts/download_leaderboard.py) with the task-specific [download lists](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/PhysInOne%20Utils/leaderboard_lists). See the [English download guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/LEADERBOARD_DOWNLOAD.md) for commands, filtering, resume behavior, and integrity checks.
+
+### 🧊 Validation 3D Assets
+
+The first validation release contains project resources for **1,000 scenes**: **4,299 files** plus **8 ZIP archives**, totaling approximately **22.25 GiB**. Install **Unreal Engine 5.5.4**; Windows is recommended for the simplest setup, while Linux is also supported with additional configuration.
+
+Download the [`PhysicBenchmark` project folder](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/3D%20Assets/PhysicBenchmark), then run the [3D asset download script](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/scripts/download_3d_assets.py). The script preserves the repository layout and extracts the packaged assets into the project tree. Consult the [setup guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/3D_ASSETS_DOWNLOAD.md) and [validation file list](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/3d_assets_lists/validation.txt), then launch `PhysicBenchmark/PhysInOne.uproject`.
 
 ### 📦 Dataset Repositories & Downloads
 
 Due to the large scale of PhysInOne, the rendered data and annotations are split across 16 Hugging Face repositories. Each entry shows the shard size, release status, live all-time downloads, live downloads in the last 30 days, and its repository link.
 
-> **Combined snapshot (Aug 25, 2026):** P01–P16 have **776,859** all-time downloads and **483,690** downloads in the last 30 days. Including the main repository, the per-repository sums are **790,070** and **485,045**.
+> **Combined snapshot (Sep 5, 2026):** P01–P16 have **986,449** all-time downloads and **615,484** downloads in the last 30 days. Including the main repository, the per-repository sums are **999,927** and **616,472**.
 
 <table>
 <tr>
