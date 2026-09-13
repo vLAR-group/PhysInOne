@@ -223,7 +223,7 @@ def main(args):
     # ------------------------------------------------------------------
     if args.leaderboard:
         logger.info("Running inference for leaderboard submission...")
-        from dataset.PhysInOne_Dataset import PhysInOneLeaderboard as PhysInOne
+        from dataset.PhysInOne_Dataset import PhysInOne_Leaderboard_VideoGeneration as PhysInOne
         validation_dataset = PhysInOne(
             cfg.dataset_path,
             args.leaderboard_branch

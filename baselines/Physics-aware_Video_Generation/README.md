@@ -142,6 +142,7 @@ First, fetch the leaderboard utility scripts and download the test inputs for yo
 
 ```bash
 # Upgrade/install required Python packages
+cd ../..
 pip install -U huggingface_hub tqdm
 
 # Download submission scripts and leaderboard file lists
@@ -163,7 +164,8 @@ Download the specific evaluation input cases for your task (e.g., `video-generat
 ```bash
 python "PhysInOne Utils/scripts/download_leaderboard.py" \
   --task video-generation \
-  --output-dir ./PhysInOne
+  --output-dir ../PhysInOne-leaderboard
+cd ./baselines/Physics-aware_Video_Generation
 ```
 *(Note: Replace `video-generation` with your target task name if evaluating on a different track.)*
 
@@ -191,7 +193,7 @@ If you downloaded the dataset to `./PhysInOne`, you can run inference using the 
 ```bash
 python inference.py \
   --config ./configs/lora/Wan2.2-TI2V-5B.yaml \
-  --data_path ./PhysInOne \
+  --data_path ../../PhysInOne-leaderboard \
   --leaderboard True \
   --leaderboard_branch static \
   --output_path ./leaderboard_output
@@ -204,12 +206,12 @@ python inference.py \
 Once inference is complete, use the provided utility script to bundle your outputs into the required submission format.
 
 ```bash
-bash ./wrap_results.sh <path/to/your/output> <path/to/your/submission_folder>
+bash ./archive_results.sh <path/to/your/output> <path/to/your/submission_folder>
 ```
 
 **Example**
 ```bash
-bash ./wrap_results.sh ./leaderboard_output ./submission
+bash ./archive_results.sh ./leaderboard_output ./submission
 ```
 
 After the script finishes, you will find individual `.zip` files inside the `./submission` directory.

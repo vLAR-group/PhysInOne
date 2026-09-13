@@ -303,7 +303,7 @@ class PhysInOne(torch.utils.data.Dataset):
 
 
 SUBFOLDER = "Leaderboard/Video Generation"  # Subfolder for leaderboard/test data (if present)
-class PhysInOne_VideoGeneration_Dataset(PhysInOne):
+class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
     def __init__(self, data_dir, mode='static'):
         # super().__init__(args, data_dir, split="test", only_main=only_main, only_one_cine=only_one_cine)
         mode = mode.lower()
@@ -317,6 +317,7 @@ class PhysInOne_VideoGeneration_Dataset(PhysInOne):
             cine_choose_sheet = json.load(f)
 
         for complexity in list_subset_names(os.path.join(data_dir, SUBFOLDER)):  # e.g., 'SinglePhysics'
+            print(complexity)
             for scene in list_subset_names(os.path.join(data_dir, SUBFOLDER, complexity)):
                 scene_root = os.path.join(data_dir, SUBFOLDER, complexity, scene)
                 rel_scene_root = os.path.join(complexity, scene)

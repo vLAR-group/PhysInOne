@@ -82,6 +82,8 @@ Thumbs.db
 *.mkv
 data/
 outputs/
+*output*/
+submission/
 checkpoints/
 hf_cache/
 models/
