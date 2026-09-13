@@ -100,3 +100,141 @@ The generated inference results will be saved in the `./outputs/flt_Wan-AI/Wan2.
 ## 5. Configurations
 
 We provide several example configuration files in the `./configs` directory. Feel free to customize these files to suit your specific hardware setups and experimental requirements.
+
+Below is the polished and structured version of your `README.md` section:
+
+---
+
+# Leaderboard (Coming Soon)
+
+We welcome evaluations on our **PhysInOne Benchmark**! Official evaluation submission pipelines and benchmark datasets are now available.
+
+### Evaluation Tasks & Tracks
+
+For the **Video Generation** task, we divide evaluation into two distinct tracks based on camera behavior:
+
+1. **Static Camera Track:** Focuses on pure dynamic physical phenomena (mechanics, optics, fluid dynamics, magnetism) under a fixed viewpoint.
+2. **Moving Camera Track:** Evaluates continuous dynamic visual physics generated under camera trajectory shifts and changing perspectives.
+
+### Input Conditions
+
+For each test case across both tracks, you will receive:
+
+* **Initial Frame:** The starting frame of the target sequence ($t = 0$).
+* **Textual Prompt:** A natural-language description of the physical scene and activity.
+* **Camera Metadata:** Intrinsic parameters and camera extrinsics (fixed pose or full trajectory).
+
+> **Note:** Models may consume any combination of these conditions (e.g., text-only, image + text, or full frame + text + camera trajectory). Please specify your exact conditioning inputs upon submission.
+
+---
+
+### Submission & Download Workflow
+
+Follow this step-by-step guide to download the benchmark inputs, run inference, package your results, and submit them to the PhysInOne Leaderboard.
+
+---
+
+#### Step 1: Download Benchmark Inputs
+
+First, fetch the leaderboard utility scripts and download the test inputs for your target task.
+
+##### 1.1 Install Dependencies & Download Scripts
+
+```bash
+# Upgrade/install required Python packages
+pip install -U huggingface_hub tqdm
+
+# Download submission scripts and leaderboard file lists
+hf download vLAR/PhysInOne \
+  "PhysInOne Utils/scripts/download_leaderboard.py" \
+  "PhysInOne Utils/leaderboard_lists/video-generation.txt" \
+  "PhysInOne Utils/leaderboard_lists/future-prediction.txt" \
+  "PhysInOne Utils/leaderboard_lists/physical-properties-estimation.txt" \
+  "PhysInOne Utils/leaderboard_lists/motion-transfer.txt" \
+  "PhysInOne Utils/LEADERBOARD_DOWNLOAD.md" \
+  --repo-type dataset \
+  --local-dir .
+```
+
+##### 1.2 Download Evaluation Inputs
+
+Download the specific evaluation input cases for your task (e.g., `video-generation`):
+
+```bash
+python "PhysInOne Utils/scripts/download_leaderboard.py" \
+  --task video-generation \
+  --output-dir ./PhysInOne
+```
+*(Note: Replace `video-generation` with your target task name if evaluating on a different track.)*
+
+
+#### Step 2: Run Inference
+
+Evaluate your model on the downloaded leaderboard dataset using the following command:
+
+```bash
+python inference.py \
+  --config <path/to/your/configuration.yaml> \
+  --data_path <path/to/leaderboard_dataset> \
+  --leaderboard True \
+  --leaderboard_branch static \
+  --output_path <path/to/your/output> \
+  --skip_exist
+```
+
+> 💡 **Tip:** Change `--leaderboard_branch static` to `moving` if you are evaluating on the **Moving Camera Track**.
+
+**Example: Static Camera Track**
+
+If you downloaded the dataset to `./PhysInOne`, you can run inference using the vanilla `Wan2.2-TI2V-5B` model for the **Static Track** like this:
+
+```bash
+python inference.py \
+  --config ./configs/lora/Wan2.2-TI2V-5B.yaml \
+  --data_path ./PhysInOne \
+  --leaderboard True \
+  --leaderboard_branch static \
+  --output_path ./leaderboard_output
+```
+
+---
+
+#### Step 3: Package Results
+
+Once inference is complete, use the provided utility script to bundle your outputs into the required submission format.
+
+```bash
+bash ./wrap_results.sh <path/to/your/output> <path/to/your/submission_folder>
+```
+
+**Example**
+```bash
+bash ./wrap_results.sh ./leaderboard_output ./submission
+```
+
+After the script finishes, you will find individual `.zip` files inside the `./submission` directory.
+
+> ⚠️ **Important Note on Zip Structure:** 
+> Each zip archive is structured to contain **only the direct subfolders** (e.g., `CineCamera_*`). It does **not** contain an outer parent folder with the same name as the zip file.
+
+##### Verify Your Submission
+Before uploading, strictly verify that your submission directory is properly formatted and legal using our validation script:
+
+```bash
+python check.py <path/to/your/submission_folder> [track]
+```
+
+**Example: Verify Static Track Submission**
+```bash
+python check.py ./submission static 
+# Use 'moving' instead of 'static' for the moving camera track
+```
+
+---
+
+#### Step 4: Submit Your Results
+
+1. **Upload:** Upload your verified `./submission` folder to your own **Hugging Face repository**.
+2. **Submit:** Navigate to the **Leaderboard Portal** and submit your Hugging Face repository link.
+
+🎉 **That's it!** We will automatically compute your metrics and update the leaderboard as soon as possible.

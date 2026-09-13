@@ -22,6 +22,7 @@ from pathlib import Path
 import numpy as np
 import torch
 from einops import rearrange
+import cv2
 
 from .utils import (
     center_crop_and_resize,
@@ -83,26 +84,26 @@ class PhysInOne(torch.utils.data.Dataset):
       - Resolution normalization
     """
 
-    def __init__(self, args, data_dir, split="train", only_main=False, only_one_cine=False):
+    def __init__(self, args, data_dir, split="train", only_moving=False, only_one_cine=False):
         """
         Args:
             args: Configuration object (e.g., from argparse).
             data_dir: Root directory of the dataset.
             split: One of ['all', 'train', 'test', 'valid'].
-            only_main: If True, only load 'main_camera' views (test split only).
+            only_moving: If True, only load 'main_camera' views (test split only).
             only_one_cine: If True, load a single pre-selected cine camera per
-                scene (test split only, mutually exclusive with `only_main`).
+                scene (test split only, mutually exclusive with `only_moving`).
         """
         split = split.lower()
         assert split in ["all", "train", "test", "valid"], \
             f"Invalid split {split} for PhysBenchDataset"
 
-        if split in ["all", "train", "valid"] and (only_main or only_one_cine):
+        if split in ["all", "train", "valid"] and (only_moving or only_one_cine):
             raise ValueError(
-                f"Cannot choose [only main] or [only one cine] for split {split}"
+                f"Cannot choose [only moving] or [only one cine] for split {split}"
             )
-        if only_main and only_one_cine:
-            raise ValueError("Cannot choose [only main] and [only one cine] at the same time")
+        if only_moving and only_one_cine:
+            raise ValueError("Cannot choose [only moving] and [only one cine] at the same time")
         with open(CINE_CHOOSE, "r") as f:
             cine_choose_sheet = json.load(f)
 
@@ -117,8 +118,6 @@ class PhysInOne(torch.utils.data.Dataset):
         split_dir = split.capitalize()
         for disk in list_subset_names(data_dir):  # e.g., ['disk1', 'disk2']
             if not disk.startswith("disk"):
-                continue
-            if disk not in ["disk35", "disk36"]:
                 continue
 
             split_root = os.path.join(data_dir, disk, RENDER, split_dir)
@@ -136,8 +135,8 @@ class PhysInOne(torch.utils.data.Dataset):
                         print(f"Not found {caption_path}")
                         continue
 
-                    if only_main:
-                        # Only the main (moving) camera.
+                    if only_moving:
+                        # Only the moving camera.
                         if check_folder_exists(os.path.join(scene_root, "CineCamera_Moving")):
                             self.info.append(os.path.join(rel_scene_root, "main_camera"))
                     elif only_one_cine:
@@ -244,7 +243,10 @@ class PhysInOne(torch.utils.data.Dataset):
             "negative_prompt": self.negative_prompt,  # Negative prompt
             "frame_mask": frame_mask,                 # (1, F, 1, 1) real vs padded
             "fps": fps,                               # Actual FPS after downsampling
-            "name": item,                             # Relative path for debugging
+            "name": item,
+            "camera_angle_x": None,
+            "total_frames": None,
+            "transforms": None,                         # Relative path for debugging
         }
 
     # ------------------------------------------------------------------
@@ -299,3 +301,97 @@ class PhysInOne(torch.utils.data.Dataset):
             fps = self.fps if self.fps is not None else DEFAULT_FPS
         return downsample_video(video, original_fps, fps), fps
 
+
+SUBFOLDER = "Leaderboard/Video Generation"  # Subfolder for leaderboard/test data (if present)
+class PhysInOne_VideoGeneration_Dataset(PhysInOne):
+    def __init__(self, data_dir, mode='static'):
+        # super().__init__(args, data_dir, split="test", only_main=only_main, only_one_cine=only_one_cine)
+        mode = mode.lower()
+        assert mode in ['static', 'moving'], "mode should be either 'static' or 'moving'"
+        # self.args = args
+        self.data_dir = data_dir
+        self.mode = mode
+
+        self.info = []
+        with open(CINE_CHOOSE, "r") as f:
+            cine_choose_sheet = json.load(f)
+
+        for complexity in list_subset_names(os.path.join(data_dir, SUBFOLDER)):  # e.g., 'SinglePhysics'
+            for scene in list_subset_names(os.path.join(data_dir, SUBFOLDER, complexity)):
+                scene_root = os.path.join(data_dir, SUBFOLDER, complexity, scene)
+                rel_scene_root = os.path.join(complexity, scene)
+
+                # Skip scenes without a caption file.
+                caption_path = os.path.join(scene_root, "caption.txt")
+                if not os.path.isfile(caption_path):
+                    print(f"Not found {caption_path}")
+                    continue
+
+                if scene not in cine_choose_sheet:
+                    print(f"Scene {scene} not in cine_choose_sheet, skipping.")
+                    continue
+
+                if self.mode == "moving":
+                    # Only the moving camera.
+                    if check_folder_exists(os.path.join(scene_root, "CineCamera_Moving")):
+                        self.info.append(os.path.join(rel_scene_root, "CineCamera_Moving"))
+                elif self.mode == "static":
+                    # All cine cameras (CineCamera_N and CineCamera_Moving).
+                    chosen_cine = cine_choose_sheet[scene]
+                    if check_folder_exists(os.path.join(scene_root, "CineCamera_Moving")):
+                        self.info.append(os.path.join(rel_scene_root, chosen_cine))
+                else:
+                    # All cine cameras (CineCamera_N and CineCamera_Moving).
+                    for cam in get_cinecamera_subfolders(scene_root):
+                        self.info.append(os.path.join(rel_scene_root, cam))
+
+
+    def __getitem__(self, idx):
+        """Return a single data sample for video generation.
+
+        On failure, fall back to the next index (with modulo wrap-around).
+        """
+        idx = idx % len(self)
+        item = self.info[idx]
+        camera = item.split("/")[-1]
+        try:
+            with open(os.path.join(self.data_dir, SUBFOLDER, item, f"blender_{camera}.json"), "r") as f:
+                meta = json.load(f)
+            camera_angle_x = meta.get("camera_angle_x", None)
+            fps = meta.get("fps", DEFAULT_FPS)
+            total_frames = meta.get("total_frames", [])
+            frames = meta.get("frames", [])
+
+            if frames:
+                main_frame_path = os.path.join(self.data_dir, SUBFOLDER, item, "rgb", frames[0]["file_path"])
+                main_frame = cv2.imread(main_frame_path)
+                main_frame = cv2.cvtColor(main_frame, cv2.COLOR_BGR2RGB)
+            else:
+                main_frame = None
+
+            transforms = np.array([np.array(frame["transform_matrix"]) for frame in frames])
+
+            # Load the text caption from the scene directory (parent of camera folder).
+            text = read_all_from_txt(os.path.join(self.data_dir, SUBFOLDER, item, "../caption.txt"))
+
+            camera_angle_x = torch.tensor(camera_angle_x) if camera_angle_x is not None else None
+            fps = torch.tensor(fps) if fps is not None else None
+            total_frames = torch.tensor(total_frames) if total_frames is not None else None
+            main_frame = torch.from_numpy(main_frame) / 255.0 if main_frame is not None else None
+            transforms = torch.from_numpy(transforms) if transforms is not None else None
+        except Exception as e:
+            # Log the error and retry with the next index (simple fault tolerance).
+            print_yellow(f"Fail to fetch {idx}:{item} of the dataset")
+            print_yellow(str(e))
+            return self.__getitem__(idx + 1)
+
+        return {
+            "image": main_frame,
+            "video": None, # not known when inference, only the first frame is provided
+            "prompt": text,
+            "fps": fps,
+            "name": item,
+            "camera_angle_x": camera_angle_x,
+            "total_frames": total_frames,
+            "transforms": transforms,
+        }

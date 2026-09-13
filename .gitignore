@@ -31,6 +31,7 @@ wheels/
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+*.log
 
 # Unit test / coverage reports
 htmlcov/
@@ -84,3 +85,5 @@ outputs/
 checkpoints/
 hf_cache/
 models/
+physinone/
+PhysInOne*/

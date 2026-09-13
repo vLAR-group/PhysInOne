@@ -6,14 +6,18 @@ ground-truth duration. Results (output.mp4 + caption.txt) are written per
 sample under the output directory.
 
 Usage:
-    # Fine-tuned inference (config.yaml is read from the model directory):
+    # Vanilla validation (no checkpoint, config.yaml specified directly):
+    python inference.py --config ./config.yaml --data_path /path/to/dataset \
+        [--output_path ./output/] [--only_main] [--skip_exist]
+
+    # Fine-tuned validation (config.yaml is read from the model directory):
     python inference.py --from_pretrained ./models/lora/lora_Wan-AI/... \
         --data_path /path/to/dataset \
         [--checkpoint latest] [--output_path ./output/] [--only_main] [--skip_exist]
 
-    # Vanilla inference (no checkpoint, config.yaml specified directly):
-    python inference.py --config ./config.yaml --data_path /path/to/dataset \
-        [--output_path ./output/] [--only_main] [--skip_exist]
+    # Vanilla testing on leaderboard (no checkpoint, config.yaml specified directly):
+        python inference.py --config ./config.yaml --data_path /path/to/leaderboard_dataset \
+            --leaderboard True --leaderboard_branch cine (or moving) [--output_path ./output/] [--skip_exist]
 """
 
 import argparse
@@ -30,7 +34,6 @@ from accelerate.logging import get_logger
 from accelerate.utils import set_seed
 from tqdm.auto import tqdm
 
-from dataset.PhysInOne_Dataset import PhysInOne
 from utils.args import read_yaml_to_namespce
 from utils import (
     apply_training_mode,
@@ -76,11 +79,14 @@ def log_validation(validation_dataloader, pipe, args, accelerator, weight_dtype,
     for valid_step, batch in bar:
         assert len(batch["video"]) == 1, "This log_validation only supports batch_size=1"
 
-        video = batch["video"].to(accelerator.device, dtype=weight_dtype)  # (1, C, F, H, W)
+        video = batch["video"].to(accelerator.device, dtype=weight_dtype) if batch["video"] is not None else None  # (1, C, F, H, W)
         image = batch["image"].to(accelerator.device, dtype=weight_dtype)  # (1, C, H, W)
         prompt = batch["prompt"][0]
         fps = batch["fps"]  # scalar tensor or int
         name = batch["name"][0]
+        camera_angle_x = batch["camera_angle_x"][0]
+        total_frames = batch["total_frames"][0]
+        transforms = batch["transforms"][0]
 
         sample_output_dir = os.path.join(args.output_path, name)
         if args.skip_exist and os.path.exists(sample_output_dir):
@@ -88,7 +94,15 @@ def log_validation(validation_dataloader, pipe, args, accelerator, weight_dtype,
             continue
 
         # Target duration (seconds) from the ground truth.
-        target_duration = get_video_time(video, fps)
+
+        if video is not None:
+            target_duration = get_video_time(video, fps)
+        else: # video is None, e.g. for leaderboard submission, we provide the ground-truth duration
+            if total_frames is not None and fps is not None:
+                target_duration = total_frames.item() / fps.item()
+            else:
+                raise ValueError(f"Cannot determine target duration for {name}: "
+                                    "video, total_frames, and/or fps are missing")
 
         # ---- Autoregressive generation until the clip is long enough ----
         output = None
@@ -98,7 +112,7 @@ def log_validation(validation_dataloader, pipe, args, accelerator, weight_dtype,
             _output = pipe(
                 image=current_image.unsqueeze(0),  # (1, C, H, W)
                 prompt=prompt,
-                fps=fps,
+                fps=cfg.fps,
                 output_type="pt",
                 generator=generator,
                 height=cfg.height,
@@ -207,13 +221,23 @@ def main(args):
     # ------------------------------------------------------------------
     # Data
     # ------------------------------------------------------------------
-    validation_dataset = PhysInOne(
-        cfg,
-        cfg.dataset_path,
-        split="test",
-        only_main=args.only_main,
-        only_one_cine=not args.only_main,
-    )
+    if args.leaderboard:
+        logger.info("Running inference for leaderboard submission...")
+        from dataset.PhysInOne_Dataset import PhysInOneLeaderboard as PhysInOne
+        validation_dataset = PhysInOne(
+            cfg.dataset_path,
+            args.leaderboard_branch
+        )
+    else:
+        logger.info("Running inference for validation...")
+        from dataset.PhysInOne_Dataset import PhysInOne
+        validation_dataset = PhysInOne(
+            cfg,
+            cfg.dataset_path,
+            split="valid",
+            only_moving=args.only_moving,
+            only_one_cine=not args.only_moving,
+        )
 
     validation_dataloader = torch.utils.data.DataLoader(
         validation_dataset,
@@ -324,9 +348,12 @@ if __name__ == "__main__":
     parser.add_argument("--checkpoint", type=str, default=None)
     parser.add_argument("--output_path", type=str, default="./outputs/")
     parser.add_argument("--batch_size", type=int, default=1)
-    parser.add_argument("--only_main", action="store_true")
+    parser.add_argument("--only_moving", action="store_true")
     parser.add_argument("--skip_exist", action="store_true")
-    parser.add_argument("--output_format", type=str, default="mp4")
+    parser.add_argument("--output_format", type=str, default="jpg")
+    parser.add_argument("--leaderboard", type=bool, default=False)
+    parser.add_argument("--leaderboard_branch", type=str, choices=["static", 'moving'], default="static",
+                        help="Specify the branch for leaderboard submission")
 
     args = parser.parse_args()
 
