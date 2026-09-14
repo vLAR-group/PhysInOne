@@ -86,13 +86,41 @@ All user-facing evaluation inputs required by the public Leaderboard have been r
 | Physical Properties Estimation | 72 scene ZIP archives and 2 shared support files |
 | Motion Transfer | 217 scene ZIP archives |
 
-Use the [Leaderboard download script](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/scripts/download_leaderboard.py) with the task-specific [download lists](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/PhysInOne%20Utils/leaderboard_lists). See the [English download guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/LEADERBOARD_DOWNLOAD.md) for commands, filtering, resume behavior, and integrity checks.
+Clone this repository and run the dependency-free public downloader:
+
+```bash
+python scripts/download_data.py \
+  --task future_prediction \
+  --output-dir ./PhysInOne_data
+```
+
+Available task values are `video_generation`, `future_prediction`, `physical_properties_estimation`, `motion_transfer`, `3d_assets`, and `all`.
 
 ### 🧊 Validation 3D Assets
 
 The first validation release contains project resources for **1,000 scenes**: **4,299 files** plus **8 ZIP archives**, totaling approximately **22.25 GiB**. Install **Unreal Engine 5.5.4**; Windows is recommended for the simplest setup, while Linux is also supported with additional configuration.
 
-Download the [`PhysicBenchmark` project folder](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/3D%20Assets/PhysicBenchmark), then run the [3D asset download script](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/scripts/download_3d_assets.py). The script preserves the repository layout and extracts the packaged assets into the project tree. Consult the [setup guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/3D_ASSETS_DOWNLOAD.md) and [validation file list](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/3d_assets_lists/validation.txt), then launch `PhysicBenchmark/PhysInOne.uproject`.
+```bash
+python scripts/download_data.py \
+  --task 3d_assets \
+  --output-dir ./PhysInOne_data
+```
+
+The downloader uses only the Python standard library, resumes incomplete files, validates ZIP archives, writes detailed logs, and creates local directories without spaces. The assembled project is stored at `PhysInOne_data/3d_assets/PhysicBenchmark/PhysInOne.uproject`.
+
+Common options:
+
+| Option | Purpose |
+| --- | --- |
+| `--task NAME [NAME ...]` | Select one or more public releases. |
+| `--output-dir PATH` | Set a whitespace-free local output root. |
+| `--scene TEXT` | Download matching scene names or six-character IDs. |
+| `--workers N` | Set concurrent downloads. |
+| `--extract` / `--no-extract` | Control ZIP extraction. |
+| `--delete-zip-after-extract` | Save space after verified extraction. |
+| `--dry-run` / `--list-only` | Preview counts or exact public URLs. |
+
+See the [complete download guide](docs/DATA_DOWNLOAD.md), [download script](scripts/download_data.py), and [task manifests](scripts/download_lists/) for all parameters and examples. Full rendered-data subsets can be prepared with [filter_cases.py](scripts/filter_cases.py) and downloaded with [download_selected.py](scripts/download_selected.py).
 
 ### 📦 Dataset Repositories & Downloads
 
