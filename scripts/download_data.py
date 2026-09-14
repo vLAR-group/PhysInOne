@@ -61,8 +61,8 @@ TASKS = {
     ),
     "3d_assets": TaskSpec(
         "3d_assets.txt",
-        "3D%20Assets/PhysicBenchmark/",
-        "3d_assets/PhysicBenchmark",
+        "Assets/PhysicBenchmark/",
+        "assets/PhysicBenchmark",
         extract_by_default=True,
     ),
 }

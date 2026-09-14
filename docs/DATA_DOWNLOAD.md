@@ -241,7 +241,7 @@ additional Unreal Engine configuration.
 After the default 3D asset download finishes, launch:
 
 ```text
-PhysInOne_data/3d_assets/PhysicBenchmark/PhysInOne.uproject
+PhysInOne_data/assets/PhysicBenchmark/PhysInOne.uproject
 ```
 
 Do not rename directories inside `PhysicBenchmark/`. Unreal Engine resolves

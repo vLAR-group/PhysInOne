@@ -138,36 +138,17 @@ Follow this step-by-step guide to download the benchmark inputs, run inference, 
 
 First, fetch the leaderboard utility scripts and download the test inputs for your target task.
 
-##### 1.1 Install Dependencies & Download Scripts
+##### 1.1 Download Evaluation Inputs
+
+The repository includes a dependency-free downloader and its manifests. From the repository root, run:
 
 ```bash
-# Upgrade/install required Python packages
 cd ../..
-pip install -U huggingface_hub tqdm
-
-# Download submission scripts and leaderboard file lists
-hf download vLAR/PhysInOne \
-  "PhysInOne Utils/scripts/download_leaderboard.py" \
-  "PhysInOne Utils/leaderboard_lists/video-generation.txt" \
-  "PhysInOne Utils/leaderboard_lists/future-prediction.txt" \
-  "PhysInOne Utils/leaderboard_lists/physical-properties-estimation.txt" \
-  "PhysInOne Utils/leaderboard_lists/motion-transfer.txt" \
-  "PhysInOne Utils/LEADERBOARD_DOWNLOAD.md" \
-  --repo-type dataset \
-  --local-dir .
-```
-
-##### 1.2 Download Evaluation Inputs
-
-Download the specific evaluation input cases for your task (e.g., `video-generation`):
-
-```bash
-python "PhysInOne Utils/scripts/download_leaderboard.py" \
-  --task video-generation \
-  --output-dir ../PhysInOne-leaderboard
+python scripts/download_data.py --task video-generation --output-dir ./PhysInOne_data
 cd ./baselines/Physics-aware_Video_Generation
 ```
-*(Note: Replace `video-generation` with your target task name if evaluating on a different track.)*
+
+The downloaded inputs are stored at `PhysInOne_data/leaderboard/video_generation/`. No Hugging Face account, token, or additional Python package is required.
 
 
 #### Step 2: Run Inference
