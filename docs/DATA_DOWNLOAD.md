@@ -1,7 +1,7 @@
 # PhysInOne Public Data Download
 
 The PhysInOne public downloader retrieves the released Leaderboard inputs and
-validation 3D assets from the public `vLAR/PhysInOne` dataset repository. It
+released 3D assets from the public `vLAR/PhysInOne` dataset repository. It
 uses only the Python standard library and anonymous HTTPS requests.
 
 Ground-truth outputs for the Leaderboard are private and are not included.
@@ -58,7 +58,7 @@ python scripts/download_data.py \
   --output-dir ./PhysInOne_data
 ```
 
-Download and assemble the validation 3D assets:
+Download and assemble all currently released 3D assets:
 
 ```bash
 python scripts/download_data.py \
@@ -77,8 +77,8 @@ remain compressed unless `--extract` is specified.
 | `future_prediction` | Fixed-view input sequences and split metadata | 103 ZIP files |
 | `physical_properties_estimation` | Scene inputs and shared supplementary files | 72 scene ZIP files plus 2 shared files |
 | `motion_transfer` | Source videos, reference frames, and captions | 217 ZIP files |
-| `3d_assets` | Validation Unreal Engine project assets for 1,000 scenes | 4,299 files |
-| `all` | Every item above | 80,558 files |
+| `3d_assets` | Unreal Engine project assets for 1,000 Val and 10,000 Train scenes | 4,325 files |
+| `all` | Every item above | 80,584 files |
 
 Multiple task values can follow one `--task` option. Hyphenated names and the
 short aliases shown by `--help` are also accepted.
@@ -246,9 +246,25 @@ python scripts/download_data.py \
 
 ## 3D asset setup
 
-The validation release contains Unreal Engine 5.5.4 resources for 1,000 scenes.
-Windows is recommended for the simplest setup; Linux is also supported with
-additional Unreal Engine configuration.
+The current release contains Unreal Engine 5.5.4 resources for 1,000 validation
+scenes and 10,000 training scenes, together with the released Train and Val
+resource libraries. The download contains 4,325 files and 35 ZIP archives
+(approximately 78.90 GiB before extraction). Windows is recommended for the
+simplest setup; Linux is also supported with additional Unreal Engine
+configuration.
+
+Every 3D asset ZIP is extracted in place into its current parent directory. The
+Scene and Trajectory archives are deliberately kept separate:
+
+| Archive pattern | ZIP member layout | Result after extraction |
+| --- | --- | --- |
+| `Content/PhysInOne/Scenes/val_scenes_batch_*.zip` | `Val/<Physics>/<Scene>.umap` | `Content/PhysInOne/Scenes/Val/<Physics>/<Scene>.umap` |
+| `Content/PhysInOne/Scenes/train_scenes_batch_*.zip` | `Train/<Physics>/<Scene>.umap` | `Content/PhysInOne/Scenes/Train/<Physics>/<Scene>.umap` |
+| `Content/PhysInOne/Trajectories/val_trajectory_batch_*.zip` | `Val/<Physics>/<Scene>_trajectory.uasset` | `Content/PhysInOne/Trajectories/Val/<Physics>/<Scene>_trajectory.uasset` |
+| `Content/PhysInOne/Trajectories/train_trajectory_batch_*.zip` | `Train/<Physics>/<Scene>_trajectory.uasset` | `Content/PhysInOne/Trajectories/Train/<Physics>/<Scene>_trajectory.uasset` |
+
+The Train and Val ZIP files can therefore share the same remote directory
+without colliding: their members begin with different split directories.
 
 After the default 3D asset download finishes, launch:
 

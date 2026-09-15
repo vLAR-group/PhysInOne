@@ -57,7 +57,7 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | --------------------- | ----------------------------- | ------------ | --------------------------------- |
 | Rendered Data - Train | `██████████` 100%(122988/122988) | Released     | Last updated: Aug 21              |
 | Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
-| 3D Assets             | `█████░░░░░` 50%              | Partially released | Validation scenes and Train resource libraries |
+| 3D Assets             | `█████░░░░░` 50%              | Partially released | 1,000 Val scenes, 10,000 Train scenes, and Train/Val resource libraries |
 | Leaderboard           | `██████████` 100%              | Released     | Public evaluation inputs for all four tasks; GT excluded |
 | PMF                   | `██████████`100%              | Released     |                                   |
 | Baselines             | `█████░░░░░`50%               | In progress | Last updated: Sept. 24th              |
@@ -107,9 +107,9 @@ Each row below is a complete command that can be copied directly. The remote Lea
 
 ### 🧊 3D Assets
 
-The public 3D asset release is now **50% complete**. It contains shared Unreal Engine project files, Scene and Trajectory resources for **1,000 validation scenes**, six validation resource archives, and seven training resource archives. The current release contains **4,306 downloadable files**, including **15 ZIP archives**, totaling approximately **73.87 GiB**.
+The public 3D asset release is now **50% complete**. It contains shared Unreal Engine project files, Scene and Trajectory resources for **1,000 validation scenes and 10,000 training scenes**, six validation resource archives, and seven training resource archives. The maintained download contains **4,325 files**, including **35 ZIP archives**, totaling approximately **78.90 GiB**.
 
-The seven training archives add approximately **51.61 GiB** of backgrounds, raw backgrounds, breakable objects, interactable objects, solid objects, appearance materials, and physical materials. Training Scene maps and training Sequence/Trajectory assets are **not released yet**.
+The Scene and Trajectory archives are intentionally stored side by side in their respective project folders. They remain separate archives: Scene ZIPs contain `Train/<Physics>/<Scene>.umap` or `Val/<Physics>/<Scene>.umap`, while Trajectory ZIPs contain `Train/<Physics>/<Scene>_trajectory.uasset` or `Val/<Physics>/<Scene>_trajectory.uasset`. The downloader extracts each ZIP into its current parent, producing `Content/PhysInOne/Scenes/{Train,Val}/` and `Content/PhysInOne/Trajectories/{Train,Val}/`.
 
 ```bash
 python scripts/download_data.py \
@@ -117,7 +117,7 @@ python scripts/download_data.py \
   --output-dir ./PhysInOne_data
 ```
 
-The dependency-free downloader currently retrieves and assembles the exact 1,000-scene validation project subset. It resumes incomplete files, validates ZIP archives, writes detailed logs, and creates local directories without spaces. The assembled project is stored at `PhysInOne_data/assets/PhysicBenchmark/PhysInOne.uproject`. The newly released training resource archives are available in their corresponding category folders in the [Hugging Face project browser](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Assets/PhysicBenchmark/Content/PhysInOne).
+The dependency-free downloader retrieves and assembles the complete currently released project subset. It resumes incomplete files, validates and extracts every released archive in place, writes detailed logs, and creates local directories without spaces. The assembled project is stored at `PhysInOne_data/assets/PhysicBenchmark/PhysInOne.uproject`.
 
 Common options:
 
