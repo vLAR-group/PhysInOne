@@ -142,19 +142,17 @@ First, fetch the leaderboard utility scripts and download the test inputs for yo
 
 ```bash
 # Upgrade/install required Python packages
-cd ../..
 pip install -U huggingface_hub tqdm
 
-# Download submission scripts and leaderboard file lists
 hf download vLAR/PhysInOne \
   "PhysInOne Utils/scripts/download_leaderboard.py" \
-  "PhysInOne Utils/leaderboard_lists/video-generation.txt" \
-  "PhysInOne Utils/leaderboard_lists/future-prediction.txt" \
-  "PhysInOne Utils/leaderboard_lists/physical-properties-estimation.txt" \
-  "PhysInOne Utils/leaderboard_lists/motion-transfer.txt" \
-  "PhysInOne Utils/LEADERBOARD_DOWNLOAD.md" \
   --repo-type dataset \
   --local-dir .
+
+python "PhysInOne Utils/scripts/download_leaderboard.py" \
+  --task future-prediction \
+  --output-dir ./PhysInOne-Leaderboard
+
 ```
 
 ##### 1.2 Download Evaluation Inputs
