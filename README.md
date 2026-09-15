@@ -95,6 +95,8 @@ cd PhysInOne
 
 A byte-identical public mirror of `scripts/` is maintained under [`Utils/scripts/`](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Utils/scripts).
 
+During downloads, an interactive terminal displays one live progress bar with file count, transferred and estimated total size, current speed, and ETA. Redirected output automatically switches to periodic plain-text progress updates, while complete per-file records remain available in `_download_logs/`.
+
 Each row below is a complete command that can be copied directly. The remote Leaderboard folder names remain unchanged, while local task directories are created without spaces.
 
 | Task | Copy command | Local directory |

@@ -14,7 +14,7 @@ from pathlib import Path, PurePosixPath
 from typing import Optional, Sequence
 from urllib.parse import quote, urlparse
 
-from download_data import DownloadResult, download_file, utc_now
+from download_data import DownloadProgress, DownloadResult, download_file, utc_now
 
 
 SCRIPT_ROOT = Path(__file__).resolve().parent
@@ -229,31 +229,38 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
     logs = Logs(output_dir / "_download_logs" / run_id)
     results = []
-    with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        futures = {
-            pool.submit(
-                download_file,
-                "full_dataset",
-                remote_path,
-                destination,
-                args.revision,
-                args.timeout,
-                args.retries,
-                not args.no_resume,
-                args.overwrite,
-                False,
-                repository,
-            ): (case_id, repository)
-            for case_id, repository, remote_path, destination in planned
-        }
-        total = len(futures)
-        for completed, future in enumerate(as_completed(futures), start=1):
-            case_id, repository = futures[future]
-            result = future.result()
-            results.append(result)
-            logs.record(case_id, repository, result)
-            label = result.status if not result.error else f"failed: {result.error}"
-            print(f"[{completed}/{total}] {label}: {case_id}")
+    progress = DownloadProgress(len(planned), "Downloading")
+    try:
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            futures = {
+                pool.submit(
+                    download_file,
+                    "full_dataset",
+                    remote_path,
+                    destination,
+                    args.revision,
+                    args.timeout,
+                    args.retries,
+                    not args.no_resume,
+                    args.overwrite,
+                    False,
+                    repository,
+                    progress,
+                    index,
+                ): (index, case_id, repository)
+                for index, (case_id, repository, remote_path, destination)
+                in enumerate(planned)
+            }
+            for future in as_completed(futures):
+                key, case_id, repository = futures[future]
+                result = future.result()
+                results.append(result)
+                logs.record(case_id, repository, result)
+                progress.complete(
+                    key, result.status, result.local_path, failed=bool(result.error)
+                )
+    finally:
+        progress.finish()
 
     failures = sum(1 for result in results if result.error)
     summary = {

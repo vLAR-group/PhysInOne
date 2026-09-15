@@ -16,11 +16,12 @@ import time
 import urllib.error
 import urllib.request
 import zipfile
+from collections import deque
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
-from typing import Iterable, Optional, Sequence
+from typing import Hashable, Iterable, Optional, Sequence, TextIO
 from urllib.parse import quote, unquote
 
 
@@ -28,6 +29,209 @@ REPOSITORY = "vLAR/PhysInOne"
 LIST_ROOT = Path(__file__).resolve().parent / "download_lists"
 CHUNK_SIZE = 8 * 1024 * 1024
 USER_AGENT = "PhysInOne-public-downloader/1.0"
+
+
+def format_bytes(value: float) -> str:
+    units = ("B", "KiB", "MiB", "GiB", "TiB")
+    amount = float(max(0.0, value))
+    for unit in units:
+        if amount < 1024.0 or unit == units[-1]:
+            if unit == "B":
+                return f"{amount:.0f} {unit}"
+            return f"{amount:.1f} {unit}"
+        amount /= 1024.0
+    return f"{amount:.1f} TiB"
+
+
+def format_duration(seconds: Optional[float]) -> str:
+    if seconds is None or seconds < 0 or seconds == float("inf"):
+        return "--:--"
+    value = int(seconds + 0.5)
+    hours, remainder = divmod(value, 3600)
+    minutes, secs = divmod(remainder, 60)
+    if hours:
+        return f"{hours:d}:{minutes:02d}:{secs:02d}"
+    return f"{minutes:02d}:{secs:02d}"
+
+
+class DownloadProgress:
+    """Thread-safe aggregate progress bar with a clean non-TTY fallback."""
+
+    def __init__(
+        self,
+        total_files: int,
+        label: str = "Downloading",
+        *,
+        show_bytes: bool = True,
+        stream: Optional[TextIO] = None,
+        refresh_interval: float = 0.2,
+        log_interval: float = 10.0,
+    ) -> None:
+        self.total_files = max(0, int(total_files))
+        self.label = label
+        self.show_bytes = show_bytes
+        self.stream = stream or sys.stderr
+        self.interactive = bool(
+            getattr(self.stream, "isatty", lambda: False)()
+            and not bool(getattr(self.stream, "closed", False))
+        )
+        self.refresh_interval = max(0.05, refresh_interval)
+        self.log_interval = max(1.0, log_interval)
+        self.started_at = time.monotonic()
+        self._last_render = 0.0
+        self._completed = 0
+        self._failed = 0
+        self._network_bytes = 0
+        self._states: dict[Hashable, list[Optional[int]]] = {}
+        self._samples: deque[tuple[float, int]] = deque()
+        self._lock = threading.Lock()
+        self._closed = False
+        self._dirty = True
+
+    def begin_file(
+        self,
+        key: Hashable,
+        existing_bytes: int = 0,
+        total_bytes: Optional[int] = None,
+    ) -> None:
+        with self._lock:
+            self._states[key] = [
+                max(0, int(existing_bytes)),
+                None if total_bytes is None else max(0, int(total_bytes)),
+            ]
+            self._dirty = True
+            self._render_locked()
+
+    def advance(self, key: Hashable, amount: int) -> None:
+        increment = max(0, int(amount))
+        if not increment:
+            return
+        with self._lock:
+            state = self._states.setdefault(key, [0, None])
+            state[0] = int(state[0] or 0) + increment
+            self._network_bytes += increment
+            self._dirty = True
+            current = time.monotonic()
+            self._samples.append((current, self._network_bytes))
+            cutoff = current - 12.0
+            while len(self._samples) > 2 and self._samples[0][0] < cutoff:
+                self._samples.popleft()
+            self._render_locked(current)
+
+    def complete(
+        self,
+        key: Hashable,
+        status: str,
+        local_path: str = "",
+        failed: bool = False,
+    ) -> None:
+        with self._lock:
+            state = self._states.setdefault(key, [0, None])
+            if not failed and local_path:
+                path = Path(local_path)
+                try:
+                    size = path.stat().st_size if path.is_file() else None
+                except OSError:
+                    size = None
+                if size is not None:
+                    state[0] = size
+                    state[1] = size
+            self._completed += 1
+            if failed:
+                self._failed += 1
+            self._dirty = True
+            self._render_locked(force=self._completed == self.total_files)
+
+    def finish(self) -> None:
+        with self._lock:
+            if self._closed:
+                return
+            if self.total_files:
+                if self._dirty:
+                    self._render_locked(force=True)
+                if self.interactive:
+                    self.stream.write("\n")
+                    self.stream.flush()
+            self._closed = True
+
+    def _speed_locked(self, current: float) -> tuple[float, float]:
+        elapsed = max(current - self.started_at, 1e-6)
+        average = self._network_bytes / elapsed
+        if len(self._samples) >= 2:
+            first_time, first_bytes = self._samples[0]
+            window = max(current - first_time, 1e-6)
+            recent = (self._network_bytes - first_bytes) / window
+        else:
+            recent = average
+        return recent, average
+
+    def _byte_totals_locked(self) -> tuple[int, Optional[int]]:
+        current_bytes = sum(int(state[0] or 0) for state in self._states.values())
+        known = [int(state[1]) for state in self._states.values() if state[1] is not None]
+        if not known:
+            return current_bytes, None
+        average_size = sum(known) / len(known)
+        estimated = int(sum(known) + average_size * (self.total_files - len(known)))
+        return current_bytes, max(current_bytes, estimated)
+
+    def _line_locked(self, current: float) -> str:
+        ratio = self._completed / self.total_files if self.total_files else 1.0
+        width = shutil.get_terminal_size(fallback=(120, 24)).columns
+        bar_width = 10 if width < 120 else min(24, max(12, width // 10))
+        filled = min(bar_width, int(ratio * bar_width))
+        if filled < bar_width and self._completed < self.total_files:
+            bar = "=" * filled + ">" + "." * (bar_width - filled - 1)
+        else:
+            bar = "=" * filled + "." * (bar_width - filled)
+        elapsed = max(current - self.started_at, 1e-6)
+        headline = f"{self.label} [{bar}] {self._completed}/{self.total_files}"
+        if self._failed:
+            headline += f" fail:{self._failed}"
+        parts = [headline]
+        if self.show_bytes:
+            current_bytes, estimated_bytes = self._byte_totals_locked()
+            recent, average = self._speed_locked(current)
+            current_text = format_bytes(current_bytes).replace(" ", "")
+            if estimated_bytes is None:
+                byte_text = current_text
+                eta = None
+            else:
+                total_text = format_bytes(estimated_bytes).replace(" ", "")
+                byte_text = f"{current_text}/~{total_text}"
+                eta = (
+                    max(0, estimated_bytes - current_bytes) / recent
+                    if recent > 0
+                    else None
+                )
+            recent_text = format_bytes(recent).replace(" ", "")
+            parts.extend([byte_text, f"{recent_text}/s", f"ETA {format_duration(eta)}"])
+            if width >= 120:
+                average_text = format_bytes(average).replace(" ", "")
+                parts.append(f"avg {average_text}/s")
+        else:
+            rate = self._completed / elapsed
+            remaining = max(0, self.total_files - self._completed)
+            eta = remaining / rate if rate > 0 else None
+            parts.extend([f"{rate:.1f} files/s", f"ETA {format_duration(eta)}"])
+        return " | ".join(parts)
+
+    def _render_locked(self, current: Optional[float] = None, force: bool = False) -> None:
+        if self._closed:
+            return
+        timestamp = current if current is not None else time.monotonic()
+        interval = self.refresh_interval if self.interactive else self.log_interval
+        if not force and timestamp - self._last_render < interval:
+            return
+        line = self._line_locked(timestamp)
+        if self.interactive:
+            width = shutil.get_terminal_size(fallback=(120, 24)).columns
+            clipped = line[: max(1, width - 1)]
+            self.stream.write("\r\033[2K" + clipped)
+        else:
+            self.stream.write(line + "\n")
+        self.stream.flush()
+        self._last_render = timestamp
+        self._dirty = False
 
 
 @dataclass(frozen=True)
@@ -185,6 +389,8 @@ def download_once(
     destination: Path,
     timeout: float,
     resume: bool,
+    progress: Optional[DownloadProgress] = None,
+    progress_key: object = "",
 ) -> tuple[str, int]:
     destination.parent.mkdir(parents=True, exist_ok=True)
     partial = destination.with_name(f"{destination.name}.part")
@@ -215,6 +421,9 @@ def download_once(
         starting_size = offset if append else 0
         expected_raw = response.headers.get("Content-Length")
         expected = int(expected_raw) if expected_raw and expected_raw.isdigit() else None
+        if progress is not None:
+            total_bytes = starting_size + expected if expected is not None else None
+            progress.begin_file(progress_key, starting_size, total_bytes)
         written = 0
         with partial.open(mode) as handle:
             while True:
@@ -223,6 +432,8 @@ def download_once(
                     break
                 handle.write(chunk)
                 written += len(chunk)
+                if progress is not None:
+                    progress.advance(progress_key, len(chunk))
         if expected is not None and written != expected:
             raise IOError(
                 f"incomplete response: expected {expected} bytes, received {written}"
@@ -245,6 +456,8 @@ def download_file(
     force: bool,
     skip_removed_archive: bool,
     repository: str = REPOSITORY,
+    progress: Optional[DownloadProgress] = None,
+    progress_key: object = "",
 ) -> DownloadResult:
     if skip_removed_archive and not destination.exists() and marker_matches(destination):
         return DownloadResult(
@@ -269,7 +482,9 @@ def download_file(
     error = ""
     for attempt in range(retries + 1):
         try:
-            status, written = download_once(url, destination, timeout, resume)
+            status, written = download_once(
+                url, destination, timeout, resume, progress, progress_key
+            )
             return DownloadResult(
                 task, remote_path, str(destination), status, bytes_written=written
             )
@@ -637,33 +852,41 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
     logs = RunLogs(output_dir / "_download_logs" / run_id)
     results: list[DownloadResult] = []
-    with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        futures = {
-            pool.submit(
-                download_file,
-                task,
-                remote_path,
-                destination,
-                args.revision,
-                args.timeout,
-                args.retries,
-                not args.no_resume,
-                args.force,
-                (
-                    args.delete_zip_after_extract
-                    and should_extract(task, args.extract)
-                    and remote_path.lower().endswith(".zip")
-                ),
-            ): (task, remote_path)
-            for task, remote_path, destination in selections
-        }
-        total = len(futures)
-        for completed, future in enumerate(as_completed(futures), start=1):
-            result = future.result()
-            results.append(result)
-            logs.record_download(result)
-            label = result.status if not result.error else f"failed: {result.error}"
-            print(f"[{completed}/{total}] {result.task}: {label}: {result.remote_path}")
+    progress = DownloadProgress(len(selections), "Downloading")
+    try:
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            futures = {
+                pool.submit(
+                    download_file,
+                    task,
+                    remote_path,
+                    destination,
+                    args.revision,
+                    args.timeout,
+                    args.retries,
+                    not args.no_resume,
+                    args.force,
+                    (
+                        args.delete_zip_after_extract
+                        and should_extract(task, args.extract)
+                        and remote_path.lower().endswith(".zip")
+                    ),
+                    REPOSITORY,
+                    progress,
+                    index,
+                ): index
+                for index, (task, remote_path, destination) in enumerate(selections)
+            }
+            for future in as_completed(futures):
+                key = futures[future]
+                result = future.result()
+                results.append(result)
+                logs.record_download(result)
+                progress.complete(
+                    key, result.status, result.local_path, failed=bool(result.error)
+                )
+    finally:
+        progress.finish()
 
     extraction_results: list[ExtractionResult] = []
     successful = {
@@ -671,28 +894,39 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         for result in results
         if not result.error
     }
-    for task, remote_path, destination in selections:
-        if not remote_path.lower().endswith(".zip"):
-            continue
-        if not should_extract(task, args.extract):
-            continue
-        archive = successful.get((task, remote_path), destination)
-        marker = extraction_marker(archive)
-        if not archive.is_file() and marker_matches(archive):
-            result = ExtractionResult(task, str(archive), "already_extracted_zip_removed")
-        elif not archive.is_file():
-            result = ExtractionResult(
-                task,
-                str(archive),
-                "failed",
-                error="archive is unavailable because its download failed",
-            )
-        else:
-            result = extract_download(task, archive, args.delete_zip_after_extract)
-        extraction_results.append(result)
-        logs.record_extraction(result)
-        label = result.status if not result.error else f"failed: {result.error}"
-        print(f"[extract] {task}: {label}: {archive}")
+    extraction_plan = [
+        item
+        for item in selections
+        if item[1].lower().endswith(".zip") and should_extract(item[0], args.extract)
+    ]
+    if extraction_plan:
+        extraction_progress = DownloadProgress(
+            len(extraction_plan), "Extracting", show_bytes=False
+        )
+        try:
+            for index, (task, remote_path, destination) in enumerate(extraction_plan):
+                archive = successful.get((task, remote_path), destination)
+                marker = extraction_marker(archive)
+                if not archive.is_file() and marker_matches(archive):
+                    result = ExtractionResult(
+                        task, str(archive), "already_extracted_zip_removed"
+                    )
+                elif not archive.is_file():
+                    result = ExtractionResult(
+                        task,
+                        str(archive),
+                        "failed",
+                        error="archive is unavailable because its download failed",
+                    )
+                else:
+                    result = extract_download(task, archive, args.delete_zip_after_extract)
+                extraction_results.append(result)
+                logs.record_extraction(result)
+                extraction_progress.complete(
+                    index, result.status, result.archive, failed=bool(result.error)
+                )
+        finally:
+            extraction_progress.finish()
 
     download_failures = sum(1 for result in results if result.error)
     extraction_failures = sum(1 for result in extraction_results if result.error)

@@ -29,6 +29,16 @@ script reads them locally and does not fetch utility files at runtime. A
 byte-identical public mirror of the complete script tree is maintained under
 [`Utils/scripts/`](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Utils/scripts).
 
+## Progress display
+
+Interactive terminals show a single live progress bar with completed file count,
+transferred and estimated total size, current download speed, and ETA. The total
+size and ETA are marked as estimates because public manifests do not store object
+sizes; they become more accurate as Hugging Face responses provide file sizes.
+When output is redirected to a log, the downloader automatically writes periodic
+plain-text snapshots instead of terminal control characters. Per-file success and
+failure details are always retained under `_download_logs/`.
+
 ## Quick start
 
 Download all four public Leaderboard tasks:
