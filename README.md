@@ -93,6 +93,8 @@ git clone https://github.com/vLAR-group/PhysInOne.git
 cd PhysInOne
 ```
 
+A byte-identical public mirror of `scripts/` is maintained under [`Utils/scripts/`](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Utils/scripts).
+
 Each row below is a complete command that can be copied directly. The remote Leaderboard folder names remain unchanged, while local task directories are created without spaces.
 
 | Task | Copy command | Local directory |

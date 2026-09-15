@@ -25,7 +25,9 @@ python scripts/download_data.py --help
 ```
 
 The maintained download lists are stored in `scripts/download_lists/`. The
-script reads them locally and does not fetch utility files at runtime.
+script reads them locally and does not fetch utility files at runtime. A
+byte-identical public mirror of the complete script tree is maintained under
+[`Utils/scripts/`](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Utils/scripts).
 
 ## Quick start
 
