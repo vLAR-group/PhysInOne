@@ -138,9 +138,12 @@ Follow this step-by-step guide to download the benchmark inputs, run inference, 
 
 First, fetch the leaderboard utility scripts and download the test inputs for your target task.
 
-##### 1.1 Install Dependencies & Download Scripts
+##### 1.1 Download Evaluation Inputs
+
+From the repository root, run:
 
 ```bash
+<<<<<<< HEAD
 # Upgrade/install required Python packages
 pip install -U huggingface_hub tqdm
 
@@ -163,10 +166,14 @@ Download the specific evaluation input cases for your task (e.g., `video-generat
 python "PhysInOne Utils/scripts/download_leaderboard.py" \
   --task video-generation \
   --output-dir ../PhysInOne-leaderboard
+=======
+cd ../..
+python scripts/download_data.py --task video-generation --output-dir ./PhysInOne_data
+>>>>>>> 5f2570a
 cd ./baselines/Physics-aware_Video_Generation
 ```
-*(Note: Replace `video-generation` with your target task name if evaluating on a different track.)*
 
+The downloaded inputs are stored at `PhysInOne_data/leaderboard/video_generation/`.
 
 #### Step 2: Run Inference
 
@@ -186,7 +193,7 @@ python inference.py \
 
 **Example: Static Camera Track**
 
-If you downloaded the dataset to `./PhysInOne`, you can run inference using the vanilla `Wan2.2-TI2V-5B` model for the **Static Track** like this:
+If you downloaded the leaderboard dataset to `../../PhysInOne_data`, you can run inference using the vanilla `Wan2.2-TI2V-5B` model for the **Static Track** like this:
 
 ```bash
 python inference.py \

@@ -77,16 +77,19 @@ def log_validation(validation_dataloader, pipe, args, accelerator, weight_dtype,
 
     bar = tqdm(enumerate(validation_dataloader), desc=split, total=len(validation_dataloader))
     for valid_step, batch in bar:
-        assert len(batch["video"]) == 1, "This log_validation only supports batch_size=1"
+        # assert len(batch["image"]) == 1, "This log_validation only supports batch_size=1"
 
-        video = batch["video"].to(accelerator.device, dtype=weight_dtype) if batch["video"] is not None else None  # (1, C, F, H, W)
+        if "video" in batch:
+            video = batch["video"].to(accelerator.device, dtype=weight_dtype)  # (1, C, F, H, W)
+        else:
+            video = None
         image = batch["image"].to(accelerator.device, dtype=weight_dtype)  # (1, C, H, W)
         prompt = batch["prompt"][0]
         fps = batch["fps"]  # scalar tensor or int
         name = batch["name"][0]
-        camera_angle_x = batch["camera_angle_x"][0]
-        total_frames = batch["total_frames"][0]
-        transforms = batch["transforms"][0]
+        camera_angle_x = batch["camera_angle_x"][0] if "camera_angle_x" in batch else None
+        total_frames = batch["total_frames"][0] if "total_frames" in batch else None
+        transforms = batch["transforms"][0] if "transforms" in batch else None
 
         sample_output_dir = os.path.join(args.output_path, name)
         if args.skip_exist and os.path.exists(sample_output_dir):
@@ -132,7 +135,7 @@ def log_validation(validation_dataloader, pipe, args, accelerator, weight_dtype,
             )
 
         # ---- Match ground-truth length and frame rate ----
-        num_gt_frames = video.size(2)
+        num_gt_frames = total_frames.item() if total_frames is not None else video.size(2) 
         output = output[:, :num_gt_frames, :, :]  # (C, F_gt, H, W)
 
         fps_val = fps.item() if torch.is_tensor(fps) else fps
@@ -148,9 +151,10 @@ def log_validation(validation_dataloader, pipe, args, accelerator, weight_dtype,
         # ---- Save results ----
         # Convert to uint8 [0, 255] with shape (F, H, W, C).
         out_frames = (output * 255.0).to(torch.uint8).permute(1, 2, 3, 0)
-        gt_frames = (video.squeeze(0) * 255.0).to(torch.uint8).permute(1, 2, 3, 0)
-        if len(gt_frames) == 0:
-            continue
+        if video is not None:
+            gt_frames = (video.squeeze(0) * 255.0).to(torch.uint8).permute(1, 2, 3, 0)
+        else:
+            gt_frames = torch.empty(0)  # Empty tensor for leaderboard submission
         
         if args.output_format == 'mp4':
             os.makedirs(sample_output_dir, exist_ok=True)
@@ -224,9 +228,11 @@ def main(args):
     if args.leaderboard:
         logger.info("Running inference for leaderboard submission...")
         from dataset.PhysInOne_Dataset import PhysInOne_Leaderboard_VideoGeneration as PhysInOne
+
         validation_dataset = PhysInOne(
             cfg.dataset_path,
-            args.leaderboard_branch
+            args.leaderboard_branch,
+            cfg.resolution
         )
     else:
         logger.info("Running inference for validation...")
@@ -372,6 +378,7 @@ if __name__ == "__main__":
     args.config = read_yaml_to_namespce(config_path)
     # The dataset path is specified externally via CLI, not read from the config.
     args.config.dataset_path = args.data_path
+    args.config.resolution = args.config.resolution if hasattr(args.config, "resolution") else (args.config.height, args.config.width)
 
     resolve_output_path(args)
     os.makedirs(args.output_path, exist_ok=True)

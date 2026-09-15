@@ -59,7 +59,7 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | Rendered Data - Train | `██████████` 100%(122988/122988) | Released     | Last updated: Aug 21              |
 | Rendered Data - Test  | `██████████` 100%               | Released     | All Leaderboard user inputs released; GT excluded |
 | Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
-| 3D Assets             | `██░░░░░░░░` 20%              | Partially released | Validation assets for 1,000 scenes |
+| 3D Assets             | `█████░░░░░` 50%              | Partially released | Validation scenes and Train resource libraries |
 | Leaderboard           | `██████████` 100%              | Released     | Public evaluation inputs for all four tasks; GT excluded |
 | PMF                   | `██████████`100%              | Released     |                                   |
 | Baselines             | `███░░░░░░░`25%               | In progress | Last updated: Jul 23              |
@@ -73,7 +73,7 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | 🌐 Project Page | [vlar-group.github.io/PhysInOne](https://vlar-group.github.io/PhysInOne.html) |
 | 🤗 Dataset      | [Hugging Face](https://huggingface.co/datasets/vLAR/PhysInOne)                |
 | 🏆 Leaderboard Data | [Public evaluation inputs](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Leaderboard) |
-| 🧊 3D Assets | [PhysicBenchmark project assets](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/3D%20Assets/PhysicBenchmark) |
+| 🧊 3D Assets | [PhysicBenchmark project assets](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Assets/PhysicBenchmark) |
 
 ### 🏆 Leaderboard Evaluation Data
 
@@ -86,13 +86,52 @@ All user-facing evaluation inputs required by the public Leaderboard have been r
 | Physical Properties Estimation | 72 scene ZIP archives and 2 shared support files |
 | Motion Transfer | 217 scene ZIP archives |
 
-Use the [Leaderboard download script](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/scripts/download_leaderboard.py) with the task-specific [download lists](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/PhysInOne%20Utils/leaderboard_lists). See the [English download guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/LEADERBOARD_DOWNLOAD.md) for commands, filtering, resume behavior, and integrity checks.
+Clone this repository once; the downloader uses only the Python standard library and reads its maintained manifests directly from the repository:
 
-### 🧊 Validation 3D Assets
+```bash
+git clone https://github.com/vLAR-group/PhysInOne.git
+cd PhysInOne
+```
 
-The first validation release contains project resources for **1,000 scenes**: **4,299 files** plus **8 ZIP archives**, totaling approximately **22.25 GiB**. Install **Unreal Engine 5.5.4**; Windows is recommended for the simplest setup, while Linux is also supported with additional configuration.
+A byte-identical public mirror of `scripts/` is maintained under [`Utils/scripts/`](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Utils/scripts).
 
-Download the [`PhysicBenchmark` project folder](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/3D%20Assets/PhysicBenchmark), then run the [3D asset download script](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/scripts/download_3d_assets.py). The script preserves the repository layout and extracts the packaged assets into the project tree. Consult the [setup guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/3D_ASSETS_DOWNLOAD.md) and [validation file list](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/PhysInOne%20Utils/3d_assets_lists/validation.txt), then launch `PhysicBenchmark/PhysInOne.uproject`.
+Each row below is a complete command that can be copied directly. The remote Leaderboard folder names remain unchanged, while local task directories are created without spaces.
+
+| Task | Copy command | Local directory |
+| --- | --- | --- |
+| Video Generation | `python scripts/download_data.py --task video-generation --output-dir ./PhysInOne_data` | `PhysInOne_data/leaderboard/video_generation/` |
+| Future Prediction | `python scripts/download_data.py --task future-prediction --output-dir ./PhysInOne_data` | `PhysInOne_data/leaderboard/future_prediction/` |
+| Physical Properties Estimation | `python scripts/download_data.py --task physical-properties-estimation --output-dir ./PhysInOne_data` | `PhysInOne_data/leaderboard/physical_properties_estimation/` |
+| Motion Transfer | `python scripts/download_data.py --task motion-transfer --output-dir ./PhysInOne_data` | `PhysInOne_data/leaderboard/motion_transfer/` |
+| All four Leaderboard tasks | `python scripts/download_data.py --task video-generation future-prediction physical-properties-estimation motion-transfer --output-dir ./PhysInOne_data` | `PhysInOne_data/leaderboard/` |
+
+### 🧊 3D Assets
+
+The public 3D asset release is now **50% complete**. It contains shared Unreal Engine project files, Scene and Trajectory resources for **1,000 validation scenes**, six validation resource archives, and seven training resource archives. The current release contains **4,306 downloadable files**, including **15 ZIP archives**, totaling approximately **73.87 GiB**.
+
+The seven training archives add approximately **51.61 GiB** of backgrounds, raw backgrounds, breakable objects, interactable objects, solid objects, appearance materials, and physical materials. Training Scene maps and training Sequence/Trajectory assets are **not released yet**.
+
+```bash
+python scripts/download_data.py \
+  --task 3d_assets \
+  --output-dir ./PhysInOne_data
+```
+
+The dependency-free downloader currently retrieves and assembles the exact 1,000-scene validation project subset. It resumes incomplete files, validates ZIP archives, writes detailed logs, and creates local directories without spaces. The assembled project is stored at `PhysInOne_data/assets/PhysicBenchmark/PhysInOne.uproject`. The newly released training resource archives are available in their corresponding category folders in the [Hugging Face project browser](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Assets/PhysicBenchmark/Content/PhysInOne).
+
+Common options:
+
+| Option | Purpose |
+| --- | --- |
+| `--task NAME [NAME ...]` | Select one or more public releases. |
+| `--output-dir PATH` | Set a whitespace-free local output root. |
+| `--scene TEXT` | Download matching scene names or six-character IDs. |
+| `--workers N` | Set concurrent downloads. |
+| `--extract` / `--no-extract` | Control ZIP extraction. |
+| `--delete-zip-after-extract` | Save space after verified extraction. |
+| `--dry-run` / `--list-only` | Preview counts or exact public URLs. |
+
+See the [complete download guide](docs/DATA_DOWNLOAD.md), [download script](scripts/download_data.py), and [task manifests](scripts/download_lists/) for all parameters and examples. Full rendered-data subsets can be prepared with [filter_cases.py](scripts/filter_cases.py) and downloaded with [download_selected.py](scripts/download_selected.py).
 
 ### 📦 Dataset Repositories & Downloads
 
@@ -239,7 +278,7 @@ if __name__ == "__main__":
 
 We provide baseline implementations under the `./baselines` directory for your reference. We welcome your feedback, please feel free to contact us if you need anything..
 
-> **📅 Update Schedule:** This section is actively being updated throughout July and August.
+> **📅 Update Schedule:** This section is actively being updated throughout Oct.
 
 ## 🚧 **Coming Soon** 🚧
 
