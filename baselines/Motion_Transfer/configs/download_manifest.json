@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "common_source": {
+    "repo_url": "https://github.com/RyannDaGreat/CommonSource.git",
+    "revision": "5f29b54eb109f93341312f662df4e55664ff0d0e",
+    "local_dir": "third_party/CommonSource",
+    "files": {
+      "background_remover.py": {
+        "size": 3436,
+        "sha256": "a87080f9221385d1b20e78a9d80ed7c0366b92f24d6192869e03f829e59f4eea"
+      },
+      "noise_warp.py": {
+        "size": 51728,
+        "sha256": "fd9db75cd56420a280ac3b4bae223ea5cb2858daf35e7de97416f0b673166965"
+      },
+      "raft.py": {
+        "size": 3056,
+        "sha256": "1250a5438fecc6714d50875600479d99f7c0879832bb19495f3df5724b444b56"
+      }
+    }
+  },
+  "files": {
+    "motionpro_dense": {
+      "repo_id": "HiDream-ai/MotionPro",
+      "revision": "8cbd7601e22b9468a000ce75eb5f60dbb29e77d1",
+      "filename": "MotionPro_Dense-gs_14k.pt",
+      "local_dir": "checkpoints",
+      "local_path": "checkpoints/MotionPro_Dense-gs_14k.pt",
+      "size": 6819636917,
+      "sha256": "f6f7105e0f46fc6462c4c60590685be00cb90f60f74c3fbe13f29d40c8ffa0a0"
+    },
+    "cotracker": {
+      "repo_id": "HiDream-ai/MotionPro",
+      "revision": "8cbd7601e22b9468a000ce75eb5f60dbb29e77d1",
+      "filename": "tools/co-tracker/checkpoints/scaled_offline.pth",
+      "local_dir": ".",
+      "local_path": "tools/co-tracker/checkpoints/scaled_offline.pth",
+      "size": 101890938,
+      "sha256": "2670d4562ed69326dda775a26e54883925cd11b6fc9b24cb7aa9f8078bce7834"
+    },
+    "gowiththeflow_lora": {
+      "repo_id": "Eyeline-Labs/Go-with-the-Flow",
+      "revision": "294961d198d3452810345e5c5c9dba6940353a9f",
+      "filename": "I2V5B_final_i38800_nearest_lora_weights.safetensors",
+      "local_dir": "lora_models",
+      "local_path": "lora_models/I2V5B_final_i38800_nearest_lora_weights.safetensors",
+      "size": 4227904584,
+      "sha256": "99a4b0449e62d8267c8c013851cc46f6f5741f809009b7e9fbd7d5b0fdf960c1"
+    },
+    "raft": {
+      "url": "https://download.pytorch.org/models/raft_large_C_T_SKHT_V2-ff5fadd5.pth",
+      "cache_filename": "raft_large_C_T_SKHT_V2-ff5fadd5.pth",
+      "size": 21106607,
+      "sha256": "ff5fadd56d26b40647388883af1547351ea17868b765c05b27231e72dd16a322"
+    }
+  },
+  "snapshots": {
+    "openclip_h": {
+      "repo_id": "laion/CLIP-ViT-H-14-laion2B-s32B-b79K",
+      "revision": "1c2b8495b28150b8a4922ee1c8edee224c284c0c",
+      "files": {
+        "open_clip_model.safetensors": {
+          "size": 3944517836,
+          "sha256": "0084e75319a50ad85ef45377bad5bc38f2f58824459eb690048d51c9f8863be5"
+        }
+      }
+    },
+    "cogvideox_i2v": {
+      "repo_id": "THUDM/CogVideoX-5b-I2V",
+      "revision": "a6f0f4858a8395e7429d82493864ce92bf73af11",
+      "files": {
+        "model_index.json": {
+          "size": 423,
+          "sha256": "dc7e10203a3d10307e19d35026fd8d52b78fe52c0b0d770fe710e17441affd29"
+        },
+        "scheduler/scheduler_config.json": {
+          "size": 482,
+          "sha256": "247ecd6635dae7bf889a7ec69ba951c44d746cb4edef13b9c3b1b16bfeeedba5"
+        },
+        "text_encoder/config.json": {
+          "size": 782,
+          "sha256": "fd42789863fc8c15b592f0ff1aec684cf5d7aaabcdce50f43a447aeaac2491e3"
+        },
+        "text_encoder/model-00001-of-00002.safetensors": {
+          "size": 4994582224,
+          "sha256": "9162b8ae9152e7a8e3bbebc535c8692783f50aec8cd3bb8ef6a751c432dd6392"
+        },
+        "text_encoder/model-00002-of-00002.safetensors": {
+          "size": 4530066360,
+          "sha256": "d3edef29693d52402b1cc7c362f031e052f2e9482ed0c765c6351950434349b0"
+        },
+        "text_encoder/model.safetensors.index.json": {
+          "size": 19885,
+          "sha256": "3bacec0f0cf392399d4a385908f67dd73df99c9e9cfee669f148858ba9fbdb0a"
+        },
+        "tokenizer/added_tokens.json": {
+          "size": 2593,
+          "sha256": "ea5a91a3234f66ea642c8e672d67f0f493759a9bee6910ae304ea9b9492118b5"
+        },
+        "tokenizer/special_tokens_map.json": {
+          "size": 2543,
+          "sha256": "7a1985a994c41886db38c719d2a3d2f40606663cc19d7c5d6a85d349320e06d2"
+        },
+        "tokenizer/spiece.model": {
+          "size": 791656,
+          "sha256": "d60acb128cf7b7f2536e8f38a5b18a05535c9e14c7a355904270e15b0945ea86"
+        },
+        "tokenizer/tokenizer_config.json": {
+          "size": 20617,
+          "sha256": "9c4f8a92630f7c6cc082831b291d6f46f18455d69d1a2a52c9b5f5303ab01469"
+        },
+        "transformer/config.json": {
+          "size": 802,
+          "sha256": "c99b9c27aba51f362f6195652eedb2576fa6cc5b9fceaedc00028a4a1679f1d2"
+        },
+        "transformer/diffusion_pytorch_model-00001-of-00003.safetensors": {
+          "size": 4992465072,
+          "sha256": "f2e3060199c34a0d18892a19d687455f938b0ac3d2ea7d48f37cb4090e141965"
+        },
+        "transformer/diffusion_pytorch_model-00002-of-00003.safetensors": {
+          "size": 4985800640,
+          "sha256": "1e8d0c62d366b0d9cc3476d2b21ca54afbecea154d54d923da120b2ec174c7e7"
+        },
+        "transformer/diffusion_pytorch_model-00003-of-00003.safetensors": {
+          "size": 1272025856,
+          "sha256": "da91a0051da3f39caf10944b7c9aa66b14ddeffb37a25b087c49fc1692c1a361"
+        },
+        "transformer/diffusion_pytorch_model.safetensors.index.json": {
+          "size": 103161,
+          "sha256": "ebf7640e8e1f2cb6610b04bf7de1ffea8a890e2c75fc3ab351d11b17ccf05d34"
+        },
+        "vae/config.json": {
+          "size": 872,
+          "sha256": "fe8805ed9e30af09fecf04f870a2f11391cea21ddf1446fe22ba220fa4538238"
+        },
+        "vae/diffusion_pytorch_model.safetensors": {
+          "size": 862388596,
+          "sha256": "a410e48d988c8224cef392b68db0654485cfd41f345f4a3a81d3e6b765bb995e"
+        }
+      }
+    }
+  },
+  "groups": {
+    "motionpro": [
+      "motionpro_dense",
+      "cotracker",
+      "openclip_h"
+    ],
+    "gowiththeflow": [
+      "common_source",
+      "raft",
+      "gowiththeflow_lora",
+      "cogvideox_i2v"
+    ],
+    "all": [
+      "motionpro_dense",
+      "cotracker",
+      "openclip_h",
+      "common_source",
+      "raft",
+      "gowiththeflow_lora",
+      "cogvideox_i2v"
+    ]
+  }
+}

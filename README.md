@@ -278,7 +278,7 @@ if __name__ == "__main__":
 
 We provide baseline implementations under the `./baselines` directory for your reference. We welcome your feedback, please feel free to contact us if you need anything..
 
-> **📅 Update Schedule:** This section is actively being updated throughout July and August.
+> **📅 Update Schedule:** This section is actively being updated throughout Oct.
 
 ## 🚧 **Coming Soon** 🚧
 
