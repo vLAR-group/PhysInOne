@@ -138,7 +138,7 @@ Follow this step-by-step guide to download the benchmark inputs, run inference, 
 
 First, fetch the leaderboard utility scripts and download the test inputs for your target task.
 
-Download the specific evaluation input cases for your task (e.g., `video-generation`):
+Download the specific evaluation input cases for your task (i.e., `video-generation`):
 
 ```bash
 cd ../..
