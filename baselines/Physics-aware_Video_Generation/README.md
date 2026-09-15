@@ -138,38 +138,11 @@ Follow this step-by-step guide to download the benchmark inputs, run inference, 
 
 First, fetch the leaderboard utility scripts and download the test inputs for your target task.
 
-##### 1.1 Download Evaluation Inputs
-
-From the repository root, run:
-
-```bash
-<<<<<<< HEAD
-# Upgrade/install required Python packages
-pip install -U huggingface_hub tqdm
-
-hf download vLAR/PhysInOne \
-  "PhysInOne Utils/scripts/download_leaderboard.py" \
-  --repo-type dataset \
-  --local-dir .
-
-python "PhysInOne Utils/scripts/download_leaderboard.py" \
-  --task future-prediction \
-  --output-dir ./PhysInOne-Leaderboard
-
-```
-
-##### 1.2 Download Evaluation Inputs
-
 Download the specific evaluation input cases for your task (e.g., `video-generation`):
 
 ```bash
-python "PhysInOne Utils/scripts/download_leaderboard.py" \
-  --task video-generation \
-  --output-dir ../PhysInOne-leaderboard
-=======
 cd ../..
 python scripts/download_data.py --task video-generation --output-dir ./PhysInOne_data
->>>>>>> 5f2570a
 cd ./baselines/Physics-aware_Video_Generation
 ```
 
