@@ -244,9 +244,6 @@ class PhysInOne(torch.utils.data.Dataset):
             "frame_mask": frame_mask,                 # (1, F, 1, 1) real vs padded
             "fps": fps,                               # Actual FPS after downsampling
             "name": item,
-            "camera_angle_x": None,
-            "total_frames": None,
-            "transforms": None,                         # Relative path for debugging
         }
 
     # ------------------------------------------------------------------
@@ -302,22 +299,22 @@ class PhysInOne(torch.utils.data.Dataset):
         return downsample_video(video, original_fps, fps), fps
 
 
-SUBFOLDER = "Leaderboard/Video Generation"  # Subfolder for leaderboard/test data (if present)
+SUBFOLDER = "leaderboard/video_generation"  # Subfolder for leaderboard/test data (if present)
 class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
-    def __init__(self, data_dir, mode='static'):
+    def __init__(self, data_dir, mode='static', resolution=RESOLUTION):
         # super().__init__(args, data_dir, split="test", only_main=only_main, only_one_cine=only_one_cine)
         mode = mode.lower()
         assert mode in ['static', 'moving'], "mode should be either 'static' or 'moving'"
         # self.args = args
         self.data_dir = data_dir
         self.mode = mode
+        self._resolution = resolution
 
         self.info = []
         with open(CINE_CHOOSE, "r") as f:
             cine_choose_sheet = json.load(f)
 
         for complexity in list_subset_names(os.path.join(data_dir, SUBFOLDER)):  # e.g., 'SinglePhysics'
-            print(complexity)
             for scene in list_subset_names(os.path.join(data_dir, SUBFOLDER, complexity)):
                 scene_root = os.path.join(data_dir, SUBFOLDER, complexity, scene)
                 rel_scene_root = os.path.join(complexity, scene)
@@ -346,7 +343,14 @@ class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
                     for cam in get_cinecamera_subfolders(scene_root):
                         self.info.append(os.path.join(rel_scene_root, cam))
 
-
+    @property
+    def image_resolution(self):
+        """Target (height, width) for video frames."""
+        resolution = getattr(self, "_resolution", None)
+        if resolution is not None:
+            return resolution
+        return RESOLUTION
+    
     def __getitem__(self, idx):
         """Return a single data sample for video generation.
 
@@ -356,7 +360,7 @@ class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
         item = self.info[idx]
         camera = item.split("/")[-1]
         try:
-            with open(os.path.join(self.data_dir, SUBFOLDER, item, f"blender_{camera}.json"), "r") as f:
+            with open(os.path.join(self.data_dir, SUBFOLDER, item, "..", f"blender_{camera}.json"), "r") as f:
                 meta = json.load(f)
             camera_angle_x = meta.get("camera_angle_x", None)
             fps = meta.get("fps", DEFAULT_FPS)
@@ -364,7 +368,8 @@ class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
             frames = meta.get("frames", [])
 
             if frames:
-                main_frame_path = os.path.join(self.data_dir, SUBFOLDER, item, "rgb", frames[0]["file_path"])
+                file_name = frames[0]["file_path"].split("/")[-1] + ".jpg"
+                main_frame_path = os.path.join(self.data_dir, SUBFOLDER, item, "rgb", file_name)
                 main_frame = cv2.imread(main_frame_path)
                 main_frame = cv2.cvtColor(main_frame, cv2.COLOR_BGR2RGB)
             else:
@@ -380,6 +385,10 @@ class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
             total_frames = torch.tensor(total_frames) if total_frames is not None else None
             main_frame = torch.from_numpy(main_frame) / 255.0 if main_frame is not None else None
             transforms = torch.from_numpy(transforms) if transforms is not None else None
+
+            main_frame = rearrange(main_frame, "h w c -> c h w")
+            img_res = self.image_resolution
+            main_frame = center_crop_and_resize(main_frame, img_res[0], img_res[1])
         except Exception as e:
             # Log the error and retry with the next index (simple fault tolerance).
             print_yellow(f"Fail to fetch {idx}:{item} of the dataset")
@@ -388,7 +397,6 @@ class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
 
         return {
             "image": main_frame,
-            "video": None, # not known when inference, only the first frame is provided
             "prompt": text,
             "fps": fps,
             "name": item,

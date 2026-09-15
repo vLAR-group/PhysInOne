@@ -140,7 +140,7 @@ First, fetch the leaderboard utility scripts and download the test inputs for yo
 
 ##### 1.1 Download Evaluation Inputs
 
-The repository includes a dependency-free downloader and its manifests. From the repository root, run:
+From the repository root, run:
 
 ```bash
 cd ../..
@@ -148,8 +148,7 @@ python scripts/download_data.py --task video-generation --output-dir ./PhysInOne
 cd ./baselines/Physics-aware_Video_Generation
 ```
 
-The downloaded inputs are stored at `PhysInOne_data/leaderboard/video_generation/`. No Hugging Face account, token, or additional Python package is required.
-
+The downloaded inputs are stored at `PhysInOne_data/leaderboard/video_generation/`.
 
 #### Step 2: Run Inference
 
@@ -169,7 +168,7 @@ python inference.py \
 
 **Example: Static Camera Track**
 
-If you downloaded the dataset to `./PhysInOne`, you can run inference using the vanilla `Wan2.2-TI2V-5B` model for the **Static Track** like this:
+If you downloaded the leaderboard dataset to `../../PhysInOne_data`, you can run inference using the vanilla `Wan2.2-TI2V-5B` model for the **Static Track** like this:
 
 ```bash
 python inference.py \
