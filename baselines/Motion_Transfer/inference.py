@@ -15,6 +15,7 @@ from typing import Sequence
 import imageio.v2 as imageio
 import numpy as np
 import torch
+import torch.nn.functional as F
 from tqdm.auto import tqdm
 
 from dataset import DataLoader, PhysInOne_Leaderboard_MotionTransfer
@@ -28,12 +29,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Run inference-only motion transfer on PhysInOne MotionTransfer data."
     )
-    parser.add_argument("--data_root", required=True, help="Path to the MotionTransfer dataset root.")
-    parser.add_argument(
-        "--mapping",
-        default=None,
-        help="Path to motion_transfer_mapping.json. Defaults to <data_root>/motion_transfer_mapping.json.",
-    )
+    parser.add_argument("--data_root", type=str, default="../../PhysInOne_data", help="Path to the MotionTransfer dataset root.")
     parser.add_argument(
         "--output_path",
         "--out_root",
@@ -48,8 +44,8 @@ def parse_args() -> argparse.Namespace:
         help="Save each scene as <scene_name>.zip instead of an uncompressed scene folder.",
     )
     parser.add_argument("--method", choices=["gowiththeflow", "motionpro"], default="motionpro")
-
-    parser.add_argument("--resize_hw", type=int, nargs=2, default=[320, 320], metavar=("H", "W"))
+    parser.add_argument("--mode", choices=["static", "moving"], default="static")
+    parser.add_argument("--resolution", type=int, nargs=2, default=[320, 320], metavar=("H", "W"))
     parser.add_argument("--num_frames", type=int, default=16, help="Reference motion frames sampled per item.")
     parser.add_argument("--frame_stride", type=int, default=1)
     parser.add_argument("--sample_mode", choices=["all", "uniform", "head", "tail"], default="uniform")
@@ -113,13 +109,6 @@ def _require_file(path: str, label: str, *, downloadable: bool = True) -> str:
         else "Pass the correct path explicitly."
     )
     raise FileNotFoundError(f"{label} not found: {path}\n{guidance}")
-
-
-def _resolve_mapping(data_root: str, mapping: str | None) -> str:
-    mapping_path = mapping or os.path.join(data_root, "motion_transfer_mapping.json")
-    if not os.path.isfile(mapping_path):
-        raise FileNotFoundError(f"Mapping file not found: {mapping_path}")
-    return mapping_path
 
 
 def _prepare_gowiththeflow_lora(lora: str) -> str:
@@ -216,6 +205,44 @@ class MotionTransferRunner:
         if hasattr(self, "_runner"):
             self._runner = None
 
+
+def _match_frame_count(video: torch.Tensor, target_frames: int) -> torch.Tensor:
+    """Match a generated video's length to the source video frame count.
+
+    Short videos are linearly interpolated along the time axis. Long videos
+    are truncated by keeping their first ``target_frames`` frames.
+    """
+    if video.ndim != 4 or video.shape[-1] != 3:
+        raise ValueError(
+            "Expected an output video with shape [frames, height, width, 3], "
+            f"but received {tuple(video.shape)}."
+        )
+    if target_frames <= 0:
+        raise ValueError(f"target_frames must be positive, but received {target_frames}.")
+
+    output_frames = video.shape[0]
+    if output_frames == 0:
+        raise ValueError("Cannot interpolate an output video containing zero frames.")
+    if output_frames == target_frames:
+        return video
+    if output_frames > target_frames:
+        return video[:target_frames]
+
+    # Treat every RGB pixel as a 1-D temporal signal. align_corners=True keeps
+    # the generated video's first and last frames at the two endpoints.
+    height, width, channels = video.shape[1:]
+    temporal_signals = (
+        video.to(torch.float32)
+        .permute(1, 2, 3, 0)
+        .reshape(1, height * width * channels, output_frames)
+    )
+    interpolated = F.interpolate(
+        temporal_signals,
+        size=target_frames,
+        mode="linear",
+        align_corners=True,
+    )
+    return interpolated.reshape(height, width, channels, target_frames).permute(3, 0, 1, 2).contiguous()
 
 def _video_to_uint8(video: torch.Tensor) -> np.ndarray:
     if video.dtype != torch.float32:
@@ -332,22 +359,12 @@ def main() -> None:
     if args.batch_size != 1:
         raise ValueError("This release supports serial single-GPU inference only; use --batch_size 1.")
     device = resolve_device(args.device)
-    mapping_path = _resolve_mapping(args.data_root, args.mapping)
-    resize_hw = tuple(args.resize_hw) if args.resize_hw else None
-
     dataset = PhysInOne_Leaderboard_MotionTransfer(
-        mapping_path=mapping_path,
-        data_root=args.data_root,
-        resize_hw=resize_hw,
-        num_frames=args.num_frames,
-        frame_stride=args.frame_stride,
-        sample_mode=args.sample_mode,
-        cameras=args.camera,
-        start_index=args.start_index,
-        drop_missing=True,
+        args.data_root,
+        args.mode,
+        resolution=tuple(args.resolution) if args.resolution else None,
     )
-    print(dataset)
-
+    # print(dataset)
     dataloader = DataLoader(
         dataset,
         batch_size=args.batch_size,
@@ -380,6 +397,7 @@ def main() -> None:
                 raise RuntimeError("All samples in a batch must share the same tensor shape. Use fixed --resize_hw.")
 
             batch_size = refs.shape[0]
+            source_frame_count = refs.shape[1]
             string_fields = {
                 "caption": captions,
                 "scene_name": scene_names,
@@ -396,6 +414,8 @@ def main() -> None:
                 refs = refs.to(device=device, non_blocking=True)
                 firsts = firsts.to(device=device, non_blocking=True)
 
+            refs = refs.permute(0, 1, 3, 4, 2).contiguous()  # [B, T, C, H, W] -> [B, T, H, W, C]
+            firsts = firsts.permute(0, 2, 3, 1).contiguous()  # [B, C, H, W] -> [B, H, W, C]
             outputs = runner(refs, firsts, captions).detach().cpu().clamp(0, 1)
 
             if outputs.shape[0] != batch_size:
@@ -404,8 +424,9 @@ def main() -> None:
                 )
 
             for item_index in range(batch_size):
+                output_video = _match_frame_count(outputs[item_index], source_frame_count)
                 destination = output_writer.save(
-                    outputs[item_index],
+                    output_video,
                     complexity=complexities[item_index],
                     scene_name=scene_names[item_index],
                     camera=cameras[item_index],
