@@ -88,12 +88,12 @@ Results are saved to `outputs/<method>/` by default. Use `--out_root` to select 
 Once inference is complete, use the provided utility script to bundle your outputs into the required submission format.
 
 ```bash
-bash ./archive_results.sh <path/to/your/output> <path/to/your/submission_folder>
+bash ../Physics-aware_Video_Generation/archive_result.sh <path/to/your/output> <path/to/your/submission_folder>
 ```
 
 **Example**
 ```bash
-bash ./archive_results.sh ./leaderboard_output ./submission
+bash ../Physics-aware_Video_Generation/archive_result.sh ./output ./submission
 ```
 
 After the script finishes, you will find individual `.zip` files inside the `./submission` directory.
@@ -105,12 +105,12 @@ After the script finishes, you will find individual `.zip` files inside the `./s
 Before uploading, strictly verify that your submission directory is properly formatted and legal using our validation script:
 
 ```bash
-python check.py <path/to/your/submission_folder>
+python ../Physics-aware_Video_Generation/check.py <path/to/your/submission_folder>
 ```
 
-**Example: Verify Static Track Submission**
+**Example: Verify Submission**
 ```bash
-python check.py ./submission 
+python ../Physics-aware_Video_Generation/check.py ./submission 
 ```
 
 ---

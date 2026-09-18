@@ -56,9 +56,9 @@ LASER_LABELS = ["FixedPlanarRedirect", "FixedArrayRedirect", "FixedConcaveRedire
 # Identifier in the scene name indicating laser physics.
 
 # JSON file mapping each scene name to its manually selected cine camera.
-CINE_CHOOSE = os.path.join(
+SELECTED = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    "selected_cinecamera.json",
+    "selected.json",
 )
 
 DEFAULT_NEGATIVE_PROMPT = (
@@ -104,7 +104,7 @@ class PhysInOne(torch.utils.data.Dataset):
             )
         if only_moving and only_one_cine:
             raise ValueError("Cannot choose [only moving] and [only one cine] at the same time")
-        with open(CINE_CHOOSE, "r") as f:
+        with open(SELECTED, "r") as f:
             cine_choose_sheet = json.load(f)
 
         self.data_dir = data_dir
@@ -141,7 +141,7 @@ class PhysInOne(torch.utils.data.Dataset):
                             self.info.append(os.path.join(rel_scene_root, "main_camera"))
                     elif only_one_cine:
                         # Single pre-selected cine camera per scene.
-                        chosen_cine = cine_choose_sheet[scene]
+                        chosen_cine = cine_choose_sheet[scene][0]
                         if check_folder_exists(os.path.join(scene_root, chosen_cine)):
                             self.info.append(os.path.join(rel_scene_root, chosen_cine))
                     else:
@@ -311,7 +311,7 @@ class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
         self._resolution = resolution
 
         self.info = []
-        with open(CINE_CHOOSE, "r") as f:
+        with open(SELECTED, "r") as f:
             cine_choose_sheet = json.load(f)
 
         for complexity in list_subset_names(os.path.join(data_dir, SUBFOLDER)):  # e.g., 'SinglePhysics'
@@ -335,7 +335,7 @@ class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
                         self.info.append(os.path.join(rel_scene_root, "CineCamera_Moving"))
                 elif self.mode == "static":
                     # All cine cameras (CineCamera_N and CineCamera_Moving).
-                    chosen_cine = cine_choose_sheet[scene]
+                    chosen_cine = cine_choose_sheet[scene][0]
                     if check_folder_exists(os.path.join(scene_root, "CineCamera_Moving")):
                         self.info.append(os.path.join(rel_scene_root, chosen_cine))
                 else:

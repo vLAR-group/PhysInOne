@@ -41,8 +41,10 @@ class PhysInOne_Leaderboard_MotionTransfer(Dataset):
             scene_name = zip.stem
             if scene_name not in scene_list:
                 continue
+            camera_name = scene_list[scene_name][0]
             self.info.append({
                 "scene_name": scene_name,
+                "camera_name": camera_name,
                 "complexity": complexity,
                 "zip_path": zip,
             })
@@ -67,18 +69,7 @@ class PhysInOne_Leaderboard_MotionTransfer(Dataset):
 
             # 2. Determine Camera Name
             if self.mode == 'static':
-                camera = None
-                # Search the zip contents dynamically
-                for name in zip_ref.namelist():
-                    if "CineCamera_" in name:
-                        parts = name.split('/')
-                        for part in parts:
-                            # Find a folder starting with CineCamera_ that ISN'T the moving camera
-                            if part.startswith("CineCamera_") and part != "CineCamera_Moving":
-                                camera = part
-                                break
-                        if camera is not None:
-                            break
+                camera = scene_info["camera_name"]
             else:
                 camera = "CineCamera_Moving"
 
