@@ -91,9 +91,9 @@ Once inference is complete, use the provided utility script to bundle your outpu
 bash ../Physics-aware_Video_Generation/archive_result.sh <path/to/your/output> <path/to/your/submission_folder>
 ```
 
-**Example**
+**Example: Archive results of MotionPro**
 ```bash
-bash ../Physics-aware_Video_Generation/archive_result.sh ./output ./submission
+bash ../Physics-aware_Video_Generation/archive_result.sh ./output/motionpro ./submission
 ```
 
 After the script finishes, you will find individual `.zip` files inside the `./submission` directory.
@@ -105,7 +105,7 @@ After the script finishes, you will find individual `.zip` files inside the `./s
 Before uploading, strictly verify that your submission directory is properly formatted and legal using our validation script:
 
 ```bash
-python ../Physics-aware_Video_Generation/check.py <path/to/your/submission_folder>
+python ../Physics-aware_Video_Generation/check.py <path/to/your/local_submission_folder>
 ```
 
 **Example: Verify Submission**
@@ -118,6 +118,7 @@ python ../Physics-aware_Video_Generation/check.py ./submission
 #### Step 4: Submit Your Results
 
 1. **Upload:** Upload your verified `./submission` folder to your own **Hugging Face repository**.
+
 2. **Submit:** Navigate to the **Leaderboard Portal** and submit your Hugging Face repository link.
 
 🎉 **That's it!** We will automatically compute your metrics and update the leaderboard as soon as possible.

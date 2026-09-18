@@ -18,9 +18,10 @@ scene_name.zip
 
 The ZIP must not wrap its contents in a directory named after the ZIP. Every
 JPG under the expected camera's rgb directory must be readable, and the JPG
-count must equal the frame number in the manifest. The ZIP filenames in the
-submission must match the manifest scene names exactly: no missing or extra
-scene ZIPs are allowed.
+count must equal the frame number in the manifest. ZIP files are discovered
+recursively below the submission directory. Their filenames must match the
+manifest scene names exactly: no missing, extra, or duplicate scene ZIPs are
+allowed, regardless of which subfolder contains them.
 
 Usage:
     python check_submission.py SUBMISSION_DIR --manifest MANIFEST_JSON
@@ -36,6 +37,7 @@ import io
 import json
 import os
 import sys
+import time
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
@@ -92,8 +94,9 @@ def print_progress_bar(
     suffix: str = "",
     length: int = 40,
     fill: str = "█",
+    start_time: float | None = None,
 ) -> None:
-    """Print a dynamic progress bar to the console."""
+    """Print a dynamic progress bar with elapsed time and estimated time left."""
     if total == 0:
         sys.stdout.write(
             f"\r{color(prefix, CYAN, BOLD)} | "
@@ -107,9 +110,23 @@ def print_progress_bar(
     bar = color(fill * filled_length, GREEN) + color(
         "-" * (length - filled_length), DIM
     )
+
+    timing = ""
+    if start_time is not None:
+        elapsed_seconds = max(0.0, time.monotonic() - start_time)
+        if iteration > 0:
+            eta_seconds = elapsed_seconds / iteration * (total - iteration)
+            timing = (
+                f"Elapsed: {format_duration(elapsed_seconds)} | "
+                f"ETA: {format_duration(eta_seconds)} | "
+            )
+        else:
+            timing = "Elapsed: 00:00 | ETA: calculating... | "
+
     sys.stdout.write(
         f"\r{color(prefix, CYAN, BOLD)} |{bar}| "
         f"{color(percent + '%', CYAN)} ({iteration}/{total}) "
+        f"{color(timing, YELLOW)}"
         f"{color(suffix, MAGENTA)}"
     )
     sys.stdout.flush()
@@ -117,6 +134,16 @@ def print_progress_bar(
     if iteration == total:
         sys.stdout.write("\n")
         sys.stdout.flush()
+
+
+def format_duration(seconds: float) -> str:
+    """Format seconds as MM:SS or HH:MM:SS."""
+    total_seconds = max(0, int(round(seconds)))
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds_part = divmod(remainder, 60)
+    if hours:
+        return f"{hours:02d}:{minutes:02d}:{seconds_part:02d}"
+    return f"{minutes:02d}:{seconds_part:02d}"
 
 
 def scene_code(scene_or_zip_name: str) -> str:
@@ -273,11 +300,13 @@ def validate_zip(
     zip_path: Path,
     manifest_entry: ManifestEntry,
     track: str,
+    display_path: str | None = None,
 ) -> tuple[list[str], list[str]]:
     """Validate one ZIP's structure, JPG readability, and frame count."""
     errors: list[str] = []
     warnings: list[str] = []
     zip_stem = zip_path.stem
+    zip_label = display_path or zip_path.name
     expected_camera = (
         MOVING_FOLDER_NAME if track == "moving" else manifest_entry.camera_name
     )
@@ -287,7 +316,7 @@ def validate_zip(
             bad_member = zf.testzip()
             if bad_member is not None:
                 errors.append(
-                    f"[CORRUPT ZIP]      '{zip_path.name}' has a bad member: "
+                    f"[CORRUPT ZIP]      '{zip_label}' has a bad member: "
                     f"'{bad_member}'"
                 )
                 return errors, warnings
@@ -297,7 +326,7 @@ def validate_zip(
             # Rule 1: the ZIP must not contain zip_stem/... as an outer wrapper.
             if zip_stem in top_entries:
                 errors.append(
-                    f"[OUTER FOLDER]     '{zip_path.name}' contains a same-named "
+                    f"[OUTER FOLDER]     '{zip_label}' contains a same-named "
                     f"outer folder '{zip_stem}/'; {expected_camera}/ must be "
                     "directly at the ZIP root"
                 )
@@ -306,7 +335,7 @@ def validate_zip(
             cameras = direct_camera_folders(zf)
             if expected_camera not in cameras:
                 errors.append(
-                    f"[CAMERA FOLDER]    '{zip_path.name}' is missing root-level "
+                    f"[CAMERA FOLDER]    '{zip_label}' is missing root-level "
                     f"'{expected_camera}/'; found: {sorted(cameras) or '<none>'}"
                 )
                 return errors, warnings
@@ -314,14 +343,14 @@ def validate_zip(
             unexpected_cameras = sorted(camera for camera in cameras if camera != expected_camera)
             if unexpected_cameras:
                 warnings.append(
-                    f"[EXTRA CAMERA]     '{zip_path.name}' also contains: "
+                    f"[EXTRA CAMERA]     '{zip_label}' also contains: "
                     f"{unexpected_cameras}"
                 )
 
             jpg_members = jpg_members_under_camera_rgb(zf, expected_camera)
             if not jpg_members:
                 errors.append(
-                    f"[MISSING JPG]      '{zip_path.name}' has no .jpg files under "
+                    f"[MISSING JPG]      '{zip_label}' has no .jpg files under "
                     f"'{expected_camera}/{RGB_FOLDER_NAME}/'"
                 )
                 return errors, warnings
@@ -334,19 +363,19 @@ def validate_zip(
 
             for filename, reason in unreadable:
                 errors.append(
-                    f"[UNREADABLE JPG]   '{zip_path.name}!{filename}' -> {reason}"
+                    f"[UNREADABLE JPG]   '{zip_label}!{filename}' -> {reason}"
                 )
 
             actual_count = len(jpg_members)
             if actual_count != manifest_entry.frame_count:
                 errors.append(
-                    f"[FRAME COUNT]      '{zip_path.name}' -> expected "
+                    f"[FRAME COUNT]      '{zip_label}' -> expected "
                     f"{manifest_entry.frame_count} JPG files in "
                     f"'{expected_camera}/{RGB_FOLDER_NAME}/', found {actual_count}"
                 )
 
     except (OSError, zipfile.BadZipFile) as error:
-        errors.append(f"[CORRUPT ZIP]      '{zip_path.name}' -> {error}")
+        errors.append(f"[CORRUPT ZIP]      '{zip_label}' -> {error}")
 
     return errors, warnings
 
@@ -383,10 +412,10 @@ def check_submission(
     zip_paths = sorted(
         (
             path
-            for path in submission_dir.iterdir()
+            for path in submission_dir.rglob("*")
             if path.is_file() and path.suffix.lower() == ".zip"
         ),
-        key=lambda path: path.name,
+        key=lambda path: str(path.relative_to(submission_dir)),
     )
     zip_paths_by_stem: dict[str, list[Path]] = {}
     for path in zip_paths:
@@ -397,9 +426,12 @@ def check_submission(
     for stem, paths in zip_paths_by_stem.items():
         if len(paths) > 1:
             duplicate_stems.add(stem)
+            relative_paths = [
+                str(path.relative_to(submission_dir)) for path in paths
+            ]
             errors.append(
                 f"[DUPLICATE ZIP]    scene '{stem}' has multiple ZIP files: "
-                f"{[path.name for path in paths]}"
+                f"{relative_paths}"
             )
         else:
             present_zips[stem] = paths[0]
@@ -412,6 +444,7 @@ def check_submission(
     total_checks = len(manifest)
     passed_scenes = 0
     failed_scenes = 0
+    validation_start_time = time.monotonic()
 
     print(color("PhysInOne submission validation", CYAN, BOLD))
     print(
@@ -422,13 +455,21 @@ def check_submission(
         )
     )
     if total_checks == 0:
-        print_progress_bar(0, 0, prefix="Progress")
+        print_progress_bar(
+            0,
+            0,
+            prefix="Progress",
+            start_time=validation_start_time,
+        )
 
     for index, (scene_name, manifest_entry) in enumerate(manifest.items(), 1):
         if scene_name in duplicate_stems:
             failed_scenes += 1
             print_progress_bar(
-                index, total_checks, suffix=f"Code: {scene_code(scene_name):<16}"
+                index,
+                total_checks,
+                suffix=f"Code: {scene_code(scene_name):<16}",
+                start_time=validation_start_time,
             )
             continue
 
@@ -440,11 +481,20 @@ def check_submission(
                 f"'{scene_name}.zip'"
             )
             print_progress_bar(
-                index, total_checks, suffix=f"Code: {scene_code(scene_name):<16}"
+                index,
+                total_checks,
+                suffix=f"Code: {scene_code(scene_name):<16}",
+                start_time=validation_start_time,
             )
             continue
 
-        zip_errors, zip_warnings = validate_zip(zip_path, manifest_entry, track)
+        relative_zip_path = str(zip_path.relative_to(submission_dir))
+        zip_errors, zip_warnings = validate_zip(
+            zip_path,
+            manifest_entry,
+            track,
+            display_path=relative_zip_path,
+        )
         errors.extend(zip_errors)
         warnings.extend(zip_warnings)
 
@@ -454,13 +504,20 @@ def check_submission(
             passed_scenes += 1
 
         print_progress_bar(
-            index, total_checks, suffix=f"Code: {scene_code(zip_path.name):<16}"
+            index,
+            total_checks,
+            suffix=f"Code: {scene_code(zip_path.name):<16}",
+            start_time=validation_start_time,
         )
 
     for stem in sorted(zip_paths_by_stem):
         if stem not in manifest:
+            relative_paths = [
+                str(path.relative_to(submission_dir))
+                for path in zip_paths_by_stem[stem]
+            ]
             errors.append(
-                f"[EXTRA ZIP]        '{stem}.zip' is not listed in the manifest"
+                f"[EXTRA ZIP]        {relative_paths} are not listed in the manifest"
             )
 
     print(color("Summary:", BOLD), end=" ")
@@ -536,7 +593,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "submission_dir",
         type=Path,
-        help="Directory containing submission ZIP files",
+        help="Root directory containing submission ZIP files at any depth",
     )
     parser.add_argument(
         "track",

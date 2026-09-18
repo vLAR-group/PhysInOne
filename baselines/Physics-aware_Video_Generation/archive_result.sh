@@ -35,7 +35,7 @@ cleanup_on_signal() {
     if [[ -n $ACTIVE_ZIP_LOG ]]; then
         rm -f -- "$ACTIVE_ZIP_LOG"
     fi
-    printf '\r%-100s\n' ' '
+    printf '\r%-160s\n' ' '
     echo "Packaging interrupted. The incomplete ZIP was removed."
     exit 130
 }
@@ -54,10 +54,26 @@ scene_uid() {
     fi
 }
 
+format_duration() {
+    local total_seconds=$1
+    local hours minutes seconds
+
+    (( total_seconds < 0 )) && total_seconds=0
+    hours=$((total_seconds / 3600))
+    minutes=$(((total_seconds % 3600) / 60))
+    seconds=$((total_seconds % 60))
+
+    if (( hours > 0 )); then
+        printf '%02d:%02d:%02d' "$hours" "$minutes" "$seconds"
+    else
+        printf '%02d:%02d' "$minutes" "$seconds"
+    fi
+}
+
 print_progress() {
     local completed=$1
     local uid=$2
-    local percent filled empty bar spaces
+    local percent filled empty bar spaces now elapsed eta elapsed_text eta_text
 
     percent=$((completed * 100 / TOTAL))
     filled=$((completed * BAR_WIDTH / TOTAL))
@@ -65,8 +81,19 @@ print_progress() {
     bar=$(printf '%*s' "$filled" '' | tr ' ' '#')
     spaces=$(printf '%*s' "$empty" '')
 
-    printf '\rProgress: [%s%s] %3d%% (%d/%d) UID: %-16s [Q = quit]' \
-        "$bar" "$spaces" "$percent" "$completed" "$TOTAL" "$uid"
+    now=$(date +%s)
+    elapsed=$((now - START_TIME))
+    elapsed_text=$(format_duration "$elapsed")
+    if (( completed > 0 )); then
+        eta=$((elapsed * (TOTAL - completed) / completed))
+        eta_text=$(format_duration "$eta")
+    else
+        eta_text="calculating..."
+    fi
+
+    printf '\rProgress: [%s%s] %3d%% (%d/%d) Elapsed: %s | ETA: %-14s UID: %-16s [Q = quit]' \
+        "$bar" "$spaces" "$percent" "$completed" "$TOTAL" \
+        "$elapsed_text" "$eta_text" "$uid"
 }
 
 echo "Scanning recursively for matching trajectory directories..."
@@ -81,6 +108,7 @@ if (( TOTAL == 0 )); then
 fi
 
 echo "Found $TOTAL directories to package."
+echo "Output layout: relative subfolders below the input root will be preserved."
 if [[ -t 0 ]]; then
     echo "Control: press Q or q at any time to quit; the active partial ZIP will be removed."
 else
@@ -91,13 +119,31 @@ BAR_WIDTH=40
 SUCCEEDED=0
 FAILED=0
 CANCELLED=0
+START_TIME=$(date +%s)
 
 for ((i = 0; i < TOTAL; i++)); do
     TARGET_DIR=${TARGETS[i]}
     FOLDER_NAME=$(basename -- "$TARGET_DIR")
+    RELATIVE_PATH=${TARGET_DIR#"$INPUT_DIR"/}
+    RELATIVE_PARENT=$(dirname -- "$RELATIVE_PATH")
     UID_CODE=$(scene_uid "$FOLDER_NAME")
-    ZIP_PATH="$OUTPUT_DIR/${FOLDER_NAME}.zip"
-    ZIP_ERROR_LOG="$OUTPUT_DIR/.${FOLDER_NAME}.zip-error.log"
+
+    if [[ $RELATIVE_PARENT == "." ]]; then
+        TARGET_OUTPUT_DIR=$OUTPUT_DIR
+    else
+        TARGET_OUTPUT_DIR="$OUTPUT_DIR/$RELATIVE_PARENT"
+    fi
+
+    if ! mkdir -p -- "$TARGET_OUTPUT_DIR"; then
+        ((FAILED += 1))
+        printf '\nError: could not create output subdirectory: %s\n' \
+            "$TARGET_OUTPUT_DIR" >&2
+        print_progress "$((i + 1))" "$UID_CODE"
+        continue
+    fi
+
+    ZIP_PATH="$TARGET_OUTPUT_DIR/${FOLDER_NAME}.zip"
+    ZIP_ERROR_LOG="$TARGET_OUTPUT_DIR/.${FOLDER_NAME}.zip-error.log"
 
     print_progress "$i" "$UID_CODE"
 
@@ -155,16 +201,20 @@ for ((i = 0; i < TOTAL; i++)); do
     print_progress "$((i + 1))" "$UID_CODE"
 done
 
-printf '\r%-100s\n' ' '
+printf '\r%-160s\n' ' '
+TOTAL_ELAPSED=$(( $(date +%s) - START_TIME ))
+TOTAL_ELAPSED_TEXT=$(format_duration "$TOTAL_ELAPSED")
 
 if (( CANCELLED )); then
     echo "Packaging cancelled by user."
     echo "Completed archives: $SUCCEEDED"
+    echo "Elapsed time: $TOTAL_ELAPSED_TEXT"
     echo "Output directory: $OUTPUT_DIR"
     exit 130
 fi
 
 echo "Packaging finished: $SUCCEEDED succeeded, $FAILED failed."
+echo "Elapsed time: $TOTAL_ELAPSED_TEXT"
 echo "Output directory: $OUTPUT_DIR"
 
 (( FAILED == 0 ))
