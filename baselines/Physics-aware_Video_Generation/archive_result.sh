@@ -108,7 +108,28 @@ if (( TOTAL == 0 )); then
 fi
 
 echo "Found $TOTAL directories to package."
-echo "Output layout: relative subfolders below the input root will be preserved."
+echo "Output layout: all scene ZIP files will be written directly under the output root."
+
+# Flattening removes source parent folders. Refuse to continue if two source
+# scenes have the same folder name, because they would map to the same ZIP.
+declare -A SEEN_SCENE_NAMES=()
+DUPLICATE_NAMES=()
+for TARGET_DIR in "${TARGETS[@]}"; do
+    FOLDER_NAME=$(basename -- "$TARGET_DIR")
+    if [[ -n ${SEEN_SCENE_NAMES[$FOLDER_NAME]+present} ]]; then
+        DUPLICATE_NAMES+=("$FOLDER_NAME")
+    else
+        SEEN_SCENE_NAMES[$FOLDER_NAME]=$TARGET_DIR
+    fi
+done
+
+if (( ${#DUPLICATE_NAMES[@]} > 0 )); then
+    echo "Error: cannot flatten output because duplicate scene folder names exist:" >&2
+    printf '  %s\n' "${DUPLICATE_NAMES[@]}" >&2
+    echo "Rename or remove duplicates, then run the script again." >&2
+    exit 1
+fi
+
 if [[ -t 0 ]]; then
     echo "Control: press Q or q at any time to quit; the active partial ZIP will be removed."
 else
@@ -124,26 +145,9 @@ START_TIME=$(date +%s)
 for ((i = 0; i < TOTAL; i++)); do
     TARGET_DIR=${TARGETS[i]}
     FOLDER_NAME=$(basename -- "$TARGET_DIR")
-    RELATIVE_PATH=${TARGET_DIR#"$INPUT_DIR"/}
-    RELATIVE_PARENT=$(dirname -- "$RELATIVE_PATH")
     UID_CODE=$(scene_uid "$FOLDER_NAME")
-
-    if [[ $RELATIVE_PARENT == "." ]]; then
-        TARGET_OUTPUT_DIR=$OUTPUT_DIR
-    else
-        TARGET_OUTPUT_DIR="$OUTPUT_DIR/$RELATIVE_PARENT"
-    fi
-
-    if ! mkdir -p -- "$TARGET_OUTPUT_DIR"; then
-        ((FAILED += 1))
-        printf '\nError: could not create output subdirectory: %s\n' \
-            "$TARGET_OUTPUT_DIR" >&2
-        print_progress "$((i + 1))" "$UID_CODE"
-        continue
-    fi
-
-    ZIP_PATH="$TARGET_OUTPUT_DIR/${FOLDER_NAME}.zip"
-    ZIP_ERROR_LOG="$TARGET_OUTPUT_DIR/.${FOLDER_NAME}.zip-error.log"
+    ZIP_PATH="$OUTPUT_DIR/${FOLDER_NAME}.zip"
+    ZIP_ERROR_LOG="$OUTPUT_DIR/.${FOLDER_NAME}.zip-error.log"
 
     print_progress "$i" "$UID_CODE"
 

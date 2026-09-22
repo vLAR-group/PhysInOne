@@ -151,23 +151,48 @@ def read_caption_txt(sequence_dir: str) -> str:
     with open(path, "r", encoding="utf-8", errors="ignore") as f:
         return f.read().strip()
 
-
 def decode_rgb_zip_to_tensor(zip_ref, prefix):
     """
     Reads all images under a specific prefix in a zip file and returns a stacked tensor.
-    Replace the internal transform/logic to exactly match your original `decode_rgb_dir_to_tensor`.
+    Handles cases where the zip file contains an extra root folder.
     """
-    # 1. Find all image files under the given prefix (zip uses forward slashes '/')
+    # Ensure prefix ends with a slash for accurate directory matching
+    if not prefix.endswith('/'):
+        prefix += '/'
+
+    # 1. Dynamically find the actual prefix in the zip file
+    # This handles cases where the zip has an extra root folder (e.g., 'root_folder/source_video/...')
+    actual_prefix = None
+    for name in zip_ref.namelist():
+        idx = name.find(prefix)
+        # Check if the prefix is found and it's a complete directory match 
+        # (either at the start of the string or preceded by a '/')
+        if idx != -1 and (idx == 0 or name[idx - 1] == '/'):
+            actual_prefix = name[:idx + len(prefix)]
+            break
+            
+    if actual_prefix is None:
+        # Provide a helpful error message with sample contents for debugging
+        sample_contents = zip_ref.namelist()[:5]
+        raise ValueError(
+            f"Could not find the expected directory structure in the zip file.\n"
+            f"Expected prefix: '{prefix}'\n"
+            f"Sample zip contents: {sample_contents}"
+        )
+
+    # 2. Find all image files under the resolved actual prefix
     image_names = [
         name for name in zip_ref.namelist()
-        if name.startswith(prefix) and not name.endswith('/') and name.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp'))
+        if name.startswith(actual_prefix) 
+        and not name.endswith('/') 
+        and name.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp'))
     ]
     
-    # 2. Sort to ensure correct temporal order (e.g., frame_001.png, frame_002.png)
+    # 3. Sort to ensure correct temporal order (e.g., frame_001.png, frame_002.png)
     image_names.sort()
     
     if not image_names:
-        raise ValueError(f"No images found in zip under prefix: '{prefix}'")
+        raise ValueError(f"No image files found under the resolved prefix: '{actual_prefix}'")
 
     frames = []
     for name in image_names:
@@ -178,11 +203,12 @@ def decode_rgb_zip_to_tensor(zip_ref, prefix):
         # Decode bytes to image
         img = Image.open(io.BytesIO(img_bytes)).convert('RGB')
         
-        # Convert to tensor (ADJUST THIS to match your original decode_rgb_dir_to_tensor logic)
-        # e.g., if you use OpenCV, specific normalization, or different shape (C,T,H,W vs T,C,H,W)
-        tensor_img = transforms.ToTensor()(img) 
-        frames.append(tensor_img)
-    
-    # Stack into a single tensor. Shape will be (T, C, H, W). 
-    # Use torch.stack(frames).permute(1, 0, 2, 3) if you need (C, T, H, W)
-    return torch.stack(frames)
+        # Convert to tensor (Replace this with your original transform logic if needed)
+        # e.g., img_tensor = your_custom_transform(img)
+        img_tensor = transforms.ToTensor()(img)
+        
+        frames.append(img_tensor)
+        
+    # Stack frames into a single tensor (e.g., shape: [T, C, H, W])
+    video_tensor = torch.stack(frames)
+    return video_tensor
