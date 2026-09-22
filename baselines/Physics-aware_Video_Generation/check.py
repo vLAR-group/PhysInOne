@@ -2,6 +2,50 @@
 """
 Validate PhysInOne submission ZIP files against a generated JSON manifest.
 
+Validation checklist performed by this script:
+
+1. Submission and manifest paths:
+   - Submission directory exists and is a directory.
+   - Manifest JSON exists and can be opened.
+   - Manifest root is a JSON object.
+   - Every manifest entry has exactly [camera_name, frame_count].
+   - Every camera_name is a string beginning with "CineCamera_".
+   - Every frame_count is an integer, is not a boolean, and is non-negative.
+
+2. Submission ZIP inventory:
+   - Discover ZIP files recursively below the submission directory.
+   - ZIP filename stems match manifest scene names exactly.
+   - Report missing scene ZIP files.
+   - Report extra scene ZIP files not listed in the manifest.
+   - Reject duplicate ZIP files with the same filename stem, even in different
+     subdirectories.
+
+3. ZIP archive integrity and layout:
+   - The ZIP archive can be opened.
+   - Every ZIP member passes ZipFile.testzip() CRC/integrity checking.
+   - The archive does not wrap its contents in a same-named outer directory.
+   - The expected camera directory is directly at the ZIP root.
+   - For the static track, the expected camera comes from the manifest.
+   - For the moving track, the expected camera is CineCamera_Moving.
+   - Any additional root-level CineCamera_* directories are reported as
+     warnings.
+
+4. RGB frame files:
+   - At least one .jpg exists below <expected_camera>/rgb/.
+   - Each JPG member can be read from the ZIP archive.
+   - Its actual content format is JPEG, not merely a .jpg filename.
+   - Pillow can verify the JPEG file structure.
+   - Pillow can fully load the JPEG pixel data.
+   - OpenCV can decode the same bytes, matching the evaluator's image loader.
+   - OpenCV returns a non-empty three-channel image with positive dimensions.
+   - The number of JPG files equals the manifest frame_count.
+
+5. Result reporting:
+   - Display passed, failed, missing, extra, error, and warning counts.
+   - Display all details with --verbose, or at most five errors/warnings by
+     default.
+   - Return exit code 0 only when there are no errors; otherwise return 1.
+
 Expected manifest format:
 {
   "scene_name_1": ["CineCamera_8", 250],
@@ -41,6 +85,18 @@ import time
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
+
+try:
+    import cv2
+    import numpy as np
+except ImportError:
+    print(
+        "ERROR: OpenCV and NumPy are required to validate images with the "
+        "same decoder used by the evaluator. Install them with: "
+        "pip install opencv-python numpy",
+        file=sys.stderr,
+    )
+    raise SystemExit(2)
 
 try:
     from PIL import Image, UnidentifiedImageError
@@ -271,7 +327,12 @@ def jpg_members_under_camera_rgb(
 
 
 def verify_jpg(zf: zipfile.ZipFile, info: zipfile.ZipInfo) -> str | None:
-    """Return None if a ZIP member is a fully decodable JPEG, else an error."""
+    """Validate a JPG with both Pillow and OpenCV.
+
+    Pillow can accept some JPEG streams that OpenCV cannot decode. The
+    evaluator uses ``cv2.imread``-style decoding, so checking only Pillow is
+    insufficient. This function deliberately validates both decoders.
+    """
     try:
         image_bytes = zf.read(info)
         with Image.open(io.BytesIO(image_bytes)) as image:
@@ -283,11 +344,24 @@ def verify_jpg(zf: zipfile.ZipFile, info: zipfile.ZipInfo) -> str | None:
         # Reopen and load the image to ensure it can actually be decoded.
         with Image.open(io.BytesIO(image_bytes)) as image:
             image.load()
+
+        # The evaluator reads extracted frames with OpenCV. Decode the exact
+        # bytes from the ZIP, which is stricter and more representative than
+        # checking only the Pillow decoder above.
+        encoded = np.frombuffer(image_bytes, dtype=np.uint8)
+        decoded = cv2.imdecode(encoded, cv2.IMREAD_COLOR)
+        if decoded is None or decoded.size == 0:
+            return "OpenCV could not decode the JPEG (cv2.imdecode returned None)"
+        if decoded.ndim != 3 or decoded.shape[2] != 3:
+            return f"OpenCV decoded an unexpected shape: {decoded.shape}"
+        if decoded.shape[0] <= 0 or decoded.shape[1] <= 0:
+            return f"OpenCV decoded an empty image: {decoded.shape}"
     except (
         OSError,
         RuntimeError,
         EOFError,
         ValueError,
+        cv2.error,
         zipfile.BadZipFile,
         UnidentifiedImageError,
     ) as error:
