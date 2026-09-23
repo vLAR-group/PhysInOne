@@ -172,7 +172,7 @@ If you downloaded the leaderboard dataset to `../../PhysInOne_data`, you can run
 python inference.py \
   --config ./configs/lora/Wan2.2-TI2V-5B.yaml \
   --data_path ../../PhysInOne-leaderboard \
-  --leaderboard True \
+  --leaderboard \
   --leaderboard_branch static \
   --output_path ./leaderboard_output
 ```
@@ -199,7 +199,6 @@ After the script finishes, you will find individual `.zip` files inside the `./s
 
 ##### Verify Your Submission
 Before uploading, strictly verify that your submission directory is properly formatted and legal using our validation script:
-
 ```bash
 python check.py <path/to/your/submission_folder> [track]
 ```

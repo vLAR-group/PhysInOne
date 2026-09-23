@@ -13,9 +13,10 @@ import torch
 
 import zipfile
 import io
-from PIL import Image
 import torch
 import torchvision.transforms as transforms  # Adjust if you use a different library
+from PIL import Image, UnidentifiedImageError
+from pathlib import PurePosixPath
 
 
 IMG_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
@@ -151,64 +152,116 @@ def read_caption_txt(sequence_dir: str) -> str:
     with open(path, "r", encoding="utf-8", errors="ignore") as f:
         return f.read().strip()
 
+
 def decode_rgb_zip_to_tensor(zip_ref, prefix):
     """
-    Reads all images under a specific prefix in a zip file and returns a stacked tensor.
-    Handles cases where the zip file contains an extra root folder.
-    """
-    # Ensure prefix ends with a slash for accurate directory matching
-    if not prefix.endswith('/'):
-        prefix += '/'
+    Read all image frames below ``prefix`` from an opened ZIP file.
 
-    # 1. Dynamically find the actual prefix in the zip file
-    # This handles cases where the zip has an extra root folder (e.g., 'root_folder/source_video/...')
+    Returns:
+        torch.Tensor:
+            Video tensor with shape [T, C, H, W] and values in [0, 1].
+
+    Raises:
+        RuntimeError:
+            If a frame cannot be read or decoded.
+        ValueError:
+            If the prefix is missing, no images are found, or frame sizes
+            are inconsistent.
+    """
+    if not prefix.endswith("/"):
+        prefix += "/"
+
+    zip_names = zip_ref.namelist()
+
+    # Resolve the actual prefix, including ZIPs with an additional root folder.
     actual_prefix = None
-    for name in zip_ref.namelist():
-        idx = name.find(prefix)
-        # Check if the prefix is found and it's a complete directory match 
-        # (either at the start of the string or preceded by a '/')
-        if idx != -1 and (idx == 0 or name[idx - 1] == '/'):
-            actual_prefix = name[:idx + len(prefix)]
+    for name in zip_names:
+        normalized_name = name.replace("\\", "/")
+        index = normalized_name.find(prefix)
+
+        if index != -1 and (
+            index == 0 or normalized_name[index - 1] == "/"
+        ):
+            actual_prefix = normalized_name[: index + len(prefix)]
             break
-            
+
     if actual_prefix is None:
-        # Provide a helpful error message with sample contents for debugging
-        sample_contents = zip_ref.namelist()[:5]
+        sample_contents = zip_names[:10]
         raise ValueError(
-            f"Could not find the expected directory structure in the zip file.\n"
-            f"Expected prefix: '{prefix}'\n"
-            f"Sample zip contents: {sample_contents}"
+            "Could not find the expected directory in the ZIP.\n"
+            f"Expected prefix: {prefix!r}\n"
+            f"ZIP file: {getattr(zip_ref, 'filename', '<unknown>')!r}\n"
+            f"Sample ZIP contents: {sample_contents}"
         )
 
-    # 2. Find all image files under the resolved actual prefix
+    image_extensions = (".png", ".jpg", ".jpeg", ".bmp")
     image_names = [
-        name for name in zip_ref.namelist()
-        if name.startswith(actual_prefix) 
-        and not name.endswith('/') 
-        and name.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp'))
+        name
+        for name in zip_names
+        if name.startswith(actual_prefix)
+        and not name.endswith("/")
+        and PurePosixPath(name).suffix.lower() in image_extensions
     ]
-    
-    # 3. Sort to ensure correct temporal order (e.g., frame_001.png, frame_002.png)
     image_names.sort()
-    
+
     if not image_names:
-        raise ValueError(f"No image files found under the resolved prefix: '{actual_prefix}'")
+        raise ValueError(
+            f"No image files found under prefix {actual_prefix!r} "
+            f"in ZIP {getattr(zip_ref, 'filename', '<unknown>')!r}"
+        )
 
     frames = []
-    for name in image_names:
-        # Read file bytes directly into memory
-        with zip_ref.open(name) as f:
-            img_bytes = f.read()
-        
-        # Decode bytes to image
-        img = Image.open(io.BytesIO(img_bytes)).convert('RGB')
-        
-        # Convert to tensor (Replace this with your original transform logic if needed)
-        # e.g., img_tensor = your_custom_transform(img)
-        img_tensor = transforms.ToTensor()(img)
-        
-        frames.append(img_tensor)
-        
-    # Stack frames into a single tensor (e.g., shape: [T, C, H, W])
-    video_tensor = torch.stack(frames)
-    return video_tensor
+    expected_size = None
+
+    for frame_index, name in enumerate(image_names):
+        try:
+            # Read the compressed member bytes directly from the ZIP.
+            image_bytes = zip_ref.read(name)
+
+            # First pass: validate the encoded image stream.
+            with Image.open(io.BytesIO(image_bytes)) as image:
+                image_format = image.format
+                if image_format not in {"JPEG", "PNG", "BMP"}:
+                    raise ValueError(
+                        f"unexpected image format {image_format!r}"
+                    )
+                image.verify()
+
+            # Second pass: fully decode pixel data.
+            # verify() alone does not necessarily decode every pixel.
+            with Image.open(io.BytesIO(image_bytes)) as image:
+                image = image.convert("RGB")
+                image.load()
+                current_size = image.size
+                frame_tensor = transforms.ToTensor()(image)
+
+        except (
+            OSError,
+            EOFError,
+            RuntimeError,
+            ValueError,
+            UnidentifiedImageError,
+        ) as error:
+            zip_filename = getattr(zip_ref, "filename", "<unknown ZIP>")
+            raise RuntimeError(
+                "Failed to decode an image frame.\n"
+                f"ZIP: {zip_filename}\n"
+                f"Frame: {name}\n"
+                f"Frame index: {frame_index}\n"
+                f"Error: {error}"
+            ) from error
+
+        if expected_size is None:
+            expected_size = current_size
+        elif current_size != expected_size:
+            raise ValueError(
+                "Image size mismatch in one video sequence.\n"
+                f"ZIP: {getattr(zip_ref, 'filename', '<unknown ZIP>')}\n"
+                f"Frame: {name}\n"
+                f"Current size: {current_size}\n"
+                f"Expected size: {expected_size}"
+            )
+
+        frames.append(frame_tensor)
+
+    return torch.stack(frames, dim=0)

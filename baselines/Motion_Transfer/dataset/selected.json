@@ -627,10 +627,6 @@
     "CineCamera_2",
     150
   ],
-  "MovingHitsStationary_ObliqueProjectile__bg165__pOS6Xu_trajectory": [
-    "CineCamera_6",
-    150
-  ],
   "MovingHitsStationary_RollDownSlope__bg171__8Vk9qD_trajectory": [
     "CineCamera_12",
     150
@@ -661,10 +657,6 @@
   ],
   "MovingHitsMoving_WindPushSameDir_ImpactFracture__bg156__aVIb22_trajectory": [
     "CineCamera_2",
-    150
-  ],
-  "MovingHitsStationary_BalloonFloat_BalloonTether__bg151__9WcRK7_trajectory": [
-    "CineCamera_11",
     150
   ],
   "WindPushSameDir_AccelPanelSpin_MirrorReflect__bg151__JDKRkY_trajectory": [
@@ -705,10 +697,6 @@
   ],
   "WindPushStationary_WindPushOppDir_SpringStretch__bg155__Todj5E_trajectory": [
     "CineCamera_3",
-    150
-  ],
-  "WindPushStationary_WindPushOppDir_SeesawCenterPivot__bg167__QimfBA_trajectory": [
-    "CineCamera_11",
     150
   ],
   "WindPushStationary_WindPushOppDir_MirrorFragmentReflect__bg186__4Oy5iW_trajectory": [
