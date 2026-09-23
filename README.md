@@ -55,7 +55,6 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 
 | Component             | Progress                      | Status       | Notes                             |
 | --------------------- | ----------------------------- | ------------ | --------------------------------- |
-| SubSet                | `██████████`100%              | Released     |                                   |
 | Rendered Data - Train | `██████████` 100%(122988/122988) | Released     | Last updated: Aug 21              |
 | Rendered Data - Test  | `██████████` 100%               | Released     | All Leaderboard user inputs released; GT excluded |
 | Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
