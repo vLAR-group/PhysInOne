@@ -69,7 +69,7 @@ Evaluate your model on the downloaded leaderboard dataset using the following co
 ```bash
 python inference.py \
   --method <method> # motionpro, gowiththeflow \
-  --data_root /path/to/your/output
+  --output /path/to/your/output
 ```
 
 **Example: MotionPro-Dense**
