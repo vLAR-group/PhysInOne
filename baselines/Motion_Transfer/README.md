@@ -78,7 +78,7 @@ For example, if you would like to inference MotionPro-Dense on GPU-0 and save th
 ```bash
 python inference.py \
   --method motionpro \
-  --data_root ./output/
+  --output ./output
 ```
 
 Results are saved to `outputs/<method>/` by default. Use `--out_root` to select another output directory.

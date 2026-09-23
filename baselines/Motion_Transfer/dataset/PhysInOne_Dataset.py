@@ -121,7 +121,7 @@ class PhysInOne_Leaderboard_MotionTransfer(Dataset):
         scene_name = scene_info["scene_name"]
         complexity = scene_info["complexity"]
         zip_path = scene_info["zip_path"]
-        print(zip_path)
+
         caption = ""
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
             if "caption.txt" in zip_ref.namelist():
