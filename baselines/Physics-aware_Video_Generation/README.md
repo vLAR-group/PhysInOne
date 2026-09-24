@@ -214,6 +214,11 @@ python check.py ./submission static
 #### Step 4: Submit Your Results
 
 1. **Upload:** Upload your verified `./submission` folder to your own **Hugging Face repository**.
+
+```bash
+python ./upload.py ./submission --repo username/repository --remote_folder submissions/team-name --token your-token
+```
+(You can refer to our official inference example here: [vLAR/PhysInOne-Leaderboard-Run-by-VLAR](https://huggingface.co/datasets/vLAR/PhysInOne-Leaderboard-Run-by-VLAR))
 2. **Submit:** Navigate to the **Leaderboard Portal** and submit your Hugging Face repository link.
 
 🎉 **That's it!** We will automatically compute your metrics and update the leaderboard as soon as possible.
