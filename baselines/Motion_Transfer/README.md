@@ -123,6 +123,7 @@ python ../Physics-aware_Video_Generation/check.py ./submission
 python ../Physics-aware_Video_Generation/upload.py ./submission --repo username/repository --remote_folder submissions/team-name --token your-token
 ```
 (You can refer to our official inference example here: [vLAR/PhysInOne-Leaderboard-Run-by-VLAR](https://huggingface.co/datasets/vLAR/PhysInOne-Leaderboard-Run-by-VLAR))
+
 2. **Submit:** Navigate to the **Leaderboard Portal** and submit your Hugging Face repository link.
 
 🎉 **That's it!** We will automatically compute your metrics and update the leaderboard as soon as possible.
