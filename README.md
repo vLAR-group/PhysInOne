@@ -56,7 +56,6 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | Component             | Progress                      | Status       | Notes                             |
 | --------------------- | ----------------------------- | ------------ | --------------------------------- |
 | Rendered Data - Train | `██████████` 100%(122988/122988) | Released     | Last updated: Aug 21              |
-| Rendered Data - Test  | `██████████` 100%               | Released     | All Leaderboard user inputs released; GT excluded |
 | Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
 | 3D Assets             | `█████░░░░░` 50%              | Partially released | Validation scenes and Train resource libraries |
 | Leaderboard           | `██████████` 100%              | Released     | Public evaluation inputs for all four tasks; GT excluded |
@@ -83,7 +82,7 @@ All user-facing evaluation inputs required by the public Leaderboard have been r
 | Video Generation | 75,865 files |
 | Future Prediction | 103 scene ZIP archives |
 | Physical Properties Estimation | 72 scene ZIP archives and 2 shared support files |
-| Motion Transfer | 217 scene ZIP archives |
+| Motion Transfer | 214 scene ZIP archives |
 
 Clone this repository once; the downloader uses only the Python standard library and reads its maintained manifests directly from the repository:
 
@@ -279,7 +278,7 @@ if __name__ == "__main__":
 
 We provide baseline implementations under the `./baselines` directory for your reference. We welcome your feedback, please feel free to contact us if you need anything..
 
-> **📅 Update Schedule:** This section is actively being updated throughout Oct.
+> **📅 Update Schedule:** This section is actively being updated throughout Oct. and Nov.
 
 ## 🚧 **Coming Soon** 🚧
 
