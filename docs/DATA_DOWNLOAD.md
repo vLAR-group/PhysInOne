@@ -76,9 +76,9 @@ remain compressed unless `--extract` is specified.
 | `video_generation` | Initial frames, camera metadata, and captions | 75,865 |
 | `future_prediction` | Fixed-view input sequences and split metadata | 103 ZIP files |
 | `physical_properties_estimation` | Scene inputs and shared supplementary files | 72 scene ZIP files plus 2 shared files |
-| `motion_transfer` | Source videos, reference frames, and captions | 217 ZIP files |
-| `3d_assets` | Unreal Engine project assets for 1,000 Val and 10,000 Train scenes | 4,325 files |
-| `all` | Every item above | 80,584 files |
+| `motion_transfer` | Source videos, reference frames, and captions | 214 ZIP files |
+| `3d_assets` | Unreal Engine project assets for 14,847 Val and 120,660 Train scenes | 4,585 files |
+| `all` | Every item above | 80,841 files |
 
 Multiple task values can follow one `--task` option. Hyphenated names and the
 short aliases shown by `--help` are also accepted.
@@ -246,10 +246,14 @@ python scripts/download_data.py \
 
 ## 3D asset setup
 
-The current release contains Unreal Engine 5.5.4 resources for 1,000 validation
-scenes and 10,000 training scenes, together with the released Train and Val
-resource libraries. The download contains 4,325 files and 35 ZIP archives
-(approximately 78.90 GiB before extraction). Windows is recommended for the
+The completed public release contains Unreal Engine 5.5.4 resources for 14,847
+validation scenes and 120,660 training scenes, together with the released Train
+and Val resource libraries. The download contains 4,585 files and 285 ZIP
+archives (approximately 139.67 GiB before extraction). The 273 validation
+origins reserved for the Motion Transfer test set are intentionally excluded to
+prevent evaluation leakage. The release also includes ten Movie Render Queue
+configurations at `Content/PhysInOne/Scripts/`, corresponding to
+`/Game/PhysInOne/Scripts/` in Unreal Engine. Windows is recommended for the
 simplest setup; Linux is also supported with additional Unreal Engine
 configuration.
 
@@ -262,6 +266,10 @@ Scene and Trajectory archives are deliberately kept separate:
 | `Content/PhysInOne/Scenes/train_scenes_batch_*.zip` | `Train/<Physics>/<Scene>.umap` | `Content/PhysInOne/Scenes/Train/<Physics>/<Scene>.umap` |
 | `Content/PhysInOne/Trajectories/val_trajectory_batch_*.zip` | `Val/<Physics>/<Scene>_trajectory.uasset` | `Content/PhysInOne/Trajectories/Val/<Physics>/<Scene>_trajectory.uasset` |
 | `Content/PhysInOne/Trajectories/train_trajectory_batch_*.zip` | `Train/<Physics>/<Scene>_trajectory.uasset` | `Content/PhysInOne/Trajectories/Train/<Physics>/<Scene>_trajectory.uasset` |
+
+The Train Scene and Trajectory series each span batches `0000–0120`; the Val
+series each span batches `0000–0014`. The final Train batch contains 660
+scenes, and the final Val batch contains 847 scenes.
 
 The Train and Val ZIP files can therefore share the same remote directory
 without colliding: their members begin with different split directories.

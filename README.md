@@ -7,7 +7,7 @@
     <a href="https://arxiv.org/pdf/2604.09415"><img src="https://img.shields.io/badge/arXiv-2604.09415-b31b1b.svg" alt="arXiv"></a>
     <a href="https://vlar-group.github.io/PhysInOne.html"><img src="https://img.shields.io/badge/Project-Page-blue" alt="Project Page"></a>
     <a href="https://huggingface.co/datasets/vLAR/PhysInOne"><img src="https://img.shields.io/badge/🤗-Dataset-yellow" alt="Dataset"></a>
-    <a href="https://huggingface.co/datasets/vLAR/PhysInOne"><img src="https://img.shields.io/badge/All%20repo%20downloads-999%2C927-FFD21E?logo=huggingface" alt="All PhysInOne repositories: 999,927 historical downloads (snapshot Sep 5, 2026)"></a>
+    <a href="https://huggingface.co/datasets/vLAR/PhysInOne"><img src="https://img.shields.io/badge/All%20repo%20downloads-1%2C280%2C414-FFD21E?logo=huggingface" alt="All PhysInOne repositories: 1,280,414 historical downloads (snapshot Oct 1, 2026)"></a>
     <a href="#license"><img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg" alt="License"></a>
   </p>
 </p>
@@ -56,12 +56,13 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | Component             | Progress                      | Status       | Notes                             |
 | --------------------- | ----------------------------- | ------------ | --------------------------------- |
 | Rendered Data - Train | `██████████` 100%(122988/122988) | Released     | Last updated: Aug 21              |
+| Rendered Data - Test  | `██████████` 100%               | Released     | All Leaderboard user inputs released; GT excluded |
 | Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
-| 3D Assets             | `█████░░░░░` 50%              | Partially released | 1,000 Val scenes, 10,000 Train scenes, and Train/Val resource libraries |
+| 3D Assets             | `██████████` 100%              | Released     | 14,847 Val scenes, 120,660 Train scenes, and Train/Val resource libraries |
 | Leaderboard           | `██████████` 100%              | Released     | Public evaluation inputs for all four tasks; GT excluded |
 | PMF                   | `██████████`100%              | Released     |                                   |
 | Baselines             | `█████░░░░░`50%               | In progress | Last updated: Sept. 24th              |
-| Data processing       | `░░░░░░░░░░` 0%               | Not released | Expected around Nov.              |
+| Data processing       | `██████████` 100%              | Released     | Camera placement, UE rendering, EXR conversion, and point-cloud generation |
 
 ## Links
 
@@ -72,6 +73,7 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | 🤗 Dataset      | [Hugging Face](https://huggingface.co/datasets/vLAR/PhysInOne)                |
 | 🏆 Leaderboard Data | [Public evaluation inputs](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Leaderboard) |
 | 🧊 3D Assets | [PhysicBenchmark project assets](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Assets/PhysicBenchmark) |
+| 🛠️ Data Processing | [Camera, rendering, and post-processing tools](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Utils/data_processing) |
 
 ### 🏆 Leaderboard Evaluation Data
 
@@ -107,9 +109,11 @@ Each row below is a complete command that can be copied directly. The remote Lea
 
 ### 🧊 3D Assets
 
-The public 3D asset release is now **50% complete**. It contains shared Unreal Engine project files, Scene and Trajectory resources for **1,000 validation scenes and 10,000 training scenes**, six validation resource archives, and seven training resource archives. The maintained download contains **4,325 files**, including **35 ZIP archives**, totaling approximately **78.90 GiB**.
+The planned public 3D asset release is now **100% complete**. It contains shared Unreal Engine 5.5.4 project files, Scene and Trajectory resources for **14,847 validation scenes and 120,660 training scenes**, six validation resource archives, and seven training resource archives. The maintained download contains **4,585 files**, including **285 ZIP archives**, totaling approximately **139.67 GiB**. The 273 validation origins reserved for the Motion Transfer test set are intentionally excluded to prevent evaluation leakage.
 
 The Scene and Trajectory archives are intentionally stored side by side in their respective project folders. They remain separate archives: Scene ZIPs contain `Train/<Physics>/<Scene>.umap` or `Val/<Physics>/<Scene>.umap`, while Trajectory ZIPs contain `Train/<Physics>/<Scene>_trajectory.uasset` or `Val/<Physics>/<Scene>_trajectory.uasset`. The downloader extracts each ZIP into its current parent, producing `Content/PhysInOne/Scenes/{Train,Val}/` and `Content/PhysInOne/Trajectories/{Train,Val}/`.
+
+The Train Scene and Trajectory series each contain batches `0000–0120`; the Val series each contain batches `0000–0014`. The final Train batch contains 660 scenes, and the final Val batch contains 847 scenes.
 
 ```bash
 python scripts/download_data.py \
@@ -133,11 +137,21 @@ Common options:
 
 See the [complete download guide](docs/DATA_DOWNLOAD.md), [download script](scripts/download_data.py), and [task manifests](scripts/download_lists/) for all parameters and examples. Full rendered-data subsets can be prepared with [filter_cases.py](scripts/filter_cases.py) and downloaded with [download_selected.py](scripts/download_selected.py).
 
+### 🛠️ Data Processing
+
+The public data-processing toolkit is released as ordinary source files under [`Utils/data_processing`](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Utils/data_processing), rather than as a ZIP archive. It includes static-camera placement, moving-camera and Level Sequence generation, unattended Unreal Engine rendering, EXR conversion, and multi-view point-cloud generation.
+
+- [Quick-start README](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/data_processing/README.md)
+- [Complete camera and rendering guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/data_processing/docs/CAMERA_AND_RENDERING.md)
+- [Movie Render Queue configuration assets](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Assets/PhysicBenchmark/Content/PhysInOne/Scripts)
+
+The ten Unreal configuration assets must remain under `PhysicBenchmark/Content/PhysInOne/Scripts/`, corresponding to `/Game/PhysInOne/Scripts/` in Unreal Engine. No Hugging Face account or access token is required.
+
 ### 📦 Dataset Repositories & Downloads
 
 Due to the large scale of PhysInOne, the rendered data and annotations are split across 16 Hugging Face repositories. Each entry shows the shard size, release status, live all-time downloads, live downloads in the last 30 days, and its repository link.
 
-> **Combined snapshot (Sep 5, 2026):** P01–P16 have **986,449** all-time downloads and **615,484** downloads in the last 30 days. Including the main repository, the per-repository sums are **999,927** and **616,472**.
+> **Combined snapshot (Oct 1, 2026):** P01–P16 have **1,233,150** all-time downloads and **408,806** downloads in the last 30 days. Including the main repository, the per-repository sums are **1,280,414** and **442,702**.
 
 <table>
 <tr>
@@ -279,10 +293,6 @@ if __name__ == "__main__":
 We provide baseline implementations under the `./baselines` directory for your reference. We welcome your feedback, please feel free to contact us if you need anything..
 
 > **📅 Update Schedule:** This section is actively being updated throughout Oct. and Nov.
-
-## 🚧 **Coming Soon** 🚧
-
-Data processing code will be released soon. Stay tuned!
 
 ## Citation
 

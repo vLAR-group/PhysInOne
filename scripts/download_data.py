@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Download public PhysInOne evaluation data and validation 3D assets."""
+"""Download public PhysInOne evaluation data and released 3D assets."""
 
 from __future__ import annotations
 
@@ -733,7 +733,7 @@ def extract_download(
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Download public PhysInOne Leaderboard data and validation 3D assets "
+            "Download public PhysInOne Leaderboard data and released 3D assets "
             "with Python standard-library networking."
         )
     )
