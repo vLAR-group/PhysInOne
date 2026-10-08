@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.vscode/
+.idea/
+output/
+predictions/
+smoke_test/
+checkpoints/SinglePhysics/
+checkpoints/DoublePhysics/
+checkpoints/TriplePhysics/
+*.log
+nohup.out
+

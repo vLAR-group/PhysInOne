@@ -1,0 +1,12 @@
+# Parameters shared by the released PhysInOne FreeGave checkpoints.
+checkpoint_iteration: 25000
+sh_degree: 3
+physics_code: 16
+max_time: 0.45
+vel_start_time: 0.0
+light: false
+is_6dof: false
+white_background: true
+static_threshold: 0.01
+motion_mask_steps: 75
+

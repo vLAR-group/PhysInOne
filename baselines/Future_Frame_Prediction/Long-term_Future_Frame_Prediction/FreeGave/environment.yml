@@ -1,0 +1,21 @@
+name: freegave-physinone
+channels:
+  - defaults
+dependencies:
+  - python=3.7.16
+  - pip
+  - pip:
+      - configargparse==1.7
+      - einops==0.6.1
+      - imageio==2.27.0
+      - imageio-ffmpeg==0.5.1
+      - numpy==1.21.6
+      - open3d==0.17.0
+      - opencv-python==4.8.1.78
+      - pillow==9.5.0
+      - plyfile==0.8.1
+      - pyyaml==6.0.1
+      - scipy==1.7.3
+      - tensorboard==2.11.2
+      - tqdm==4.67.1
+
