@@ -59,7 +59,7 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
 | 3D Assets             | `██████████` 100%              | Released     | 14,847 Val scenes, 120,660 Train scenes, and Train/Val resource libraries |
 | Leaderboard Evaluation Inputs | `██████████` 100%       | Released     | All public task inputs released; ground truth excluded |
-| Baseline code         | `████░░░░░░` 50%              | In progress  | Last updated: Sept 18             |
+| Baseline code         | `███████▌░░` 75%              | In progress  | Six long-term future prediction baselines released; updated Oct 8 |
 | Data processing       | `██████████` 100%              | Released     | Camera placement, UE rendering, EXR conversion, and point-cloud generation |
 
 ## Links
@@ -238,7 +238,16 @@ if __name__ == "__main__":
 
 ## Baselines
 
-We provide baseline implementations under the `./baselines` directory for your reference. We welcome your feedback, please feel free to contact us if you need anything..
+We provide baseline implementations under the [`./baselines`](./baselines) directory. The latest release adds six baselines for **Long-term Future Frame Prediction**:
+
+- [FreeGave](./baselines/Future_Frame_Prediction/Long-term_Future_Frame_Prediction/FreeGave)
+- [Def3G](./baselines/Future_Frame_Prediction/Long-term_Future_Frame_Prediction/Def3G)
+- [ExtDM](./baselines/Future_Frame_Prediction/Long-term_Future_Frame_Prediction/ExtDM)
+- [MAGI-1](./baselines/Future_Frame_Prediction/Long-term_Future_Frame_Prediction/MAGI-1)
+- [TRACE](./baselines/Future_Frame_Prediction/Long-term_Future_Frame_Prediction/TRACE)
+- [TiNeuVox](./baselines/Future_Frame_Prediction/Long-term_Future_Frame_Prediction/TiNeuVox)
+
+Each package contains cleaned source code, English setup and usage instructions, a directory-layout guide, the 103-scene evaluation manifest, and checkpoint-placement instructions. Training instructions are included where the released integration supports training; MAGI-1 is provided as an inference-only integration. Model weights and benchmark ground truth are not bundled with the source release.
 
 > **📅 Update Schedule:** This section is actively being updated throughout Oct. and Nov.
 
