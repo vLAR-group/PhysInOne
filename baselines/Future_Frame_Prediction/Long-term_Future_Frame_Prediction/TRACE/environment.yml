@@ -1,0 +1,25 @@
+name: trace-physinone
+channels:
+  - defaults
+  - https://repo.anaconda.com/pkgs/main
+  - https://repo.anaconda.com/pkgs/r
+dependencies:
+  - python=3.7.16=h7a1cb2a_0
+  - pip:
+      - configargparse==1.7
+      - einops==0.6.1
+      - fast-pytorch-kmeans==0.2.2
+      - imageio==2.27.0
+      - imageio-ffmpeg==0.5.1
+      - lpips==0.1.4
+      - matplotlib==3.5.3
+      - matplotlib-inline==0.1.6
+      - numpy==1.21.6
+      - open3d==0.17.0
+      - pillow==9.5.0
+      - pip==24.0
+      - plyfile==0.8.1
+      - pytorch-msssim==1.0.0
+      - pyyaml==6.0.1
+      - requests==2.31.0
+      - tqdm==4.67.1

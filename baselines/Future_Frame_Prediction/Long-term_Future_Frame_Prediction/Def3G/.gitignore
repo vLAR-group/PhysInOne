@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.so
+build/
+*.egg-info/
+output/
+predictions/
+checkpoints/*
+!checkpoints/README.md
+cfg_args
+*.log

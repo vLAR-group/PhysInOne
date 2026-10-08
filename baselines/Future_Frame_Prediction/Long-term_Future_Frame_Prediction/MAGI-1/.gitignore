@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+output/
+predictions/
+checkpoints/*
+!checkpoints/README.md
+ckpt/
+*.log
+*.mp4

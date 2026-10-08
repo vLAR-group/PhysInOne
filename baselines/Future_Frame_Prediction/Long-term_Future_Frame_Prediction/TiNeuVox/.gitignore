@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+output/
+predictions/
+logs/
+checkpoints/*
+!checkpoints/README.md
+*.log
+*.tar
+*.npy

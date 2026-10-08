@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+output/
+predictions/
+logs_training/
+checkpoints/*
+!checkpoints/README.md
+wandb/
+*.log
+*.pth
