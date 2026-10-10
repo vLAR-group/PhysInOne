@@ -11,8 +11,8 @@ The script parses:
     phenomena: abbreviations before "__bg..."
     background: bgXXX
     hash: final six-character code
-    part_id: e.g. physinone_part1
-    hf_zip_path: expected zip path inside the shard repo, e.g.
+    part_id: repository-map key, e.g. physinone_part1 or physinone_val
+    hf_zip_path: expected zip path inside the mapped dataset repository, e.g.
         Train/DoublePhysics/AccelConcaveSpin_AccelSurfaceSpin__bg070__K5ER39_trajectory.zip
 """
 

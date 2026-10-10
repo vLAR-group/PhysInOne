@@ -152,7 +152,10 @@ python scripts/download_data.py \
 ## Full rendered dataset selection
 
 The repository also includes a filter and downloader for selecting scene
-archives from the 16 public rendered-data shards.
+archives from the public rendered dataset. Train archives are distributed
+across 16 shard repositories, while the currently released Val archives are
+stored in the main `vLAR/PhysInOne` dataset repository. The bundled index and
+repository map handle this difference automatically.
 
 Create a selection file:
 
@@ -164,6 +167,19 @@ python scripts/filter_cases.py \
   --num 100 \
   --output selected_cases.json
 ```
+
+Select all currently released Val archives:
+
+```bash
+python scripts/filter_cases.py \
+  --split val \
+  --output selected_val_cases.json \
+  --show_stats
+```
+
+This currently selects 199 Val scene archives. The count follows the public
+files present under `Val/` and may increase as additional validation data is
+released.
 
 Download the selected archives:
 
