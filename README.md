@@ -12,6 +12,9 @@
   </p>
 </p>
 
+> [!IMPORTANT]
+> **Looking for the data? Start on [Hugging Face](https://huggingface.co/datasets/vLAR/PhysInOne).** All dataset downloads, download tools, and usage guides are available there: [Rendered Data](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/DATA_DOWNLOAD.md) · [3D Assets](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/3D_ASSETS_DOWNLOAD.md) · [Leaderboard Evaluation Data](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/LEADERBOARD_DOWNLOAD.md). This GitHub repository hosts the code and baseline implementations.
+
 <p align="center">
   <img src="teaser.png" alt="PhysInOne Teaser" width="100%">
 </p>
@@ -59,7 +62,7 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
 | 3D Assets             | `██████████` 100%              | Released     | 14,847 Val scenes, 120,660 Train scenes, and Train/Val resource libraries |
 | Leaderboard Evaluation Inputs | `██████████` 100%       | Released     | All public task inputs released; ground truth excluded |
-| Baseline code         | `███████▌░░` 75%              | In progress  | Six long-term future prediction baselines released; updated Oct 8 |
+| Baseline code         | `███████▌░░` 75%              | In progress  | Task-specific implementations; see [Baselines](#baselines) below |
 | Data processing       | `██████████` 100%              | Released     | Camera placement, UE rendering, EXR conversion, and point-cloud generation |
 
 ## Links
@@ -69,31 +72,10 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | 📄 Paper        | [arXiv](https://arxiv.org/pdf/2604.09415)                                     |
 | 🌐 Project Page | [vlar-group.github.io/PhysInOne](https://vlar-group.github.io/PhysInOne.html) |
 | 🤗 Dataset      | [Hugging Face](https://huggingface.co/datasets/vLAR/PhysInOne)                |
-| 🏆 Leaderboard Data | [Public evaluation inputs](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Leaderboard) |
+| 🎞️ Rendered Data | [Scene selection and download guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/DATA_DOWNLOAD.md) |
 | 🧊 3D Assets | [PhysicBenchmark project assets](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Assets/PhysicBenchmark) |
+| 🏆 Leaderboard Data | [Public evaluation inputs](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Leaderboard) |
 | 🛠️ Data Processing | [Camera, rendering, and post-processing tools](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Utils/data_processing) |
-
-### 🏆 Leaderboard Evaluation Data
-
-All user-facing evaluation inputs for the four PhysInOne Leaderboard tasks are publicly available; ground-truth targets remain private. See the dedicated guide for task contents, copyable download commands, manifests, output layout, and resume instructions.
-
-- [Browse the public Leaderboard inputs](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Leaderboard)
-- [Read the Leaderboard download guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/LEADERBOARD_DOWNLOAD.md)
-
-### 🧊 3D Assets
-
-The complete public Unreal Engine 5.5.4 asset release includes the project files and Scene/Trajectory resources for **14,847 validation scenes and 120,660 training scenes**. See the dedicated guide for download commands, archive layout, extraction, and project setup.
-
-- [Browse the `PhysicBenchmark` project](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Assets/PhysicBenchmark)
-- [Read the 3D asset download and setup guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/3D_ASSETS_DOWNLOAD.md)
-
-### 🛠️ Data Processing
-
-The public toolkit covers static and moving camera generation, Level Sequence creation, unattended Unreal Engine rendering, EXR conversion, and multi-view point-cloud generation. The guides describe the Unreal Engine 5.5.4 setup, required project assets, commands, outputs, and safety behavior.
-
-- [Browse the data-processing source](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Utils/data_processing)
-- [Read the quick-start guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/data_processing/README.md)
-- [Read the complete camera and rendering guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/data_processing/docs/CAMERA_AND_RENDERING.md)
 
 ### 📦 Dataset Repositories & Downloads
 
@@ -192,6 +174,36 @@ Due to the large scale of PhysInOne, the rendered data and annotations are split
 
 > Download badges query the official Hugging Face API and update automatically. Counts are repository-level download events, not deduplicated users; accessing multiple shards can produce one event in each shard.
 
+### 🎞️ Rendered Data
+
+Released Train rendered archives are distributed across the 16 repositories listed above; released Val archives are hosted in the main repository. Dependency-free public tools can filter scenes by split, interaction type, and physical phenomenon, then download the selected archives with resume support and per-file logs.
+
+- [Read the rendered-data selection and download guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/DATA_DOWNLOAD.md)
+- [Browse the download tools](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Utils/scripts)
+- [Browse the Hugging Face utility mirror](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Utils)
+
+### 🧊 3D Assets
+
+The complete public Unreal Engine 5.5.4 asset release includes the project files and Scene/Trajectory resources for **14,847 validation scenes and 120,660 training scenes**. See the dedicated guide for download commands, archive layout, extraction, and project setup.
+
+- [Browse the `PhysicBenchmark` project](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Assets/PhysicBenchmark)
+- [Read the 3D asset download and setup guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/3D_ASSETS_DOWNLOAD.md)
+
+### 🏆 Leaderboard Evaluation Data
+
+All user-facing evaluation inputs for the four PhysInOne Leaderboard tasks are publicly available; ground-truth targets remain private. See the dedicated guide for task contents, copyable download commands, manifests, output layout, and resume instructions.
+
+- [Browse the public Leaderboard inputs](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Leaderboard)
+- [Read the Leaderboard download guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/LEADERBOARD_DOWNLOAD.md)
+
+### 🛠️ Data Processing
+
+The public toolkit covers static and moving camera generation, Level Sequence creation, unattended Unreal Engine rendering, EXR conversion, and multi-view point-cloud generation. The guides describe the Unreal Engine 5.5.4 setup, required project assets, commands, outputs, and safety behavior.
+
+- [Browse the data-processing source](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Utils/data_processing)
+- [Read the quick-start guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/data_processing/README.md)
+- [Read the complete camera and rendering guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/data_processing/docs/CAMERA_AND_RENDERING.md)
+
 ## 💻 Code
 
 ### PMF Metric
@@ -238,16 +250,13 @@ if __name__ == "__main__":
 
 ## Baselines
 
-We provide baseline implementations under the [`./baselines`](./baselines) directory. The latest release adds six baselines for **Long-term Future Frame Prediction**:
+Baseline implementations are organized by task under [`baselines/`](./baselines):
 
-- [FreeGave](./baselines/Future_Frame_Prediction/Long-term_Future_Frame_Prediction/FreeGave)
-- [Def3G](./baselines/Future_Frame_Prediction/Long-term_Future_Frame_Prediction/Def3G)
-- [ExtDM](./baselines/Future_Frame_Prediction/Long-term_Future_Frame_Prediction/ExtDM)
-- [MAGI-1](./baselines/Future_Frame_Prediction/Long-term_Future_Frame_Prediction/MAGI-1)
-- [TRACE](./baselines/Future_Frame_Prediction/Long-term_Future_Frame_Prediction/TRACE)
-- [TiNeuVox](./baselines/Future_Frame_Prediction/Long-term_Future_Frame_Prediction/TiNeuVox)
+- [Physics-aware Video Generation](./baselines/Physics-aware_Video_Generation)
+- [Future Frame Prediction](./baselines/Future_Frame_Prediction)
+- [Motion Transfer](./baselines/Motion_Transfer)
 
-Each package contains cleaned source code, English setup and usage instructions, a directory-layout guide, the 103-scene evaluation manifest, and checkpoint-placement instructions. Training instructions are included where the released integration supports training; MAGI-1 is provided as an inference-only integration. Model weights and benchmark ground truth are not bundled with the source release.
+Refer to each task or model's README for environment setup, checkpoint requirements, training (where supported), and inference or evaluation instructions. Available implementations and supported workflows vary by task. Public evaluation inputs and download instructions are available on [Hugging Face](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/LEADERBOARD_DOWNLOAD.md); benchmark ground-truth targets remain private.
 
 > **📅 Update Schedule:** This section is actively being updated throughout Oct. and Nov.
 
