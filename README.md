@@ -73,9 +73,9 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | 🌐 Project Page | [vlar-group.github.io/PhysInOne](https://vlar-group.github.io/PhysInOne.html) |
 | 🤗 Dataset      | [Hugging Face](https://huggingface.co/datasets/vLAR/PhysInOne)                |
 | 🎞️ Rendered Data | [Scene selection and download guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/DATA_DOWNLOAD.md) |
-| 🧊 3D Assets | [PhysicBenchmark project assets](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Assets/PhysicBenchmark) |
-| 🏆 Leaderboard Data | [Public evaluation inputs](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Leaderboard) |
-| 🛠️ Data Processing | [Camera, rendering, and post-processing tools](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Utils/data_processing) |
+| 🧊 3D Assets | [Asset download and project setup guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/3D_ASSETS_DOWNLOAD.md) |
+| 🏆 Leaderboard Data | [Evaluation input download guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/LEADERBOARD_DOWNLOAD.md) |
+| 🛠️ Data Processing | [Camera, rendering, and post-processing usage guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/data_processing/README.md) |
 
 ### 📦 Dataset Repositories & Downloads
 
