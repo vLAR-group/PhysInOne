@@ -58,7 +58,7 @@ LASER_LABELS = ["FixedPlanarRedirect", "FixedArrayRedirect", "FixedConcaveRedire
 # JSON file mapping each scene name to its manually selected cine camera.
 SELECTED = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    "selected.json",
+    "selected_full.json",
 )
 
 DEFAULT_NEGATIVE_PROMPT = (
@@ -84,7 +84,7 @@ class PhysInOne(torch.utils.data.Dataset):
       - Resolution normalization
     """
 
-    def __init__(self, args, data_dir, split="train", only_moving=False, only_one_cine=False):
+    def __init__(self, args, data_dir, split="train", only_moving=False, only_one_cine=False, mini_dataset=False):
         """
         Args:
             args: Configuration object (e.g., from argparse).
@@ -93,7 +93,9 @@ class PhysInOne(torch.utils.data.Dataset):
             only_moving: If True, only load 'main_camera' views (test split only).
             only_one_cine: If True, load a single pre-selected cine camera per
                 scene (test split only, mutually exclusive with `only_moving`).
+            mini_dataset: If True, use a smaller subset of the dataset purposes.
         """
+        
         split = split.lower()
         assert split in ["all", "train", "test", "valid"], \
             f"Invalid split {split} for PhysBenchDataset"
@@ -104,6 +106,8 @@ class PhysInOne(torch.utils.data.Dataset):
             )
         if only_moving and only_one_cine:
             raise ValueError("Cannot choose [only moving] and [only one cine] at the same time")
+        if mini_dataset:
+            SELECTED = SELECTED.replace("selected_full.json", "selected_mini.json")
         with open(SELECTED, "r") as f:
             cine_choose_sheet = json.load(f)
 
