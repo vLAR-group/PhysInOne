@@ -109,12 +109,14 @@ Below is the polished and structured version of your `README.md` section:
 
 We welcome evaluations on our **PhysInOne Benchmark**! Official evaluation submission pipelines and benchmark datasets are now available.
 
-### Evaluation Tasks & Tracks
+### Evaluation Tracks & Subsets
 
 For the **Video Generation** task, we divide evaluation into two distinct tracks based on camera behavior:
 
 1. **Static Camera Track:** Focuses on pure dynamic physical phenomena (mechanics, optics, fluid dynamics, magnetism) under a fixed viewpoint.
 2. **Moving Camera Track:** Evaluates continuous dynamic visual physics generated under camera trajectory shifts and changing perspectives.
+
+Participants can choose to evaluate their submissions on either the **full dataset** (15,173 data pairs) or the **mini dataset** (683 data pairs) for each track.
 
 ### Input Conditions
 
@@ -166,14 +168,15 @@ python inference.py \
 
 **Example: Static Camera Track**
 
-If you downloaded the leaderboard dataset to `../../PhysInOne_data`, you can run inference using the vanilla `Wan2.2-TI2V-5B` model for the **Static Track** like this:
+If you downloaded the leaderboard dataset to `../../PhysInOne_data`, you can run inference using the vanilla `Wan2.2-TI2V-5B` model for the **Static Track** on **mini subset** like this:
 
 ```bash
 python inference.py \
   --config ./configs/lora/Wan2.2-TI2V-5B.yaml \
-  --data_path ../../PhysInOne-leaderboard \
+  --data_path ../../PhysInOne_data \
   --leaderboard \
   --leaderboard_branch static \
+  --subset mini \
   --output_path ./leaderboard_output
 ```
 
@@ -200,13 +203,15 @@ After the script finishes, you will find individual `.zip` files inside the `./s
 ##### Verify Your Submission
 Before uploading, strictly verify that your submission directory is properly formatted and legal using our validation script:
 ```bash
-python check.py <path/to/your/submission_folder> [track]
+python check.py <path/to/your/submission_folder> [track] --subset [your-subset]
 ```
 
-**Example: Verify Static Track Submission**
+**Example: Verify Static Track mini-subset Submission**
 ```bash
-python check.py ./submission static 
+python check.py ./submission static --subset mini
 # Use 'moving' instead of 'static' for the moving camera track
+# Or, use 'full' instead of 'mini' for full set evaluation
+
 ```
 
 ---

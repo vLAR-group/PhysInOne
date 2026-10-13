@@ -84,7 +84,7 @@ class PhysInOne(torch.utils.data.Dataset):
       - Resolution normalization
     """
 
-    def __init__(self, args, data_dir, split="train", only_moving=False, only_one_cine=False, mini_dataset=False):
+    def __init__(self, args, data_dir, split="train", only_moving=False, only_one_cine=False):
         """
         Args:
             args: Configuration object (e.g., from argparse).
@@ -93,7 +93,6 @@ class PhysInOne(torch.utils.data.Dataset):
             only_moving: If True, only load 'main_camera' views (test split only).
             only_one_cine: If True, load a single pre-selected cine camera per
                 scene (test split only, mutually exclusive with `only_moving`).
-            mini_dataset: If True, use a smaller subset of the dataset purposes.
         """
         
         split = split.lower()
@@ -106,8 +105,7 @@ class PhysInOne(torch.utils.data.Dataset):
             )
         if only_moving and only_one_cine:
             raise ValueError("Cannot choose [only moving] and [only one cine] at the same time")
-        if mini_dataset:
-            SELECTED = SELECTED.replace("selected_full.json", "selected_mini.json")
+        
         with open(SELECTED, "r") as f:
             cine_choose_sheet = json.load(f)
 
@@ -305,7 +303,7 @@ class PhysInOne(torch.utils.data.Dataset):
 
 SUBFOLDER = "leaderboard/video_generation"  # Subfolder for leaderboard/test data (if present)
 class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
-    def __init__(self, data_dir, mode='static', resolution=RESOLUTION):
+    def __init__(self, data_dir, mode='static', resolution=RESOLUTION, subset="full"):
         # super().__init__(args, data_dir, split="test", only_main=only_main, only_one_cine=only_one_cine)
         mode = mode.lower()
         assert mode in ['static', 'moving'], "mode should be either 'static' or 'moving'"
@@ -313,10 +311,18 @@ class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
         self.data_dir = data_dir
         self.mode = mode
         self._resolution = resolution
+        self.subset = subset
+
+        if subset not in ["full", "mini"]:
+            raise ValueError(f"Invalid subset {subset}. Must be one of ['full', 'mini']")
+        if subset == "full":
+            selected = SELECTED
+        else:
+            selected = SELECTED.replace("selected_full.json", f"selected_{subset}.json")
+        with open(selected, "r") as f:
+            cine_choose_sheet = json.load(f)
 
         self.info = []
-        with open(SELECTED, "r") as f:
-            cine_choose_sheet = json.load(f)
 
         for complexity in list_subset_names(os.path.join(data_dir, SUBFOLDER)):  # e.g., 'SinglePhysics'
             for scene in list_subset_names(os.path.join(data_dir, SUBFOLDER, complexity)):
@@ -330,7 +336,7 @@ class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
                     continue
 
                 if scene not in cine_choose_sheet:
-                    print(f"Scene {scene} not in cine_choose_sheet, skipping.")
+                    # print(f"Scene {scene} not in cine_choose_sheet, skipping.")
                     continue
 
                 if self.mode == "moving":

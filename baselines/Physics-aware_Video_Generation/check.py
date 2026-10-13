@@ -677,9 +677,9 @@ def parse_args() -> argparse.Namespace:
         help="Submission track (default: static)",
     )
     parser.add_argument(
-        "dataset",
+        "--subset",
         default=None,
-        help="dataset name (default: None)",
+        help="subset name (default: None)",
         )
     parser.add_argument(
         "--manifest",
@@ -709,8 +709,8 @@ def main() -> int:
     global COLOR_ENABLED
     args = parse_args()
 
-    if args.dataset is not None:
-        DEFAULT_JSON_PATH = f"./dataset/selected_{args.dataset}.json"
+    if args.subset is not None:
+        DEFAULT_JSON_PATH = f"./dataset/selected_{args.subset}.json"
     if args.no_color:
         COLOR_ENABLED = False
     valid = check_submission(

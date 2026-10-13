@@ -609,6 +609,7 @@ def main(args: argparse.Namespace) -> None:
             cfg.dataset_path,
             args.leaderboard_branch,
             cfg.resolution,
+            subset=args.subset
         )
     else:
         logger.info("Running validation inference...")
@@ -819,6 +820,12 @@ def parse_args() -> argparse.Namespace:
         default="static",
         help="Leaderboard submission branch",
     )
+    parser.add_argument(
+            "--subset",
+            choices=("full", "mini"),
+            default="full",
+            help="Leaderboard subset to use for inference (default: full)",
+        )
 
     args = parser.parse_args()
     if args.batch_size <= 0:
