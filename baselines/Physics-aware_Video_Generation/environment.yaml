@@ -12,6 +12,7 @@ dependencies:
     - torchvision
     - torchaudio
     - peft
+    - sentencepiece
     - xformers==0.0.34
     - wandb==0.22.2
     - tensorboard==2.20.0

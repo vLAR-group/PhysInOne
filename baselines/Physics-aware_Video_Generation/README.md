@@ -144,7 +144,7 @@ Download the specific evaluation input cases for your task (i.e., `video-generat
 
 ```bash
 cd ../..
-python scripts/download_data.py --task video-generation --output-dir ./PhysInOne_data
+python scripts/download_data.py --task video-generation --output-dir ./data
 cd ./baselines/Physics-aware_Video_Generation
 ```
 
@@ -173,7 +173,7 @@ If you downloaded the leaderboard dataset to `../../PhysInOne_data`, you can run
 ```bash
 python inference.py \
   --config ./configs/lora/Wan2.2-TI2V-5B.yaml \
-  --data_path ../../PhysInOne_data \
+  --data_path ../../data \
   --leaderboard \
   --leaderboard_branch static \
   --subset mini \
