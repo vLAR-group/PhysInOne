@@ -609,7 +609,8 @@ def main(args: argparse.Namespace) -> None:
             cfg.dataset_path,
             args.leaderboard_branch,
             cfg.resolution,
-            subset=args.subset
+            subset=args.subset,
+            image_resolution=cfg.image_resolution
         )
     else:
         logger.info("Running validation inference...")

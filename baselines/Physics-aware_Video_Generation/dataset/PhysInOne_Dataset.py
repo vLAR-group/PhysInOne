@@ -303,7 +303,7 @@ class PhysInOne(torch.utils.data.Dataset):
 
 SUBFOLDER = "leaderboard/video_generation"  # Subfolder for leaderboard/test data (if present)
 class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
-    def __init__(self, data_dir, mode='static', resolution=RESOLUTION, subset="full"):
+    def __init__(self, data_dir, mode='static', resolution=RESOLUTION, subset="full", **kwargs):
         # super().__init__(args, data_dir, split="test", only_main=only_main, only_one_cine=only_one_cine)
         mode = mode.lower()
         assert mode in ['static', 'moving'], "mode should be either 'static' or 'moving'"
@@ -312,6 +312,8 @@ class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
         self.mode = mode
         self._resolution = resolution
         self.subset = subset
+
+        self._image_resolution = kwargs.pop("image_resolution", None)
 
         if subset not in ["full", "mini"]:
             raise ValueError(f"Invalid subset {subset}. Must be one of ['full', 'mini']")
@@ -355,12 +357,11 @@ class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
 
     @property
     def image_resolution(self):
-        """Target (height, width) for video frames."""
-        resolution = getattr(self, "_resolution", None)
-        if resolution is not None:
-            return resolution
-        return RESOLUTION
-    
+        if self._image_resolution is None:
+            return self._resolution
+        else:
+            return self._image_resolution
+        
     def __getitem__(self, idx):
         """Return a single data sample for video generation.
 
@@ -369,41 +370,41 @@ class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
         idx = idx % len(self)
         item = self.info[idx]
         camera = item.split("/")[-1]
-        try:
-            with open(os.path.join(self.data_dir, SUBFOLDER, item, "..", f"blender_{camera}.json"), "r") as f:
-                meta = json.load(f)
-            camera_angle_x = meta.get("camera_angle_x", None)
-            fps = meta.get("fps", DEFAULT_FPS)
-            total_frames = meta.get("total_frames", [])
-            frames = meta.get("frames", [])
+        # try:
+        with open(os.path.join(self.data_dir, SUBFOLDER, item, "..", f"blender_{camera}.json"), "r") as f:
+            meta = json.load(f)
+        camera_angle_x = meta.get("camera_angle_x", None)
+        fps = meta.get("fps", DEFAULT_FPS)
+        total_frames = meta.get("total_frames", [])
+        frames = meta.get("frames", [])
 
-            if frames:
-                file_name = frames[0]["file_path"].split("/")[-1] + ".jpg"
-                main_frame_path = os.path.join(self.data_dir, SUBFOLDER, item, "rgb", file_name)
-                main_frame = cv2.imread(main_frame_path)
-                main_frame = cv2.cvtColor(main_frame, cv2.COLOR_BGR2RGB)
-            else:
-                main_frame = None
+        if frames:
+            file_name = frames[0]["file_path"].split("/")[-1] + ".jpg"
+            main_frame_path = os.path.join(self.data_dir, SUBFOLDER, item, "rgb", file_name)
+            main_frame = cv2.imread(main_frame_path)
+            main_frame = cv2.cvtColor(main_frame, cv2.COLOR_BGR2RGB)
+        else:
+            main_frame = None
 
-            transforms = np.array([np.array(frame["transform_matrix"]) for frame in frames])
+        transforms = np.array([np.array(frame["transform_matrix"]) for frame in frames])
 
-            # Load the text caption from the scene directory (parent of camera folder).
-            text = read_all_from_txt(os.path.join(self.data_dir, SUBFOLDER, item, "../caption.txt"))
+        # Load the text caption from the scene directory (parent of camera folder).
+        text = read_all_from_txt(os.path.join(self.data_dir, SUBFOLDER, item, "../caption.txt"))
 
-            camera_angle_x = torch.tensor(camera_angle_x) if camera_angle_x is not None else None
-            fps = torch.tensor(fps) if fps is not None else None
-            total_frames = torch.tensor(total_frames) if total_frames is not None else None
-            main_frame = torch.from_numpy(main_frame) / 255.0 if main_frame is not None else None
-            transforms = torch.from_numpy(transforms) if transforms is not None else None
+        camera_angle_x = torch.tensor(camera_angle_x) if camera_angle_x is not None else None
+        fps = torch.tensor(fps) if fps is not None else None
+        total_frames = torch.tensor(total_frames) if total_frames is not None else None
+        main_frame = torch.from_numpy(main_frame) / 255.0 if main_frame is not None else None
+        transforms = torch.from_numpy(transforms) if transforms is not None else None
 
-            main_frame = rearrange(main_frame, "h w c -> c h w")
-            img_res = self.image_resolution
-            main_frame = center_crop_and_resize(main_frame, img_res[0], img_res[1])
-        except Exception as e:
-            # Log the error and retry with the next index (simple fault tolerance).
-            print_yellow(f"Fail to fetch {idx}:{item} of the dataset")
-            print_yellow(str(e))
-            return self.__getitem__(idx + 1)
+        main_frame = rearrange(main_frame, "h w c -> c h w")
+        img_res = self.image_resolution
+        main_frame = center_crop_and_resize(main_frame, img_res[0], img_res[1])
+        # except Exception as e:
+        #     # Log the error and retry with the next index (simple fault tolerance).
+        #     print_yellow(f"Fail to fetch {idx}:{item} of the dataset")
+        #     print_yellow(str(e))
+        #     return self.__getitem__(idx + 1)
 
         return {
             "image": main_frame,
