@@ -1,8 +1,8 @@
-# Physics-Aware Video Generation in PhysInOne
+# Physics-Aware Video Generation on PhysInOne
 
 ## Table of Contents
 
-- [Physics-Aware Video Generation in PhysInOne](#physics-aware-video-generation-in-physinone)
+- [Physics-Aware Video Generation on PhysInOne](#physics-aware-video-generation-on-physinone)
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
   - [Quickstart](#quickstart)
