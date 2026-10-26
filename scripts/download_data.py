@@ -244,7 +244,7 @@ class TaskSpec:
 
 TASKS = {
     "video_generation": TaskSpec(
-        "video_generation.txt",
+        "video_generation_mini.txt",
         "Leaderboard/Video%20Generation/",
         "leaderboard/video_generation",
     ),
@@ -748,6 +748,15 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--subset",
+        choices=("mini", "full"),
+        default=None,
+        help=(
+            "Video Generation subset (default: mini). Only valid when the selected "
+            "tasks include video-generation. The full subset is not available yet."
+        ),
+    )
+    parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path("PhysInOne_data"),
@@ -808,7 +817,14 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
-    args = build_parser().parse_args(argv)
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    tasks = selected_tasks(args.task)
+    if args.subset is not None and "video_generation" not in tasks:
+        parser.error("--subset applies only to video-generation; include it in --task.")
+    video_subset = (args.subset or "mini") if "video_generation" in tasks else None
+    if video_subset == "full":
+        parser.error("The full Video Generation subset is not available yet. Use --subset mini.")
     if args.workers < 1:
         raise SystemExit("--workers must be at least 1")
     if args.retries < 0:
@@ -820,7 +836,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if any(character.isspace() for character in str(args.output_dir)):
         raise SystemExit("--output-dir must not contain whitespace")
 
-    tasks = selected_tasks(args.task)
     output_dir = args.output_dir.expanduser().resolve()
     selections: list[tuple[str, str, Path]] = []
     counts: dict[str, int] = {}
@@ -834,7 +849,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         )
 
     for task in tasks:
-        print(f"{task}: {counts[task]} file(s)")
+        label = f"{task} (subset={video_subset})" if task == "video_generation" else task
+        print(f"{label}: {counts[task]} file(s)")
     print(f"total: {len(selections)} file(s)")
     if args.scene and not selections:
         print("No files matched --scene.", file=sys.stderr)
@@ -933,6 +949,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     summary = {
         "repository": REPOSITORY,
         "revision": args.revision,
+        "video_generation_subset": video_subset,
         "tasks": tasks,
         "selected_files": len(selections),
         "successful_downloads": len(results) - download_failures,

@@ -193,6 +193,8 @@ The complete public Unreal Engine 5.5.4 asset release includes the project files
 
 All user-facing evaluation inputs for the four PhysInOne Leaderboard tasks are publicly available; ground-truth targets remain private. See the dedicated guide for task contents, copyable download commands, manifests, output layout, and resume instructions.
 
+Video Generation downloads default to the **mini subset (801 scenes)**. Use `python scripts/download_data.py --task video-generation --output-dir ./data --subset mini`; omitting `--subset` selects the same mini data. The `full` subset is not available yet and is rejected before downloading.
+
 - [Browse the public Leaderboard inputs](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Leaderboard)
 - [Read the Leaderboard download guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/LEADERBOARD_DOWNLOAD.md)
 - [Read the Tutorial of Video Generation](https://github.com/vLAR-group/PhysInOne/blob/main/baselines/Physics-aware_Video_Generation/README.md)
