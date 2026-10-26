@@ -195,6 +195,7 @@ All user-facing evaluation inputs for the four PhysInOne Leaderboard tasks are p
 
 - [Browse the public Leaderboard inputs](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Leaderboard)
 - [Read the Leaderboard download guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/LEADERBOARD_DOWNLOAD.md)
+- [Read the Tutorial of Video Generation](https://github.com/vLAR-group/PhysInOne/blob/main/baselines/Physics-aware_Video_Generation/README.md)
 
 ### 🛠️ Data Processing
 

@@ -659,6 +659,8 @@ def main(args: argparse.Namespace) -> None:
 
 def resolve_output_path(args: argparse.Namespace) -> None:
     """Derive output path and training mode from command-line arguments."""
+    if args.leaderboard_branch is not None:
+        args.output_path = os.path.join(args.output_path, args.leaderboard_branch)
     if args.from_pretrained is None:
         args.training_mode = "vanilla"
         args.output_path = str(
@@ -824,7 +826,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
             "--subset",
             choices=("full", "mini"),
-            default="full",
+            default="mini",
             help="Leaderboard subset to use for inference (default: full)",
         )
 
