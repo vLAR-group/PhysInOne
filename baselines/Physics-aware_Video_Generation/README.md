@@ -1,14 +1,47 @@
-# Overview
+# Physics-Aware Video Generation in PhysInOne
 
-While video generation models have demonstrated significant advancements in visual fidelity, they frequently struggle to capture physically plausible dynamics. **PhysInOne** is a diverse and extensive dataset comprising dynamic activities governed by a wide variety of real-world physical phenomena. This rich dataset serves as an ideal resource for training and fine-tuning next-generation video models to faithfully emulate real-world physics.
+## Table of Contents
 
-This repository provides the official codebase for fine-tuning and running inference on video generation models using the PhysInOne dataset.
+- [Physics-Aware Video Generation in PhysInOne](#physics-aware-video-generation-in-physinone)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Quickstart](#quickstart)
+    - [1. Installation](#1-installation)
+    - [2. Inference](#2-inference)
+    - [3. Training](#3-training)
+    - [4. Checkpoints](#4-checkpoints)
+      - [Available Checkpoints](#available-checkpoints)
+      - [Download Checkpoints](#download-checkpoints)
+      - [Validate Checkpoints](#validate-checkpoints)
+    - [5. Configurations](#5-configurations)
+  - [Leaderboard (Coming Soon)](#leaderboard-coming-soon)
+    - [Evaluation Tracks and Subsets](#evaluation-tracks-and-subsets)
+    - [Input Conditions](#input-conditions)
+    - [Inference \& Submission Workflow](#inference--submission-workflow)
+      - [Step 1: Download Benchmark Inputs](#step-1-download-benchmark-inputs)
+      - [Step 2: Run Inference](#step-2-run-inference)
+      - [Step 3: Package and Verify Results](#step-3-package-and-verify-results)
+      - [Step 4: Upload and Submit Results](#step-4-upload-and-submit-results)
 
-# Quickstart
+## Overview
 
-## 1. Installation
+Video generation models have made substantial progress in visual fidelity, but they still struggle to reproduce physically plausible dynamics. **PhysInOne** is a diverse, large-scale dataset of dynamic activities governed by real-world physical phenomena. It supports training and fine-tuning video generation models to better capture physical behavior.
 
-We recommend using Conda to manage dependencies. Create and activate the environment using the provided configuration:
+This directory contains the official implementation for fine-tuning video generation models and running inference on the PhysInOne dataset.
+
+**Paper:** *PhysInOne: Visual Physics Learning and Reasoning in One Suite*
+
+[GitHub](https://github.com/vLAR-group/PhysInOne) · [Project Website](https://vlar-group.github.io/PhysInOne.html) · [arXiv](https://arxiv.org/abs/2604.09415) · [Dataset](https://huggingface.co/datasets/vLAR/PhysInOne)
+
+![PhysInOne dataset overview](https://raw.githubusercontent.com/vLAR-group/PhysInOne/main/teaser.png)
+
+## Quickstart
+
+Run the following commands from `baselines/Physics-aware_Video_Generation/` unless otherwise noted. Replace placeholder paths with the locations of your configuration files, dataset, and checkpoints.
+
+### 1. Installation
+
+We recommend using Conda to manage dependencies. Create and activate the environment, then install the local `diffusers` package:
 
 ```bash
 conda env create -f environment.yaml
@@ -18,105 +51,139 @@ pip install -e ".[torch]"
 cd ..
 ```
 
-## 2. Inference
+### 2. Inference
 
-To run inference and evaluate baseline video generation models on the PhysInOne dataset, use the following command:
-
-```bash
-python inference.py --config /path/to/baseline/configuration --data_path /path/to/PhysInOne
-```
-
-**Example:** Evaluating the vanilla `Wan2.2-TI2V-5B` model on the PhysInOne dataset located at `/media/SSD2/PhysInOne`:
-```bash
-python inference.py --config ./configs/lora/Wan2.2-TI2V-5B.yaml --data_path /media/SSD2/PhysInOne
-```
-
-## 3. Training
-
-To fine-tune a baseline video generation model on the PhysInOne dataset, use the Hugging Face `accelerate` launcher:
+Run inference with a baseline model using its configuration file and the path to the PhysInOne dataset:
 
 ```bash
-accelerate launch --main_process_port 22525 --config_file /path/to/accelerate/config train.py --config /path/to/training/config
+python inference.py \
+  --config /path/to/baseline/configuration.yaml \
+  --data_path /path/to/PhysInOne
 ```
 
-**Example:** Fine-tuning the `Wan2.2-TI2V-5B` model using LoRA on the PhysInOne dataset (located at `/media/SSD2/PhysInOne`) utilizing 8 H200 GPUs with bfloat16 precision:
-```bash
-accelerate launch --main_process_port 22525 --config_file configs/accelerate/8_16bf.yaml train.py --config configs/lora/Wan2.2-TI2V-5B.yaml --data_path /media/SSD2/PhysInOne
-```
-
-**Validation:** After training, you can evaluate the latest saved checkpoints using the inference script:
+**Example:** Run the vanilla `Wan2.2-TI2V-5B` model on the dataset stored at `/media/SSD2/PhysInOne`:
 
 ```bash
-python inference.py --from_pretrained ./models/lora_Wan-AI --data_path /path/to/dataset --checkpoint latest
+python inference.py \
+  --config ./configs/lora/Wan2.2-TI2V-5B.yaml \
+  --data_path /media/SSD2/PhysInOne
 ```
 
-## 4. Checkpoints
+### 3. Training
 
-We provide several fine-tuned models for you to explore. We highly encourage community contributions; if you have developed an improved model or a novel approach, please feel free to contact us!
+Use the Hugging Face Accelerate launcher to fine-tune a baseline model on PhysInOne:
 
-### 4.1 Available Checkpoints
+```bash
+accelerate launch \
+  --main_process_port 22525 \
+  --config_file /path/to/accelerate/config.yaml \
+  train.py \
+  --config /path/to/training/config.yaml
+```
 
-| Base Model | Fine-tuning Method | Checkpoint Name |
-| :--- | :--- | :--- |
-| [**Wan2.2-5B**]([WAN_MODEL_LINK]https://arxiv.org/abs/2503.20314) | [**LoRA**]([LORA_METHOD_LINK]https://arxiv.org/pdf/2106.09685v1/1000) | `lora_Wan-AI` |
-| [**Wan2.2-5B**]([WAN_MODEL_LINK]https://arxiv.org/abs/2503.20314) | [**SFT**]([SFT_METHOD_LINK]https://aclanthology.org/P18-1031/) | `sft_Wan-AI` |
-| [**Wan2.2-5B**]([WAN_MODEL_LINK]https://arxiv.org/abs/2503.20314) | [**FLT**]([FLT_METHOD_LINK]https://proceedings.neurips.cc/paper_files/paper/2014/hash/532a2f85b6977104bc93f8580abbb330-Abstract.html) | `flt_Wan-AI` |
-| [**Stable Video Diffusion XT**]([SVD_MODEL_LINK]https://arxiv.org/abs/2311.15127) | [**LoRA**]([LORA_METHOD_LINK]https://arxiv.org/pdf/2106.09685v1/1000)  | `lora_Wan-AI` |
-| [**Stable Video Diffusion XT**]([SVD_MODEL_LINK]https://arxiv.org/abs/2311.15127) | [**SFT**]([SFT_METHOD_LINK]https://aclanthology.org/P18-1031/) | `sft_Wan-AI` |
-| [**Stable Video Diffusion XT**]([SVD_MODEL_LINK]https://arxiv.org/abs/2311.15127) | [**FLT**]([FLT_METHOD_LINK]https://proceedings.neurips.cc/paper_files/paper/2014/hash/532a2f85b6977104bc93f8580abbb330-Abstract.html) | `flt_Wan-AI` |
-| [**CogVideoX-1.5-5B**]([COGVIDEO_MODEL_LINK]https://proceedings.iclr.cc/paper_files/paper/2025/hash/ce31378e9f41d8907e97dab172b6c559-Abstract-Conference.html) | [**LoRA**]([LORA_METHOD_LINK]https://arxiv.org/pdf/2106.09685v1/1000)  | `lora_THUDM` |
+**Example:** Fine-tune `Wan2.2-TI2V-5B` with LoRA using eight H200 GPUs and bfloat16 precision:
 
-### 4.2 Downloads
+```bash
+accelerate launch \
+  --main_process_port 22525 \
+  --config_file configs/accelerate/8_16bf.yaml \
+  train.py \
+  --config configs/lora/Wan2.2-TI2V-5B.yaml \
+  --data_path /media/SSD2/PhysInOne
+```
 
-To download all available checkpoints at once, run the following command:
+After training, evaluate the latest saved checkpoint:
+
+```bash
+python inference.py \
+  --from_pretrained ./models/lora_Wan-AI \
+  --data_path /path/to/PhysInOne \
+  --checkpoint latest
+```
+
+### 4. Checkpoints
+
+We provide fine-tuned checkpoints for several baseline models. Community contributions are welcome—please contact us if you develop an improved model or a new fine-tuning approach.
+
+#### Available Checkpoints
+
+| Base Model | Fine-Tuning Method | Checkpoint Name |
+| --- | --- | --- |
+| Wan2.2-TI2V-5B | LoRA | `lora_Wan-AI` |
+| Wan2.2-TI2V-5B | SFT | `sft_Wan-AI` |
+| Wan2.2-TI2V-5B | FLT | `flt_Wan-AI` |
+| Stable Video Diffusion XT | LoRA | `lora_Wan-AI` |
+| Stable Video Diffusion XT | SFT | `sft_Wan-AI` |
+| Stable Video Diffusion XT | FLT | `flt_Wan-AI` |
+| CogVideoX-1.5-5B | LoRA | `lora_THUDM` |
+
+> **Note:** The checkpoint names above are retained from the provided checkpoint list. The Stable Video Diffusion XT entries share names with the Wan entries; confirm these identifiers in `scripts/download_ckpt.py` before downloading.
+
+See [Baseline Resources](#baseline-resources) for model papers and official repositories.
+
+#### Download Checkpoints
+
+Download all available checkpoints:
+
 ```bash
 python scripts/download_ckpt.py
 ```
 
-You can also specify a particular checkpoint name to download:
+To download a specific checkpoint, pass its name with `--name`:
+
 ```bash
 python scripts/download_ckpt.py --name <checkpoint_name>
 ```
 
-**Example:** To download the `lora_Wan-AI` checkpoint:
+**Example:** Download the `lora_Wan-AI` checkpoint:
+
 ```bash
 python scripts/download_ckpt.py --name lora_Wan-AI
 ```
 
-### 4.3 Validation
+#### Validate Checkpoints
 
-Similarly, use the following command to validate the models:
+Run inference on a downloaded checkpoint:
+
 ```bash
-python inference.py --from_pretrained /path/to/checkpoints --data_path /path/to/dataset --checkpoint latest
+python inference.py \
+  --from_pretrained /path/to/checkpoints \
+  --data_path /path/to/PhysInOne \
+  --checkpoint latest
 ```
 
-**Example:** To validate the **latest** checkpoint located at `./checkpoints/flt_Wan-AI/Wan2.2-TI2V-5B-Diffusers` on the PhysInOne dataset (located at `/media/SSD2/PhysInOne`):
+**Example:** Evaluate the latest checkpoint in `./checkpoints/flt_Wan-AI/Wan2.2-TI2V-5B-Diffusers`:
+
 ```bash
-python inference.py --from_pretrained ./checkpoints/flt_Wan-AI/Wan2.2-TI2V-5B-Diffusers --data_path /media/SSD2/PhysInOne --checkpoint latest
+python inference.py \
+  --from_pretrained ./checkpoints/flt_Wan-AI/Wan2.2-TI2V-5B-Diffusers \
+  --data_path /media/SSD2/PhysInOne \
+  --checkpoint latest
 ```
 
-The generated inference results will be saved in the `./outputs/flt_Wan-AI/Wan2.2-TI2V-5B-Diffusers_ckpt_latest` directory.
+For this example, generated results are saved to:
 
-## 5. Configurations
+```
+./outputs/flt_Wan-AI/Wan2.2-TI2V-5B-Diffusers_ckpt_latest
+```
 
-We provide several example configuration files in the `./configs` directory. Feel free to customize these files to suit your specific hardware setups and experimental requirements.
+### 5. Configurations
 
-Below is the polished and structured version of your `README.md` section:
+Example configuration files are available in `./configs`. Customize them to match your hardware, model settings, and experimental requirements.
 
----
+## Leaderboard (Coming Soon)
 
-# Leaderboard (Coming Soon)
+We welcome submissions to the **PhysInOne Benchmark**. Benchmark inputs and submission tools are available to help you prepare your evaluation results ahead of the leaderboard launch.
 
-We welcome evaluations on our **PhysInOne Benchmark**! Official evaluation submission pipelines and benchmark datasets are now available.
+### Evaluation Tracks and Subsets
 
-### Evaluation Tracks & Subsets
+The video generation benchmark includes two tracks based on camera behavior:
 
-For the **Video Generation** task, we divide evaluation into two distinct tracks based on camera behavior:
+- **Static Camera Track:** Evaluates physical dynamics—including mechanics, optics, fluid dynamics, and magnetism—from a fixed viewpoint.
 
-1. **Static Camera Track:** Focuses on pure dynamic physical phenomena (mechanics, optics, fluid dynamics, magnetism) under a fixed viewpoint.
-2. **Moving Camera Track:** Evaluates continuous dynamic visual physics generated under camera trajectory shifts and changing perspectives.
+- **Moving Camera Track:** Evaluates physical dynamics under changing camera positions and perspectives.
 
-Participants can choose to evaluate their submissions on either the **full dataset** (15,173 data pairs) or the **mini dataset** (683 data pairs) for each track.
+For each track, you can evaluate on the **full test dataset** containing 15,411 data pairs or the **mini test dataset** containing 801 data pairs.
 
 ### Input Conditions
 
@@ -124,23 +191,18 @@ For each test case across both tracks, you will receive:
 
 * **Initial Frame:** The starting frame of the target sequence ($t = 0$).
 * **Textual Prompt:** A natural-language description of the physical scene and activity.
-* **Camera Metadata:** Intrinsic parameters and camera extrinsics (fixed pose or full trajectory).
+* **Camera Metadata:** Intrinsic parameters and camera extrinsics.
 
 > **Note:** Models may consume any combination of these conditions (e.g., text-only, image + text, or full frame + text + camera trajectory). Please specify your exact conditioning inputs upon submission.
 
----
 
-### Submission & Download Workflow
+### Inference & Submission Workflow
 
-Follow this step-by-step guide to download the benchmark inputs, run inference, package your results, and submit them to the PhysInOne Leaderboard.
-
----
+Follow the steps below to download benchmark inputs, run inference, package and verify your outputs, and submit your results.
 
 #### Step 1: Download Benchmark Inputs
 
-First, fetch the leaderboard utility scripts and download the test inputs for your target task.
-
-Download the specific evaluation input cases for your task (i.e., `video-generation`):
+First of all, download the video generation inputs:
 
 ```bash
 cd ../..
@@ -148,7 +210,7 @@ python scripts/download_data.py --task video-generation --output-dir ./data
 cd ./baselines/Physics-aware_Video_Generation
 ```
 
-The downloaded inputs are stored at `PhysInOne_data/leaderboard/video_generation/`.
+The downloaded inputs are stored in `../../data/leaderboard/video_generation/`.
 
 #### Step 2: Run Inference
 
@@ -159,16 +221,13 @@ python inference.py \
   --config <path/to/your/configuration.yaml> \
   --data_path <path/to/leaderboard_dataset> \
   --leaderboard True \
-  --leaderboard_branch static \
+  --leaderboard_track <your track : static or moving> \
   --output_path <path/to/your/output> \
-  --skip_exist
 ```
 
-> 💡 **Tip:** Change `--leaderboard_branch static` to `moving` if you are evaluating on the **Moving Camera Track**.
+**Example: Static Camera Track on Mini Test Dataset**
 
-**Example: Static Camera Track**
-
-If you downloaded the leaderboard dataset to `../../PhysInOne_data`, you can run inference using the vanilla `Wan2.2-TI2V-5B` model for the **Static Track** on **mini subset** like this:
+If you downloaded the leaderboard dataset to `../../data`, you can run inference using the vanilla `Wan2.2-TI2V-5B` model for the **Static Track** on **mini test subset** like this:
 
 ```bash
 python inference.py \
@@ -179,52 +238,51 @@ python inference.py \
   --subset mini \
   --output_path ./leaderboard_output
 ```
+#### Step 3: Package and Verify Results
 
----
-
-#### Step 3: Package Results
-
-Once inference is complete, use the provided utility script to bundle your outputs into the required submission format.
+Use the provided utility script to package your outputs in the required submission format:
 
 ```bash
-bash ./archive_results.sh <path/to/your/output> <path/to/your/submission_folder>
+bash ./archive_results.sh /path/to/your/output /path/to/your/submission_folder
 ```
 
-**Example**
+**Example:**
+
 ```bash
 bash ./archive_results.sh ./leaderboard_output ./submission
 ```
 
-After the script finishes, you will find individual `.zip` files inside the `./submission` directory.
+The script creates individual `.zip` archives in `./submission`.
 
-> ⚠️ **Important Note on Zip Structure:** 
-> Each zip archive is structured to contain **only the direct subfolders** (e.g., `CineCamera_*`). It does **not** contain an outer parent folder with the same name as the zip file.
+> **Important:** Each archive must contain the result subfolders, such as `CineCamera_*`, directly at its root. Do not wrap them in an additional parent folder named after the archive.
 
-##### Verify Your Submission
-Before uploading, strictly verify that your submission directory is properly formatted and legal using our validation script:
+Before uploading, validate the submission structure using the same track and subset used for inference:
+
 ```bash
-python check.py <path/to/your/submission_folder> [track] --subset [your-subset]
+python check.py /path/to/your/submission_folder <static_or_moving> --subset <mini_or_full>
 ```
 
-**Example: Verify Static Track mini-subset Submission**
+**Example:** Validate a Static Camera Track submission for the mini subset:
+
 ```bash
 python check.py ./submission static --subset mini
-# Use 'moving' instead of 'static' for the moving camera track
-# Or, use 'full' instead of 'mini' for full set evaluation
-
 ```
 
----
+Use `moving` for the Moving Camera Track or `full` for the full test dataset.
 
-#### Step 4: Submit Your Results
+#### Step 4: Upload and Submit Results
 
-1. **Upload:** Upload your verified `./submission` folder to your own **Hugging Face repository**.
+Upload your verified submission folder to your Hugging Face repository:
 
 ```bash
-python ./upload.py ./submission --repo username/repository --remote_folder submissions/team-name --token your-token
+python ./upload.py ./submission \
+  --repo username/repository \
+  --remote_folder submissions/team-name \
+  --token <your_hugging_face_token>
 ```
-(You can refer to our official inference example here: [vLAR/PhysInOne-Leaderboard-Run-by-VLAR](https://huggingface.co/datasets/vLAR/PhysInOne-Leaderboard-Run-by-VLAR))
 
-2. **Submit:** Navigate to the **Leaderboard Portal** and submit your Hugging Face repository link.
+Replace the repository name, remote folder, and token with your own values. Keep your token private and do not commit it to the repository.
 
-🎉 **That's it!** We will automatically compute your metrics and update the leaderboard as soon as possible.
+For a reference submission, see [vLAR/PhysInOne-Leaderboard-Run-by-VLAR](https://huggingface.co/datasets/vLAR/PhysInOne-Leaderboard-Run-by-VLAR).
+
+Submit your Hugging Face repository link through the Leaderboard Portal when it becomes available. Your results will be evaluated automatically, and the leaderboard will be updated after evaluation.
