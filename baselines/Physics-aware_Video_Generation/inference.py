@@ -26,7 +26,7 @@ Examples:
     # Leaderboard inference:
     accelerate launch --num_processes 4 inference.py \
         --config ./config.yaml --data_path /path/to/leaderboard_dataset \
-        --leaderboard --leaderboard_branch static --batch_size 2
+        --leaderboard --leaderboard_track static --batch_size 2
 
 Notes:
     * Effective global batch size = batch_size * number of processes/GPUs.
@@ -607,7 +607,7 @@ def main(args: argparse.Namespace) -> None:
 
         validation_dataset = PhysInOne(
             cfg.dataset_path,
-            args.leaderboard_branch,
+            args.leaderboard_track,
             cfg.resolution,
             subset=args.subset,
             image_resolution=cfg.image_resolution
@@ -659,8 +659,8 @@ def main(args: argparse.Namespace) -> None:
 
 def resolve_output_path(args: argparse.Namespace) -> None:
     """Derive output path and training mode from command-line arguments."""
-    if args.leaderboard_branch is not None:
-        args.output_path = os.path.join(args.output_path, args.leaderboard_branch)
+    if args.leaderboard_track is not None:
+        args.output_path = os.path.join(args.output_path, args.leaderboard_track)
     if args.from_pretrained is None:
         args.training_mode = "vanilla"
         args.output_path = str(
@@ -818,10 +818,10 @@ def parse_args() -> argparse.Namespace:
         help="Use the leaderboard dataset instead of the validation split",
     )
     parser.add_argument(
-        "--leaderboard_branch",
+        "--leaderboard_track",
         choices=("static", "moving"),
         default="static",
-        help="Leaderboard submission branch",
+        help="Leaderboard submission track",
     )
     parser.add_argument(
             "--subset",

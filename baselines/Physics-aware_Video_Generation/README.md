@@ -175,7 +175,7 @@ python inference.py \
   --config ./configs/lora/Wan2.2-TI2V-5B.yaml \
   --data_path ../../data \
   --leaderboard \
-  --leaderboard_branch static \
+  --leaderboard_track static \
   --subset mini \
   --output_path ./leaderboard_output
 ```
