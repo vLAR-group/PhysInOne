@@ -541,16 +541,6 @@ def main(args: argparse.Namespace) -> None:
     text_encoder = components["text_encoder"]
     image_encoder = components["image_encoder"]
 
-    if (
-        cfg.model_key.startswith("stabilityai/stable-video-diffusion")
-        and args.batch_size > 4
-    ):
-        accelerator.print(
-            "Stable Video Diffusion supports at most batch size 4 per GPU; "
-            f"reducing --batch_size from {args.batch_size} to 4."
-        )
-        args.batch_size = 4
-
     freeze_models([denoiser, vae, text_encoder, image_encoder])
     if args.checkpoint is not None:
         denoiser = apply_training_mode(denoiser, args.training_mode, cfg)
@@ -825,12 +815,16 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
             "--subset",
-            choices=("full", "mini"),
+            choices=("full", "large", "small", "mini"),
             default="mini",
-            help="Leaderboard subset to use for inference (default: full)",
+            help="Leaderboard subset to use for inference (default: mini)",
         )
 
     args = parser.parse_args()
+
+    if args.subset not in ["mini"]:
+        raise NotImplementedError(f"Subset {args.subset} is not supported.")
+    
     if args.batch_size <= 0:
         parser.error("--batch_size must be a positive integer")
     if args.from_pretrained is None and args.checkpoint is not None:
