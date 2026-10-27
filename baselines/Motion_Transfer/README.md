@@ -1,6 +1,6 @@
-# Overview
+# Motion Transfer on PhysInOne
 
-This repository provides inference pipelines for two open-source motion-transfer methods on PhysInOne.
+This tutorial instructs inference pipelines for two open-source motion transfer methods on PhysInOne.
 
 | Method | Official repository | Checkpoints |
 | :--- | :--- | :--- |
