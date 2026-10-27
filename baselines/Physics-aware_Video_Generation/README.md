@@ -259,7 +259,7 @@ The script creates individual `.zip` archives in `./submission`.
 Before uploading, validate the submission structure using the same track and subset used for inference:
 
 ```bash
-python check.py /path/to/your/submission_folder <static_or_moving> --subset <mini_or_full>
+python check.py /path/to/your/submission_folder <static_or_moving> --subset <mini_or_large>
 ```
 
 **Example:** Validate a Static Camera Track submission for the mini subset:
@@ -268,7 +268,7 @@ python check.py /path/to/your/submission_folder <static_or_moving> --subset <min
 python check.py ./submission static --subset mini
 ```
 
-Use `moving` for the Moving Camera Track or `full` for the full test dataset.
+Use `moving` for the Moving Camera Track or `large` for the large test dataset.
 
 #### Step 4: Upload and Submit Results
 
