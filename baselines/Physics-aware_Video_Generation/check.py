@@ -108,7 +108,7 @@ except ImportError:
     )
     raise SystemExit(2)
 
-DEFAULT_JSON_PATH = "./dataset/selected.json"
+DEFAULT_JSON_PATH = "./dataset/selected_mini.json"
 MOVING_FOLDER_NAME = "CineCamera_Moving"
 CAMERA_PREFIX = "CineCamera_"
 RGB_FOLDER_NAME = "rgb"
