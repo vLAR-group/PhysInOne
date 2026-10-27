@@ -183,7 +183,7 @@ The video generation benchmark includes two tracks based on camera behavior:
 
 - **Moving Camera Track:** Evaluates physical dynamics under changing camera positions and perspectives.
 
-For each track, you can evaluate on the **full test dataset** containing 15,411 data pairs or the **mini test dataset** containing 801 data pairs.
+For each track, you can evaluate on the **large test dataset** (coming soon) containing 15,411 data pairs or the **mini test dataset** containing 801 data pairs.
 
 ### Input Conditions
 
