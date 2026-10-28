@@ -1,5 +1,8 @@
 # Directory Structure
 
+DefGS is the model name used in the PhysInOne paper. Its code directory retains
+the legacy name `Def3G` for compatibility with existing paths and commands.
+
 ```text
 Def3G/
 ├── infer_physinone.py

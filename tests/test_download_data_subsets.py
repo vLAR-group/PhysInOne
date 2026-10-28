@@ -31,16 +31,40 @@ class VideoSubsetTests(unittest.TestCase):
         self.assertIn('video_generation (subset=mini): 4005 file(s)', default[1])
         self.assertEqual(sum(line.startswith('https://') for line in default[1].splitlines()), 4005)
 
-    def test_full_fails_before_io(self):
+    def test_large_fails_before_io(self):
         for task in ('video-generation', 'all', 'vg'):
             with self.subTest(task=task), mock.patch.object(downloader, 'read_manifest') as read, \
                  mock.patch.object(downloader.urllib.request, 'urlopen') as network, \
                  mock.patch.object(Path, 'mkdir') as mkdir, contextlib.redirect_stderr(io.StringIO()) as err:
                 with self.assertRaises(SystemExit) as raised:
-                    downloader.main(['--task', task, '--subset', 'full', '--dry-run'])
+                    downloader.main(['--task', task, '--subset', 'large', '--dry-run'])
                 self.assertEqual(raised.exception.code, 2)
                 self.assertIn('not available yet', err.getvalue())
+                self.assertIn('large Video Generation', err.getvalue())
                 read.assert_not_called(); network.assert_not_called(); mkdir.assert_not_called()
+
+    def test_full_is_rejected_before_io(self):
+        with mock.patch.object(downloader, 'read_manifest') as read, \
+             mock.patch.object(downloader.urllib.request, 'urlopen') as network, \
+             mock.patch.object(Path, 'mkdir') as mkdir, contextlib.redirect_stderr(io.StringIO()) as err:
+            with self.assertRaises(SystemExit) as raised:
+                downloader.main(['--task', 'vg', '--subset', 'full', '--dry-run'])
+            self.assertEqual(raised.exception.code, 2)
+            self.assertIn("invalid choice: 'full'", err.getvalue())
+            self.assertIn('--subset {mini,large}', err.getvalue())
+            read.assert_not_called(); network.assert_not_called(); mkdir.assert_not_called()
+
+    def test_help_advertises_mini_large(self):
+        help_text = downloader.build_parser().format_help()
+        self.assertIn('--subset {mini,large}', help_text)
+        self.assertNotIn('--subset {mini,full}', help_text)
+
+    def test_small_is_rejected_before_io(self):
+        with mock.patch.object(downloader, 'read_manifest') as read, \
+             contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit):
+                downloader.main(['--task', 'vg', '--subset', 'small'])
+            read.assert_not_called()
 
     def test_explicit_subset_rejected_for_unrelated_task(self):
         with contextlib.redirect_stderr(io.StringIO()):

@@ -1,8 +1,12 @@
-# Def3G for PhysInOne Future Prediction
+# DefGS for PhysInOne Future Prediction
 
-This folder contains the cleaned Def3G baseline used for long-term future-frame
-prediction. Def3G is optimized independently for every scene; there is no
+This folder contains the cleaned DefGS baseline used for long-term future-frame
+prediction. DefGS is optimized independently for every scene; there is no
 single dataset-wide training checkpoint.
+
+**Naming:** DefGS is the model name used in the PhysInOne paper. The existing
+code directory and environment name retain the legacy `Def3G` / `def3g`
+identifiers for compatibility; these are not a separate baseline.
 
 ## Release status
 
@@ -12,7 +16,7 @@ single dataset-wide training checkpoint.
   future RGB and local metric code are intentionally excluded.
 - Weights: not included yet; use `checkpoints/` for the per-scene release.
 
-The inspected Def3G snapshot did not contain a repository-level license. Read
+The inspected legacy `Def3G` source snapshot did not contain a repository-level license. Read
 `THIRD_PARTY_NOTICES.md` before publishing this folder.
 
 ## Installation

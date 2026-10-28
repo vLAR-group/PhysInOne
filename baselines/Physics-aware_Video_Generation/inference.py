@@ -815,15 +815,15 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
             "--subset",
-            choices=("full", "large", "small", "mini"),
+            choices=("mini", "large"),
             default="mini",
-            help="Leaderboard subset to use for inference (default: mini)",
+            help="Leaderboard subset (default: mini); large is not available yet",
         )
 
     args = parser.parse_args()
 
-    if args.subset not in ["mini"]:
-        raise NotImplementedError(f"Subset {args.subset} is not supported.")
+    if args.subset == "large":
+        parser.error("The large Video Generation subset is not available yet. Use --subset mini.")
     
     if args.batch_size <= 0:
         parser.error("--batch_size must be a positive integer")

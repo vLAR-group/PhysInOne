@@ -112,7 +112,7 @@ python scripts/download_data.py \
 
 The local task directory is `data/leaderboard/future_prediction/`, with physics
 category subdirectories and one extracted directory per scene. No access token
-is required for these public inputs. The `--subset mini/full` option belongs to
+is required for these public inputs. The `--subset mini/large` option belongs to
 Video Generation, not Future Prediction.
 
 Baseline-specific installation, training, checkpoint, and inference instructions:
@@ -120,7 +120,7 @@ Baseline-specific installation, training, checkpoint, and inference instructions
 | Baseline | Usage guide |
 | --- | --- |
 | FreeGave | [FreeGave README](Long-term_Future_Frame_Prediction/FreeGave/README.md) |
-| Def3G | [Def3G README](Long-term_Future_Frame_Prediction/Def3G/README.md) |
+| DefGS | [DefGS README](Long-term_Future_Frame_Prediction/Def3G/README.md) (legacy code directory: `Def3G`) |
 | TRACE | [TRACE README](Long-term_Future_Frame_Prediction/TRACE/README.md) |
 | TiNeuVox | [TiNeuVox README](Long-term_Future_Frame_Prediction/TiNeuVox/README.md) |
 | MAGI-1 | [MAGI-1 README](Long-term_Future_Frame_Prediction/MAGI-1/README.md) |

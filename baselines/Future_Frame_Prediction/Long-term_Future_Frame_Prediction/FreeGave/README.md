@@ -4,7 +4,8 @@ This folder contains the cleaned FreeGave baseline code used for the
 PhysInOne future-prediction task. It provides:
 
 - a ground-truth-free inference entry point;
-- a training entry point that reads only the public training split;
+- a per-scene training entry point that reads only public observed RGB frames
+  from that evaluation scene's seen views;
 - the CUDA extensions required by Gaussian splatting;
 - the expected dataset, checkpoint, and prediction layouts.
 
@@ -19,8 +20,13 @@ folder yet.
 file. It writes predictions only and does not compute metrics or copy ground
 truth.
 
-`train_physinone.py` loads `transforms_train.json` and its public RGB frames.
-Validation and future-test images are skipped during public training.
+`train_physinone.py` optimizes a separate model for each evaluation scene using
+`transforms_train.json` and the public first-half RGB observations from its
+10 **seen views** (also called training cameras). This is a camera/time split
+within a held-out evaluation scene, **not the dataset-level Train split**.
+RGB from the two novel views and all second-half future frames is withheld
+and must not be used for optimization. `transforms_val.json` identifies the
+novel cameras; it does not provide training images.
 
 ## Installation
 
@@ -131,10 +137,10 @@ python infer_physinone.py \
   --frame-end 75
 ```
 
-## Training
+## Per-scene training
 
-The following command reproduces the public-data training path without loading
-validation or future-test RGB frames:
+The following command fits the evaluation scene's public observed frames from
+seen views only. It does not load novel-view RGB or future-frame GT:
 
 ```bash
 python train_physinone.py \

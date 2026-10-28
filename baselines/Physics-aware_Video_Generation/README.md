@@ -185,6 +185,11 @@ The video generation benchmark includes two tracks based on camera behavior:
 
 For each track, you can evaluate on the **large test dataset** (coming soon) containing 15,411 data pairs or the **mini test dataset** containing 801 data pairs.
 
+The public subset names are `mini` and `large` across downloading, inference,
+and submission validation. `mini` is the default. Only `mini` and `large`
+are accepted; the old `full` and `small` spellings are not supported.
+This naming change does not change scene membership or release availability.
+
 ### Input Conditions
 
 For each test case across both tracks, you will receive:
@@ -206,11 +211,16 @@ First of all, download the video generation inputs:
 
 ```bash
 cd ../..
-python scripts/download_data.py --task video-generation --output-dir ./data
+python scripts/download_data.py --task video-generation --subset mini --output-dir ./data
 cd ./baselines/Physics-aware_Video_Generation
 ```
 
 The downloaded inputs are stored in `../../data/leaderboard/video_generation/`.
+
+The corresponding large-subset download option is `--subset large`. The large
+release is not available yet: downloading or running inference with that
+option exits with an explanatory error. It never silently downloads or runs
+the mini subset instead.
 
 #### Step 2: Run Inference
 
@@ -269,6 +279,15 @@ python check.py ./submission static --subset mini
 ```
 
 Use `moving` for the Moving Camera Track or `large` for the large test dataset.
+
+For validation, `mini` selects `dataset/selected_mini.json`; `large` selects
+the existing internal filename `dataset/selected_full.json`. That legacy
+filename is not a public subset name and is not renamed by this change.
+The large index is not bundled in the current release. Validation therefore
+requires the official large index when it becomes available; it must not use
+the mini index as a fallback. An explicit `--manifest PATH` overrides automatic
+index selection; `SUBMISSION_MANIFEST` is the fallback override when no
+`--manifest` is supplied. Ensure any override matches the intended subset.
 
 #### Step 4: Upload and Submit Results
 

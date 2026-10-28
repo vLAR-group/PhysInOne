@@ -38,9 +38,20 @@ in `example/4.5B/4.5B_distill_config.json` to those paths.
 
 ## Inference and evaluation
 
-The script conditions on the last 32 available public frames per static camera.
-If a clip is shorter, it left-pads with the earliest available frame. Moving
-camera folders are not selected by the released future-prediction data.
+MAGI-1 supports **seen-view future prediction only**: predict the second-half
+RGB for the 10 seen views (training cameras) identified by
+`transforms_train.json`. It does not synthesize the two held-out novel views
+identified by `transforms_val.json`.
+
+For each seen camera, the script conditions on the last 32 available frames
+of its public first-half clip. If the clip is shorter, it left-pads with the
+earliest available public frame.
+
+Use an input directory containing only the public first-half RGB for those
+10 seen cameras. The current entry point enumerates RGB camera directories;
+it does not independently filter them against the training-camera JSON.
+Never point it at a full rendered scene or private GT directory containing
+future frames, novel-camera RGB, or moving-camera RGB.
 
 ```bash
 export MASTER_ADDR=localhost MASTER_PORT=6009
@@ -53,10 +64,18 @@ export PYTHONPATH="$PWD"
 python infer_physinone.py   --scene-dir /path/to/FuturePrediction/SinglePhysics/<scene>_trajectory   --output-dir ./predictions/SinglePhysics/<scene>_trajectory   --config example/4.5B/4.5B_distill_config.json
 ```
 
-`transforms_test.json` determines the target views, timestamps, frame names,
-and prediction count. The script never loads future RGB and writes
-`prediction_manifest.json` with `contains_ground_truth: false`. Submit the
-result to the official leaderboard for private evaluation.
+For each seen camera, `transforms_test.json` determines the future timestamps,
+frame names, and prediction count. That JSON also lists novel-camera targets
+for other baselines; those entries are not MAGI-1 submission targets.
+
+Submit only predicted future RGB for all 10 seen cameras. Omit novel-camera
+directories entirely, including empty placeholders; do not copy GT or
+observed frames into the submission. The leaderboard reports seen-view
+metrics and displays novel-view metrics as `-`, not zero. See the
+[task submission modes](../../README.md#prediction-layout-and-evaluation).
+
+The script also writes `prediction_manifest.json` for local bookkeeping;
+keep this metadata file out of the prediction ZIP.
 
 `manifests/scenes_103.txt` records scene coverage. Model weights, generated
 videos, GT exports, metrics, logs, and local progress databases are excluded.

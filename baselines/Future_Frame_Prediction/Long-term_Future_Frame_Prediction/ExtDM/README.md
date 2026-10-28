@@ -52,14 +52,31 @@ WANDB_MODE=disabled CUDA_VISIBLE_DEVICES=0,1 PYTHONPATH=. accelerate launch --nu
 
 ## Inference and evaluation
 
+ExtDM supports **seen-view future prediction only**: predict the second-half
+RGB for the 10 seen views (training cameras) identified by
+`transforms_train.json`. It does not synthesize the two held-out novel views
+identified by `transforms_val.json`.
+
+Use an input directory containing only the public first-half RGB for those
+10 seen cameras. The current entry point enumerates RGB camera directories;
+it does not independently filter them against the training-camera JSON.
+Never point it at a full rendered scene or private GT directory containing
+future frames, novel-camera RGB, or moving-camera RGB.
+
 ```bash
 python infer_physinone.py   --scene-dir /path/to/FuturePrediction/SinglePhysics/<scene>_trajectory   --flowae-checkpoint ./checkpoints/RegionMM.pth   --dm-checkpoint ./checkpoints/flowdiff.pth   --output-dir ./predictions/SinglePhysics/<scene>_trajectory
 ```
 
-The script left-pads short conditioning clips with their earliest available
-public frame, autoregressively predicts exactly the frames described by
-`transforms_test.json`, and writes no GT or metric artifacts. Submit the
-prediction tree to the PhysInOne leaderboard for private evaluation.
+For each seen camera, the script left-pads short conditioning clips with their
+earliest available public frame and autoregressively predicts its future
+frames specified in `transforms_test.json`. That JSON also lists novel-camera
+targets for other baselines; those entries are not ExtDM submission targets.
+
+Submit only predicted future RGB for all 10 seen cameras. Omit novel-camera
+directories entirely, including empty placeholders; do not copy GT or
+observed frames into the submission. The leaderboard reports seen-view
+metrics and displays novel-view metrics as `-`, not zero. See the
+[task submission modes](../../README.md#prediction-layout-and-evaluation).
 
 Checkpoint files:
 

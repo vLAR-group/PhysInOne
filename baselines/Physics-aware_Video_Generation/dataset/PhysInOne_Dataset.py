@@ -302,8 +302,17 @@ class PhysInOne(torch.utils.data.Dataset):
 
 
 SUBFOLDER = "leaderboard/video_generation"  # Subfolder for leaderboard/test data (if present)
+
+
+def leaderboard_selection_path(subset):
+    """Public large name maps to the existing full index; do not rename data."""
+    if subset not in ("mini", "large"):
+        raise ValueError(f"Invalid subset {subset}. Must be one of ['mini', 'large']")
+    return SELECTED if subset == "large" else str(Path(SELECTED).with_name("selected_mini.json"))
+
+
 class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
-    def __init__(self, data_dir, mode='static', resolution=RESOLUTION, subset="full", **kwargs):
+    def __init__(self, data_dir, mode='static', resolution=RESOLUTION, subset="large", **kwargs):
         # super().__init__(args, data_dir, split="test", only_main=only_main, only_one_cine=only_one_cine)
         mode = mode.lower()
         assert mode in ['static', 'moving'], "mode should be either 'static' or 'moving'"
@@ -315,12 +324,7 @@ class PhysInOne_Leaderboard_VideoGeneration(PhysInOne):
 
         self._image_resolution = kwargs.pop("image_resolution", None)
 
-        if subset not in ["full", "mini"]:
-            raise ValueError(f"Invalid subset {subset}. Must be one of ['full', 'mini']")
-        if subset == "full":
-            selected = SELECTED
-        else:
-            selected = SELECTED.replace("selected_full.json", f"selected_{subset}.json")
+        selected = leaderboard_selection_path(self.subset)
         with open(selected, "r") as f:
             cine_choose_sheet = json.load(f)
 

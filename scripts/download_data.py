@@ -749,11 +749,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--subset",
-        choices=("mini", "full"),
+        choices=("mini", "large"),
         default=None,
         help=(
             "Video Generation subset (default: mini). Only valid when the selected "
-            "tasks include video-generation. The full subset is not available yet."
+            "tasks include video-generation. The large subset is not available yet."
         ),
     )
     parser.add_argument(
@@ -823,8 +823,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if args.subset is not None and "video_generation" not in tasks:
         parser.error("--subset applies only to video-generation; include it in --task.")
     video_subset = (args.subset or "mini") if "video_generation" in tasks else None
-    if video_subset == "full":
-        parser.error("The full Video Generation subset is not available yet. Use --subset mini.")
+    if video_subset == "large":
+        parser.error("The large Video Generation subset is not available yet. Use --subset mini.")
     if args.workers < 1:
         raise SystemExit("--workers must be at least 1")
     if args.retries < 0:

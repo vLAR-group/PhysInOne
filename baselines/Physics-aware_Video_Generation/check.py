@@ -108,7 +108,7 @@ except ImportError:
     )
     raise SystemExit(2)
 
-DEFAULT_JSON_PATH = "./dataset/selected_mini.json"
+DEFAULT_JSON_PATH = str(Path(__file__).resolve().parent / "dataset/selected_mini.json")
 MOVING_FOLDER_NAME = "CineCamera_Moving"
 CAMERA_PREFIX = "CineCamera_"
 RGB_FOLDER_NAME = "rgb"
@@ -680,14 +680,14 @@ def parse_args() -> argparse.Namespace:
         "--subset",
         default="mini",
         choices=("mini", "large"),
-        help="subset name (default: None)",
+        help="VG subset (default: mini); large uses the legacy selected_full.json index",
         )
     parser.add_argument(
         "--manifest",
         "--json-path",
         dest="json_path",
         type=Path,
-        default=Path(os.environ.get("SUBMISSION_MANIFEST", DEFAULT_JSON_PATH)),
+        default=None,
         help=(
             "Generated scene manifest path; default: SUBMISSION_MANIFEST or "
             f"{DEFAULT_JSON_PATH}"
@@ -703,15 +703,18 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Disable colored console output",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.json_path is None:
+        override = os.environ.get("SUBMISSION_MANIFEST")
+        filename = "selected_full.json" if args.subset == "large" else "selected_mini.json"
+        args.json_path = Path(override) if override else Path(DEFAULT_JSON_PATH).with_name(filename)
+    return args
 
 
 def main() -> int:
     global COLOR_ENABLED
     args = parse_args()
 
-    if args.subset is not None:
-        DEFAULT_JSON_PATH = f"./dataset/selected_{args.subset}.json"
     if args.no_color:
         COLOR_ENABLED = False
     valid = check_submission(
