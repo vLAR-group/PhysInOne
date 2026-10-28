@@ -678,7 +678,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--subset",
-        default=None,
+        default="mini",
+        choices=("mini", "large"),
         help="subset name (default: None)",
         )
     parser.add_argument(
