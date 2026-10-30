@@ -1,4 +1,4 @@
-# Long-Term Future Frame Prediction on PhysInOne
+# Long-Term Future Frame Prediction
 
 Predict how a physical scene evolves **after its observed video ends**. The task
 evaluates future RGB predictions at previously observed camera viewpoints and,
@@ -23,47 +23,18 @@ scenes, and 9 MPM scenes**. The standardized per-scene setting is:
 
 **Camera membership and frame targets come from the official scene JSON files,
 not from assumed camera numbers or a hard-coded video length.** Use the scene
-list, archives, and transforms from the same release. If an older local copy has
-different camera counts or temporal splits, check the current release before
-running; do not randomly redefine its evaluation views or targets yourself.
+list, archives, and transforms from the same release.
 
-### Training views versus novel views
-
-- **Training views** are the cameras whose past RGB observations are available.
-  You may use those observations for conditioning or per-scene optimization.
-  Their future RGB is withheld and is an evaluation target.
-- **Novel views** are held-out static cameras. Their camera poses and timestamps
-  are provided as metadata, but their RGB is not supplied as training input.
-  Predicting their future video tests both temporal extrapolation and viewpoint
-  generalization.
-- Do not assume that `CineCamera_0` and `CineCamera_1` are always the novel views.
-  Read `transforms_val.json`, and preserve the original camera names.
-
-Here, **training view** describes a camera split within an evaluation scene; it
-does not mean that the entire scene video belongs to the dataset's training set.
-Likewise, `transforms_val.json` identifies held-out cameras; it does not grant
-access to validation RGB or permission to optimize against private images.
+Here, **training view** means an observed camera within an evaluation scene, not
+the dataset training split. Novel cameras have public poses but no input RGB.
+Their camera numbers vary between scenes.
 
 ### Observed frames versus future frames
 
-For a zero-indexed sequence with an even total length `N`, the intended split is:
-
-- Observed frames: `0` through `N / 2 - 1`.
-- Future frames: `N / 2` through `N - 1`.
-
-| Total frames per camera | Observed frame names | Future frame names | Frames per half |
-| ---: | --- | --- | ---: |
-| 90 | `0000.jpg`–`0044.jpg` | `0045.jpg`–`0089.jpg` | 45 |
-| 120 | `0000.jpg`–`0059.jpg` | `0060.jpg`–`0119.jpg` | 60 |
-| 130 | `0000.jpg`–`0064.jpg` | `0065.jpg`–`0129.jpg` | 65 |
-| 150 | `0000.jpg`–`0074.jpg` | `0075.jpg`–`0149.jpg` | 75 |
-| 300 | `0000.jpg`–`0149.jpg` | `0150.jpg`–`0299.jpg` | 150 |
-
-These are examples, **not a fixed 75-frame prediction requirement**. In code,
-read the exact observed entries from `transforms_train.json` and the exact
-prediction entries from `transforms_test.json`. Keep their frame identifiers,
-camera poses, and timestamps; do not renumber the future interval from zero or
-replace the supplied time values with an assumed frame rate.
+For example, a 150-frame video provides `0000–0074` and requires `0075–0149`;
+a 90-frame video uses `0000–0044` and `0045–0089` instead. Read exact targets from
+`transforms_test.json`; preserve frame identifiers, poses, and timestamps.
+Do not renumber future frames from zero or assume a fixed 75-frame horizon.
 
 ## Public inputs and metadata
 
@@ -73,29 +44,9 @@ replace the supplied time values with an assumed frame rate.
 | `transforms_val.json` | Held-out camera membership and associated pose/time metadata | No |
 | `transforms_test.json` | Exact future camera/frame targets to predict | No; its RGB paths describe targets, not downloadable images |
 
-The test targets include both training and novel cameras. Consequently,
-`transforms_train.json` and `transforms_test.json` need not contain the same
-number of entries, even though the timeline is split equally.
-
-For a 150-frame example, an extracted public scene looks like this:
-
-```text
-<scene>_trajectory/
-├── transforms_train.json
-├── transforms_val.json
-├── transforms_test.json
-├── CineCamera_<training_view_a>/
-│   └── rgb/
-│       ├── 0000.jpg
-│       ├── ...
-│       └── 0074.jpg
-└── ...                         # the other nine training cameras
-```
-
-The absence of future RGB and novel-camera RGB is intentional. A loader must
-not try to open every image referenced by the three JSON files during training
-or inference. In particular, do not obtain hidden images from another task,
-another dataset copy, related scene variants, or private organizer resources.
+Future RGB and novel-camera RGB are intentionally absent from public inputs.
+JSON target paths do not make those images available for training. Use only the
+public observed frames; do not obtain hidden RGB from another task or scene variant.
 
 ## Download and run a baseline
 
@@ -132,7 +83,7 @@ pretraining or fine-tuning must respect the held-out evaluation data boundary.
 Inference should save predictions only; private-reference scoring is performed
 by the leaderboard.
 
-## Prediction layout and evaluation
+## Package predictions
 
 Produce one scene archive containing camera directories and predicted future
 RGB. For example, for the 150-frame setting:
@@ -151,10 +102,14 @@ RGB. For example, for the 150-frame setting:
     └── rgb/...
 ```
 
-Use the official scene identifier for the archive name, and the exact camera
-and frame names in `transforms_test.json` inside it. Preserve the source image
-resolution specified by the release. Submit RGB predictions, not ground truth,
+Use the official scene identifier (including `_trajectory`) for the archive name,
+and the exact camera names and frame identifiers in `transforms_test.json`.
+Images may be **JPG, JPEG, or PNG**; PNG avoids additional lossy compression.
+Preserve the source image resolution. Submit RGB predictions, not ground truth,
 observed input frames, comparison panels, depth, segmentation, or model weights.
+Do not include metadata or moving-camera files. Camera directories may be at the
+ZIP root or inside one outer scene directory. Physics-category directories
+outside the ZIPs are optional.
 
 Two submission modes are supported:
 
@@ -170,12 +125,48 @@ For an aggregate novel-view score, the complete novel group must be supplied
 across all evaluated scenes. Pure video models such as MAGI-1 and ExtDM can use
 the first mode without inventing novel-view results.
 
+## Check before uploading
+
+The offline [check.py](check.py) uses the bundled
+[submission manifest](dataset/submission_manifest.json): scene IDs, camera names,
+exact target frame identifiers, and image sizes only. It needs **no GT, network,
+authentication, or GPU**. Keep the script and manifest together.
+
+Run from the repository root:
+
+```bash
+pip install pillow numpy opencv-python-headless
+
+python baselines/Future_Frame_Prediction/check.py ./predictions \
+  --report ./fp_check_report.json
+```
+
+| Argument | Purpose |
+| --- | --- |
+| `submission_dir` | Folder containing the 103 scene ZIPs; searched recursively |
+| `--report PATH` | Write detailed per-scene results to a new JSON file |
+| `--verbose` | Print every error and warning |
+| `--fail-on-warning` | Treat content warnings as failures |
+| `--manifest PATH` | Use a different official release manifest; defaults to the bundled file |
+
+The checker validates scene coverage, camera groups, exact future frame names,
+ZIP integrity, image decoding, and resolution. Missing, duplicate, or extra scene
+ZIPs and unexpected files are errors. JPG/PNG images are fully decoded with Pillow
+and OpenCV. Black/white frames and entirely repeated videos produce warnings.
+Progress includes elapsed time and estimated time remaining.
+
+Exit codes: **0** = valid (possibly with warnings), **1** = validation failure,
+**2** = command, dependency, or configuration error. Inspect warnings before
+uploading. Format validation cannot establish prediction accuracy or prove that
+an image is not GT. Prediction archives are never modified.
+
+After checking, upload the prediction ZIPs and select their dataset repository
+and subdirectory in the Leaderboard submission form.
+
+## Evaluation
+
 Scores are reported separately for future frames at training and novel views.
 The evaluator includes PSNR, SSIM, LPIPS, PMF, and three PhysicsIQ motion-mask
 IoU components (spatial, spatiotemporal, and weighted spatial IoU). The three
 PhysicsIQ components are not a single composite score. A `train` score here is
 still a score on **hidden future frames**, not on the observed training images.
-
-Before submission, check that all scene IDs match the official task list, each
-required frame is present and decodable, and no private GT has entered either
-your model inputs or your output archives.
