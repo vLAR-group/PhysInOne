@@ -32,12 +32,19 @@ Validation checklist performed by this script:
 
 4. RGB frame files:
    - At least one .jpg exists below <expected_camera>/rgb/.
-   - Each JPG member can be read from the ZIP archive.
-   - Its actual content format is JPEG, not merely a .jpg filename.
-   - Pillow can verify the JPEG file structure.
-   - Pillow can fully load the JPEG pixel data.
-   - OpenCV can decode the same bytes, matching the evaluator's image loader.
+   - Check every recognized image file anywhere in each validated scene ZIP,
+     including images outside the expected camera folder. Recognized extensions:
+     .jpg, .jpeg, .png, .bmp, .webp, .tif, .tiff, .gif, .ico, .ppm, .pgm, .pbm.
+   - Each image member can be read from the ZIP archive and is not empty.
+   - Files ending in .jpg or .jpeg contain actual JPEG data.
+   - Pillow can verify the image structure and fully decode it as RGB.
+   - Truncated-image tolerance is disabled; damaged images are rejected.
+   - OpenCV can decode the same bytes and convert them to RGB, as in the
+     evaluator. Files unsupported by either decoder are rejected.
    - OpenCV returns a non-empty three-channel image with positive dimensions.
+   - Both width and height must be <= 1120 pixels in Pillow and OpenCV.
+     Exactly 1120 x 1120 is allowed; exceeding either dimension is an error.
+     The checker reports oversized images but never resizes or changes them.
    - The number of JPG files equals the manifest frame_count.
 
 5. Result reporting:
@@ -99,7 +106,7 @@ except ImportError:
     raise SystemExit(2)
 
 try:
-    from PIL import Image, UnidentifiedImageError
+    from PIL import Image, ImageFile, UnidentifiedImageError
 except ImportError:
     print(
         "ERROR: Pillow is required to verify JPG files. Install it with: "
@@ -112,6 +119,14 @@ DEFAULT_JSON_PATH = str(Path(__file__).resolve().parent / "dataset/selected_mini
 MOVING_FOLDER_NAME = "CineCamera_Moving"
 CAMERA_PREFIX = "CineCamera_"
 RGB_FOLDER_NAME = "rgb"
+MAX_IMAGE_DIMENSION = 1120
+IMAGE_EXTENSIONS = frozenset({
+    ".jpg", ".jpeg", ".png", ".bmp", ".webp", ".tif", ".tiff", ".gif",
+    ".ico", ".ppm", ".pgm", ".pbm",
+})
+
+# Never silently accept truncated images during submission validation.
+ImageFile.LOAD_TRUNCATED_IMAGES = False
 
 # ANSI colors are enabled for interactive terminals. FORCE_COLOR=1 is useful
 # for testing or terminals whose TTY status cannot be detected; NO_COLOR
@@ -326,48 +341,95 @@ def jpg_members_under_camera_rgb(
     return images
 
 
-def verify_jpg(zf: zipfile.ZipFile, info: zipfile.ZipInfo) -> str | None:
-    """Validate a JPG with both Pillow and OpenCV.
+def verify_image(
+    zf: zipfile.ZipFile, info: zipfile.ZipInfo
+) -> list[tuple[str, str]]:
+    """Check one image's readability and dimensions without extracting it.
 
-    Pillow can accept some JPEG streams that OpenCV cannot decode. The
-    evaluator uses ``cv2.imread``-style decoding, so checking only Pillow is
-    insufficient. This function deliberately validates both decoders.
+    Returns ``(error_category, reason)`` pairs. Both decoders are tested even
+    when one fails, and images exceeding the ground-truth resolution are
+    rejected rather than resized. Pillow reports size as (width, height),
+    while OpenCV reports shape as (height, width, channels).
     """
+    issues: list[tuple[str, str]] = []
     try:
         image_bytes = zf.read(info)
+    except (OSError, RuntimeError, EOFError, ValueError, zipfile.BadZipFile) as error:
+        return [("UNREADABLE IMAGE", f"cannot read ZIP member: {error}")]
+
+    if not image_bytes:
+        return [("UNREADABLE IMAGE", "image file is empty (0 bytes)")]
+
+    try:
         with Image.open(io.BytesIO(image_bytes)) as image:
-            if image.format != "JPEG":
-                return f"content format is {image.format!r}, not JPEG"
+            extension = PurePosixPath(info.filename).suffix.lower()
+            if extension in {".jpg", ".jpeg"} and image.format != "JPEG":
+                issues.append((
+                    "IMAGE FORMAT",
+                    f"content format is {image.format!r}, not JPEG",
+                ))
+
+            width, height = image.size
+            if width > MAX_IMAGE_DIMENSION or height > MAX_IMAGE_DIMENSION:
+                issues.append((
+                    "IMAGE SIZE",
+                    f"Pillow size (width x height) is {width} x {height}; "
+                    f"both dimensions must be <= {MAX_IMAGE_DIMENSION} pixels",
+                ))
             image.verify()
 
-        # verify() checks file integrity but does not decode all pixel data.
-        # Reopen and load the image to ensure it can actually be decoded.
+        # verify() alone does not guarantee that all pixel data can be decoded.
         with Image.open(io.BytesIO(image_bytes)) as image:
-            image.load()
+            rgb_image = image.convert("RGB")
+            try:
+                rgb_image.load()
+            finally:
+                rgb_image.close()
+    except (
+        OSError, RuntimeError, EOFError, ValueError,
+        UnidentifiedImageError, Image.DecompressionBombError,
+    ) as error:
+        issues.append(("UNREADABLE IMAGE", f"Pillow decoding failed: {error}"))
 
-        # The evaluator reads extracted frames with OpenCV. Decode the exact
-        # bytes from the ZIP, which is stricter and more representative than
-        # checking only the Pillow decoder above.
+    try:
         encoded = np.frombuffer(image_bytes, dtype=np.uint8)
         decoded = cv2.imdecode(encoded, cv2.IMREAD_COLOR)
         if decoded is None or decoded.size == 0:
-            return "OpenCV could not decode the JPEG (cv2.imdecode returned None)"
-        if decoded.ndim != 3 or decoded.shape[2] != 3:
-            return f"OpenCV decoded an unexpected shape: {decoded.shape}"
-        if decoded.shape[0] <= 0 or decoded.shape[1] <= 0:
-            return f"OpenCV decoded an empty image: {decoded.shape}"
-    except (
-        OSError,
-        RuntimeError,
-        EOFError,
-        ValueError,
-        cv2.error,
-        zipfile.BadZipFile,
-        UnidentifiedImageError,
-    ) as error:
-        return str(error)
+            issues.append((
+                "UNREADABLE IMAGE",
+                "OpenCV could not decode the image (None or empty result)",
+            ))
+        elif decoded.ndim != 3 or decoded.shape[2] != 3:
+            issues.append((
+                "UNREADABLE IMAGE",
+                f"OpenCV decoded an unexpected shape: {decoded.shape}",
+            ))
+        else:
+            height, width = decoded.shape[:2]
+            if width <= 0 or height <= 0:
+                issues.append((
+                    "UNREADABLE IMAGE", f"OpenCV decoded an empty image: {decoded.shape}",
+                ))
+            elif width > MAX_IMAGE_DIMENSION or height > MAX_IMAGE_DIMENSION:
+                # Avoid reporting the same oversized image twice, but catch
+                # limits exceeded only by OpenCV's decoded dimensions too.
+                if not any(category == "IMAGE SIZE" for category, _ in issues):
+                    issues.append((
+                        "IMAGE SIZE",
+                        f"OpenCV size (width x height) is {width} x {height}; "
+                        f"both dimensions must be <= {MAX_IMAGE_DIMENSION} pixels",
+                    ))
+            cv2.cvtColor(decoded, cv2.COLOR_BGR2RGB)
+    except (OSError, RuntimeError, EOFError, ValueError, cv2.error) as error:
+        issues.append(("UNREADABLE IMAGE", f"OpenCV decoding failed: {error}"))
 
-    return None
+    return issues
+
+
+def verify_jpg(zf: zipfile.ZipFile, info: zipfile.ZipInfo) -> str | None:
+    """Compatibility wrapper returning None on success or a combined reason."""
+    issues = verify_image(zf, info)
+    return "; ".join(f"[{category}] {reason}" for category, reason in issues) or None
 
 
 def validate_zip(
@@ -376,7 +438,7 @@ def validate_zip(
     track: str,
     display_path: str | None = None,
 ) -> tuple[list[str], list[str]]:
-    """Validate one ZIP's structure, JPG readability, and frame count."""
+    """Validate layout, every recognized image's readability/size, and JPG count."""
     errors: list[str] = []
     warnings: list[str] = []
     zip_stem = zip_path.stem
@@ -394,6 +456,18 @@ def validate_zip(
                     f"'{bad_member}'"
                 )
                 return errors, warnings
+
+            # Scan the entire scene ZIP before checking layout, so damaged or
+            # oversized images in extra cameras/other folders are not missed.
+            for info in zf.infolist():
+                if info.is_dir():
+                    continue
+                if PurePosixPath(info.filename).suffix.lower() not in IMAGE_EXTENSIONS:
+                    continue
+                for category, reason in verify_image(zf, info):
+                    errors.append(
+                        f"[{category}] '{zip_label}!{info.filename}' -> {reason}"
+                    )
 
             top_entries = top_level_entries(zf)
 
@@ -428,17 +502,6 @@ def validate_zip(
                     f"'{expected_camera}/{RGB_FOLDER_NAME}/'"
                 )
                 return errors, warnings
-
-            unreadable: list[tuple[str, str]] = []
-            for info in jpg_members:
-                reason = verify_jpg(zf, info)
-                if reason is not None:
-                    unreadable.append((info.filename, reason))
-
-            for filename, reason in unreadable:
-                errors.append(
-                    f"[UNREADABLE JPG]   '{zip_label}!{filename}' -> {reason}"
-                )
 
             actual_count = len(jpg_members)
             if actual_count != manifest_entry.frame_count:

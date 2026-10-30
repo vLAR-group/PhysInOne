@@ -294,6 +294,7 @@ index selection; `SUBMISSION_MANIFEST` is the fallback override when no
 Upload your verified submission folder to your Hugging Face repository:
 
 ```bash
+# Before uploading and submitting, check the integrity of your submission
 python ./upload.py ./submission \
   --repo username/repository \
   --remote_folder submissions/team-name \
