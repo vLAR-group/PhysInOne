@@ -1,0 +1,1423 @@
+{
+  "schema_version": 1,
+  "defaults": {
+    "frame_stems": [
+      "0000",
+      "0001",
+      "0002",
+      "0003",
+      "0004",
+      "0005",
+      "0006",
+      "0007",
+      "0008",
+      "0009",
+      "0010",
+      "0011",
+      "0012",
+      "0013",
+      "0014",
+      "0015",
+      "0016",
+      "0017",
+      "0018",
+      "0019",
+      "0020",
+      "0021",
+      "0022",
+      "0023",
+      "0024",
+      "0025",
+      "0026",
+      "0027",
+      "0028",
+      "0029",
+      "0030",
+      "0031",
+      "0032",
+      "0033",
+      "0034",
+      "0035",
+      "0036",
+      "0037",
+      "0038",
+      "0039",
+      "0040",
+      "0041",
+      "0042",
+      "0043",
+      "0044",
+      "0045",
+      "0046",
+      "0047",
+      "0048",
+      "0049",
+      "0050",
+      "0051",
+      "0052",
+      "0053",
+      "0054",
+      "0055",
+      "0056",
+      "0057",
+      "0058",
+      "0059",
+      "0060",
+      "0061",
+      "0062",
+      "0063",
+      "0064",
+      "0065",
+      "0066",
+      "0067",
+      "0068",
+      "0069",
+      "0070",
+      "0071",
+      "0072",
+      "0073",
+      "0074",
+      "0075",
+      "0076",
+      "0077",
+      "0078",
+      "0079",
+      "0080",
+      "0081",
+      "0082",
+      "0083",
+      "0084",
+      "0085",
+      "0086",
+      "0087",
+      "0088",
+      "0089"
+    ],
+    "image_size": [
+      1120,
+      1120
+    ]
+  },
+  "scenes": {
+    "ElasticFall__bg851__HyKM4e_trajectory": {
+      "material": "ELASTIC",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "ElasticFall__bg851__ONA90r_trajectory": {
+      "material": "ELASTIC",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "ElasticFall__bg851__Urfkor_trajectory": {
+      "material": "ELASTIC",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "ElasticFall__bg851__aZnA3h_trajectory": {
+      "material": "ELASTIC",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "ElasticFall__bg851__tCRMt3_trajectory": {
+      "material": "ELASTIC",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "ElasticFall__bg851__wBxhzP_trajectory": {
+      "material": "ELASTIC",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "ElasticFall__bg852__n4vNbZ_trajectory": {
+      "material": "ELASTIC",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "ElasticFall__bg852__rueoHR_trajectory": {
+      "material": "ELASTIC",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "ElasticFall__bg852__tgPNPs_trajectory": {
+      "material": "ELASTIC",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "ElasticFall__bg853__IKwBRg_trajectory": {
+      "material": "ELASTIC",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "ElasticFall__bg853__ZT7AUD_trajectory": {
+      "material": "ELASTIC",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "ElasticFall__bg853__cPLVum_trajectory": {
+      "material": "ELASTIC",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "GranularFall__bg851__9lIDU3_trajectory": {
+      "material": "SAND",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "GranularFall__bg851__JBM15M_trajectory": {
+      "material": "SAND",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "GranularFall__bg851__U3Jlvj_trajectory": {
+      "material": "SAND",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "GranularFall__bg851__Vbe8dQ_trajectory": {
+      "material": "SAND",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "GranularFall__bg851__ioGrE8_trajectory": {
+      "material": "SAND",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "GranularFall__bg851__osQrjq_trajectory": {
+      "material": "SAND",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "GranularFall__bg852__MoyIIZ_trajectory": {
+      "material": "SAND",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "GranularFall__bg852__VyRLV3_trajectory": {
+      "material": "SAND",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "GranularFall__bg852__tDtaft_trajectory": {
+      "material": "SAND",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "GranularFall__bg853__H2LWew_trajectory": {
+      "material": "SAND",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "GranularFall__bg853__ZBMM7p_trajectory": {
+      "material": "SAND",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "GranularFall__bg853__yXif8O_trajectory": {
+      "material": "SAND",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NewtonianFluidFall__bg851__9UuymC_trajectory": {
+      "material": "NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NewtonianFluidFall__bg851__D4npMS_trajectory": {
+      "material": "NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NewtonianFluidFall__bg851__gvvzoP_trajectory": {
+      "material": "NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NewtonianFluidFall__bg851__ksCdUy_trajectory": {
+      "material": "NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "NewtonianFluidFall__bg851__q9BCMV_trajectory": {
+      "material": "NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NewtonianFluidFall__bg851__vHyaMH_trajectory": {
+      "material": "NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "NewtonianFluidFall__bg852__2WIQvD_trajectory": {
+      "material": "NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NewtonianFluidFall__bg852__JtG3Vh_trajectory": {
+      "material": "NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NewtonianFluidFall__bg852__dLPzqy_trajectory": {
+      "material": "NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "NewtonianFluidFall__bg853__Mw45TL_trajectory": {
+      "material": "NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NewtonianFluidFall__bg853__flqAQw_trajectory": {
+      "material": "NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "NewtonianFluidFall__bg853__wJG4hq_trajectory": {
+      "material": "NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NonNewtonianFluidFall__bg851__1e9y4t_trajectory": {
+      "material": "NON_NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NonNewtonianFluidFall__bg851__CUmiwi_trajectory": {
+      "material": "NON_NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "NonNewtonianFluidFall__bg851__D8DZBH_trajectory": {
+      "material": "NON_NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NonNewtonianFluidFall__bg851__NkuHcR_trajectory": {
+      "material": "NON_NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "NonNewtonianFluidFall__bg851__i7JDwF_trajectory": {
+      "material": "NON_NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NonNewtonianFluidFall__bg851__xNRybL_trajectory": {
+      "material": "NON_NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NonNewtonianFluidFall__bg852__KrdygQ_trajectory": {
+      "material": "NON_NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NonNewtonianFluidFall__bg852__N1F0si_trajectory": {
+      "material": "NON_NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NonNewtonianFluidFall__bg852__yYzlwK_trajectory": {
+      "material": "NON_NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "NonNewtonianFluidFall__bg853__3NsWvc_trajectory": {
+      "material": "NON_NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "NonNewtonianFluidFall__bg853__X8RW5t_trajectory": {
+      "material": "NON_NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "NonNewtonianFluidFall__bg853__raldSU_trajectory": {
+      "material": "NON_NEWTONIAN",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "PlasticineFall__bg851__CJa9sg_trajectory": {
+      "material": "PLASTICINE",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "PlasticineFall__bg851__Eo4QFG_trajectory": {
+      "material": "PLASTICINE",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "PlasticineFall__bg851__QhSP1w_trajectory": {
+      "material": "PLASTICINE",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "PlasticineFall__bg851__SR7SHn_trajectory": {
+      "material": "PLASTICINE",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "PlasticineFall__bg851__fR29iu_trajectory": {
+      "material": "PLASTICINE",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "PlasticineFall__bg851__mzVWKS_trajectory": {
+      "material": "PLASTICINE",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "PlasticineFall__bg852__IovT0U_trajectory": {
+      "material": "PLASTICINE",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "PlasticineFall__bg852__QYLkjv_trajectory": {
+      "material": "PLASTICINE",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "PlasticineFall__bg852__TEgEeY_trajectory": {
+      "material": "PLASTICINE",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "PlasticineFall__bg853__AudM59_trajectory": {
+      "material": "PLASTICINE",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    },
+    "PlasticineFall__bg853__JqI201_trajectory": {
+      "material": "PLASTICINE",
+      "training_cameras": [
+        "CineCamera_0",
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_1",
+        "CineCamera_8"
+      ]
+    },
+    "PlasticineFall__bg853__wWdOlo_trajectory": {
+      "material": "PLASTICINE",
+      "training_cameras": [
+        "CineCamera_2",
+        "CineCamera_3",
+        "CineCamera_4",
+        "CineCamera_5",
+        "CineCamera_6",
+        "CineCamera_7",
+        "CineCamera_8",
+        "CineCamera_9",
+        "CineCamera_10",
+        "CineCamera_11",
+        "CineCamera_12",
+        "CineCamera_13",
+        "CineCamera_14"
+      ],
+      "novel_cameras": [
+        "CineCamera_0",
+        "CineCamera_1"
+      ]
+    }
+  }
+}
