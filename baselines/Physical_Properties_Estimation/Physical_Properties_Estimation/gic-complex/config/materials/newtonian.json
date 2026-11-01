@@ -1,0 +1,97 @@
+{
+  "data": {
+    "xyz_min": [
+      -0.5,
+      0.0,
+      -0.5
+    ],
+    "xyz_max": [
+      0.5,
+      1.0,
+      0.5
+    ]
+  },
+  "gs": {
+    "eval": true,
+    "is_blender": true,
+    "timenet": true,
+    "test_iterations": [
+      5000,
+      6000,
+      7000
+    ],
+    "save_iterations": [
+      7000,
+      10000,
+      20000,
+      30000,
+      40000
+    ],
+    "quiet": false,
+    "iteration": 40000
+  },
+  "physics": {
+    "id": 0,
+    "material": 11,
+    "rho": 1000,
+    "kappa": 10000.0,
+    "mu": 10,
+    "voxel_size": 0.02,
+    "mpm_iter_cnt": 200,
+    "n_frames": 19,
+    "fps": 30,
+    "gravity": [
+      0,
+      -9.8,
+      0
+    ],
+    "bc": {
+      "ground": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        0
+      ]
+    },
+    "density_grid_size": 0.12,
+    "density_min_th": 0.67,
+    "density_max_th": 0.9,
+    "opacity_threshold": 0.01,
+    "random_sample": true,
+    "img_loss": true,
+    "geo_loss": true,
+    "w_img": 0.0,
+    "w_alp": 5.0,
+    "w_geo": 1.0,
+    "params": {
+      "bulk modulus": {
+        "lr_decay": false,
+        "init_lr": 0.2,
+        "final_lr": 0.1,
+        "max_steps": 60
+      },
+      "shear modulus": {
+        "lr_decay": false,
+        "init_lr": 0.15,
+        "final_lr": 0.01,
+        "max_steps": 60
+      }
+    },
+    "iter_cnt": 150,
+    "vel_iter_cnt": 100,
+    "vel_estimation_frames": 4,
+    "vel_lr": 0.025,
+    "init_vel": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  }
+}
