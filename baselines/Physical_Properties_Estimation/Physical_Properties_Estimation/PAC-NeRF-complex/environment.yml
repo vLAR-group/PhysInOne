@@ -1,0 +1,39 @@
+# Core Linux environment reconstructed from ../envs/pacnerf metadata.
+# Install CUDA 11.8 nvcc + a compatible C++ compiler separately.
+# Install torch-scatter after activation, as documented in README.md.
+name: pacnerf
+channels:
+  - pytorch
+  - nvidia
+  - defaults
+dependencies:
+  - python=3.9.23
+  - pytorch=2.5.1
+  - torchvision=0.20.1
+  - torchaudio=2.5.1
+  - pytorch-cuda=11.8
+  - numpy=2.0.1
+  - pip=25.2
+  - setuptools=78.1.1
+  - pip:
+      - taichi==1.2.0
+      - mmcv==1.7.2
+      - ninja==1.13.0
+      - tqdm==4.67.1
+      - imageio==2.37.0
+      - imageio-ffmpeg==0.6.0
+      - opencv-python==4.12.0.88
+      - pillow==11.3.0
+      - addict==2.4.0
+      - packaging==25.0
+      - pyyaml==6.0.2
+      - yapf==0.43.0
+      - sourceinspect==0.0.4
+      - colorama==0.4.6
+      - rich==14.1.0
+      - markdown-it-py==3.0.0
+      - mdurl==0.1.2
+      - pygments==2.19.2
+      - platformdirs==4.4.0
+      - tomli==2.2.1
+      - wheel==0.45.1
