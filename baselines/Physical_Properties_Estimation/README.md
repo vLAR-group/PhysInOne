@@ -197,10 +197,12 @@ states; novel images cannot be copied into reinit as a replacement for the
 requested simulation.
 
 Create **one ZIP per official case identifier**, including `_trajectory` and
-excluding the training suffix `_gap1` or `_gap5`. The canonical ZIP root
-contains the two JSON files and the `novel/` and `reinit/` directories.
-A `property_estimation/` wrapper, an outer directory named exactly after the
-scene, or `<scene>/property_estimation/` is also accepted by the checker.
+excluding the training suffix `_gap1` or `_gap5`. The ZIP root must contain
+one `property_estimation/` directory, with the two JSON files and the `novel/`
+and `reinit/` directories directly inside it. The online Worker does not
+remove outer directories. Bare payloads, `<scene>/` wrappers and
+`<scene>/property_estimation/` wrappers are not supported by the checker or
+the online Worker.
 For example, from a directory where `submissions/` should be created:
 
 ```bash
@@ -235,6 +237,12 @@ the case. All four baselines use the same inference export format:
 | NEWTONIAN | mu, kappa |
 | NON_NEWTONIAN | mu, kappa, yield, visc |
 | PLASTICINE | E, nu, yield |
+
+`E`, `mu`, `kappa`, `yield` and `visc`, where required for the material,
+must be strictly positive because the scorer compares them in log10 space.
+Zero is invalid for these parameters; do not replace predictions with an
+epsilon to pass validation. This restriction does not apply to velocity
+components, which may be zero or negative.
 
 The following examples use simple illustrative initial values, not estimated
 results or reference answers. Each code block represents a separate
@@ -326,11 +334,22 @@ names, image encoding, full decoding and resolution. It checks images with
 Pillow and OpenCV. Entirely repeated sequences and uniform black/white frames
 produce warnings. Progress shows elapsed time and estimated time remaining.
 
+The checker enforces this tutorial's recommended submission format, not every
+input variation the Worker can parse. In particular, it requires four-digit
+frame names (`0000` through `0089`), exact JSON fields and RGB images at the
+release resolution. The Worker parses frame indices as integers, so unpadded
+names such as `0.png` may pass its structural checks but are intentionally
+rejected here. Use the documented format rather than relying on looser parsing.
+
 JPEG/PNG sequences have no FPS field, so the checker verifies their 90 frame
 identifiers; it cannot prove that they were simulated at 150 FPS. Likewise,
 valid parameter ranges cannot establish parameter accuracy or detect every
 unit/log-space mistake. The script does not compute leaderboard metrics or
 modify prediction archives.
+
+Passing these checks does not guarantee a correct simulation, an accurate
+prediction, a valid final score or successful online execution; resource and
+network failures are outside the checker's scope.
 
 Exit codes: **0** = valid, possibly with warnings; **1** = submission validation
 failed; **2** = command, dependency or configuration error. Inspect warnings

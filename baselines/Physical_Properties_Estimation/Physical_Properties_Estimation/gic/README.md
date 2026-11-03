@@ -112,7 +112,7 @@ metadata status. All four configs for a case share one model directory.
 | --gs-iterations | 40000, initial deformable GS training |
 | --infer-iterations | 40000, one-time fixed-particle GS fitting |
 | --infer-frames | First 5 training frames |
-| --render-frames | Actual training frame count |
+| --render-frames | --source-frames (90), independent of --gap |
 | --substeps-per-source-frame | 40, maximum physical dt control |
 
 Valid metadata supplies frame count, interval, resolution and camera count.
@@ -124,6 +124,9 @@ dt=1/6000. Material defaults are preserved. The two existing light granular
 cases `MoyIIZ` and `tDtaft` retain voxel_size=0.025 and density_grid_size=0.16.
 `reg_scale` and `reg_alpha` remain training regularizers.
 
+Gap5 samples 18 frames for training only. Novel and resimulated submission
+outputs still require 90 frames at 150 FPS; do not set `--render-frames` to 18.
+
 Reinitialization uses Blender XYZ Euler angles, `Rz @ Ry @ Rx`, and converts
 rotation/translation to PAC coordinates. The generator converts only the
 rotation center to [x,z,-y]. Learned velocity remains in world coordinates
@@ -133,7 +136,7 @@ it does not fit against a reinitialized video.
 ## Run one case
 
 ```bash
-CASE=ElasticFall__bg851__aZnA3h_trajectory_gap1
+CASE=ElasticFall__bg851__aZnA3h_trajectory_gap5
 python train_dynamic.py --config_path "config/generated/elastic/${CASE}_train.json"
 python test.py --config "config/generated/elastic/${CASE}_infer.json" --mode infer
 python test.py --config "config/generated/elastic/${CASE}_novel.json" --mode novel --cam-id all
@@ -164,7 +167,7 @@ bash scripts/generated/resimulate.sh
 bash scripts/generated/all.sh
 ```
 
-Each stage contains 30 commands for the current gap1 manifest. Scripts
+Each stage contains 30 commands for the gap5 manifest generated above. Scripts
 change to the project directory, use LF line endings and stop on failure.
 `--gpu` sets CUDA_VISIBLE_DEVICES; without it the existing selection is
 preserved. `--python` sets the executable, overridden by runtime `PYTHON`.

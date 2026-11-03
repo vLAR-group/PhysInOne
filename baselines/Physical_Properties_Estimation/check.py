@@ -113,10 +113,8 @@ def validate_parameters(material, velocity, expected_material):
             for key, value in values.items():
                 if not number(value):
                     errors.append(f"Material parameter {key} must be a finite number, not a string/list/bool")
-                elif key in {"E", "mu", "kappa"} and value <= 0:
-                    errors.append(f"Material parameter {key} must be positive")
-                elif key in {"yield", "visc"} and value < 0:
-                    errors.append(f"Material parameter {key} must be nonnegative")
+                elif key in {"E", "mu", "kappa", "yield", "visc"} and value <= 0:
+                    errors.append(f"Material parameter {key} must be > 0 for log10 scoring")
                 elif key == "nu" and not -1 < value < 0.5:
                     errors.append("Poisson ratio nu must satisfy -1 < nu < 0.5")
                 elif key == "friction_angle" and not 0 <= value < 90:
@@ -151,14 +149,19 @@ def payload_members(archive, scene):
         if name in members:
             raise ValueError(f"Duplicate ZIP member: {name}")
         members[name] = info
-    for _ in range(2):
-        roots = {name.split("/")[0] for name in members}
-        if len(roots) != 1 or not roots <= {scene, "property_estimation"}:
-            break
-        wrapper = next(iter(roots))
-        members = {name[len(wrapper)+1:]: info for name, info in members.items()
-                   if name.startswith(wrapper+"/")}
-    return members
+    prefix = "property_estimation/"
+    if (not members or any(
+            not name.startswith(prefix) and not (name == prefix.rstrip("/") and info.is_dir())
+            for name, info in members.items())):
+        raise ValueError(
+            "ZIP root must contain only property_estimation/; bare payloads and scene wrappers "
+            f"are not supported. Package with: python -m zipfile -c {scene}.zip property_estimation"
+        )
+    payload = {name[len(prefix):]: info for name, info in members.items()
+               if name.startswith(prefix)}
+    if any(name.split("/")[0] in {scene, "property_estimation"} for name in payload):
+        raise ValueError("Place parameter JSONs, novel/ and reinit/ directly inside property_estimation/")
+    return payload
 
 
 def read_parameter_json(archive, info):

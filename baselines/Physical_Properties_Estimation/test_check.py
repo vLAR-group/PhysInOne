@@ -76,11 +76,11 @@ class SubmissionTests(unittest.TestCase):
                     result[f"{group}/{camera}/rgb/{stem}{ext}"]=stream.getvalue()
         return result
 
-    def write_zip(self,members,name=None):
+    def write_zip(self,members,name=None,wrapper="property_estimation/"):
         path=self.root/(name or SCENE+".zip")
         path.parent.mkdir(parents=True,exist_ok=True)
         with zipfile.ZipFile(path,"w") as archive:
-            for name,raw in members.items():archive.writestr(name,raw)
+            for name,raw in members.items():archive.writestr(wrapper+name,raw)
         return path
 
     def check(self,members):
@@ -103,14 +103,36 @@ class SubmissionTests(unittest.TestCase):
         self.assertEqual(self.check(members)["errors"],[])
 
     def test_payload_wrappers_and_explicit_directories(self):
-        for wrapper in ("property_estimation/",SCENE+"/",SCENE+"/property_estimation/"):
-            members={wrapper+key:value for key,value in self.members().items()}
-            members[wrapper]=b""
-            self.assertEqual(self.check(members)["errors"],[])
         members=self.members()
+        members[""]=b""
         members["novel/"]=b""
         members["novel/CineCamera_0/rgb/"]=b""
         self.assertEqual(self.check(members)["errors"],[])
+
+    def test_incompatible_zip_roots_are_rejected(self):
+        for wrapper in ("",SCENE+"/",SCENE+"/property_estimation/",
+                        "property_estimation/property_estimation/","Property_Estimation/"):
+            with self.subTest(wrapper=wrapper):
+                path=self.write_zip(self.members(),wrapper=wrapper)
+                errors=CHECK.validate_zip(path,self.entry)["errors"]
+                self.assertTrue(errors)
+                self.assertTrue(any("property_estimation/" in error for error in errors))
+        for name in ("extra.txt","extra/","materials_configs.json"):
+            path=self.write_zip(self.members())
+            with zipfile.ZipFile(path,"a") as archive:archive.writestr(name,b"extra")
+            self.assertTrue(any("ZIP root" in error for error in CHECK.validate_zip(path,self.entry)["errors"]))
+
+    def test_documented_packaging_command(self):
+        model=self.root/"model"
+        for name,raw in self.members().items():
+            target=model/"property_estimation"/name
+            target.parent.mkdir(parents=True,exist_ok=True)
+            target.write_bytes(raw)
+        path=self.root/(SCENE+".zip")
+        result=subprocess.run([sys.executable,"-B","-m","zipfile","-c",str(path),
+                               "property_estimation"],cwd=model,capture_output=True)
+        self.assertEqual(result.returncode,0,result.stderr)
+        self.assertEqual(CHECK.validate_zip(path,self.entry)["errors"],[])
 
     def test_missing_novel_or_reinit_group(self):
         for group in ("novel/","reinit/"):
@@ -188,6 +210,20 @@ class SubmissionTests(unittest.TestCase):
             self.assertTrue(self.check(self.members())["errors"],(material,key,value))
         self.entry["material"]="SAND"
         self.material={"SAND":dict(SAMPLES["SAND"],friction_angle=0)}
+        self.assertEqual(self.check(self.members())["errors"],[])
+
+    def test_log_scored_parameters_must_be_strictly_positive(self):
+        for material,fields in (("NON_NEWTONIAN",("yield","visc")),("PLASTICINE",("yield",))):
+            for field in fields:
+                for value in (0,-1):
+                    with self.subTest(material=material,field=field,value=value):
+                        payload={material:dict(SAMPLES[material],**{field:value})}
+                        errors=CHECK.validate_parameters(payload,self.velocity,material)
+                        self.assertTrue(any(f"{field} must be > 0 for log10 scoring" in error for error in errors))
+                payload={material:dict(SAMPLES[material],**{field:0.001})}
+                self.assertEqual(CHECK.validate_parameters(payload,self.velocity,material),[])
+        self.velocity=dict(vx=0,vy=-1,vz=0)
+        self.material={"ELASTIC":dict(E=1,nu=0)}
         self.assertEqual(self.check(self.members())["errors"],[])
 
     def test_previous_submission_names_are_rejected(self):
@@ -274,8 +310,8 @@ class SubmissionTests(unittest.TestCase):
         path=self.write_zip(self.members())
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            with zipfile.ZipFile(path,"a") as archive:archive.writestr("initvelocity.json",b"duplicate")
-        self.assertTrue(CHECK.validate_zip(path,self.entry)["errors"])
+            with zipfile.ZipFile(path,"a") as archive:archive.writestr("property_estimation/initvelocity.json",b"duplicate")
+        self.assertTrue(any("Duplicate ZIP member" in error for error in CHECK.validate_zip(path,self.entry)["errors"]))
         for flag,size in ((1,0),(0,CHECK.MAX_MEMBER_BYTES+1)):
             info=zipfile.ZipInfo("image.jpg");info.flag_bits=flag;info.file_size=size
             with self.assertRaises(ValueError):CHECK.member_path(info)
