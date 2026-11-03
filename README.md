@@ -62,7 +62,7 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
 | 3D Assets             | `██████████` 100%              | Released     | 14,847 Val scenes, 120,660 Train scenes, and Train/Val resource libraries |
 | Leaderboard Evaluation Inputs | `██████████` 100%       | Released     | All public task inputs released; ground truth excluded |
-| Baseline code         | `██████████` 99%              | In progress  | Task-specific implementations and tutorials |
+| Baseline code         | `██████████` 100%              | Released     | Task-specific implementations and tutorials |
 | Data processing       | `██████████` 100%              | Released     | Camera placement, UE rendering, EXR conversion, and point-cloud generation |
 
 ## Links
