@@ -62,7 +62,7 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
 | 3D Assets             | `██████████` 100%              | Released     | 14,847 Val scenes, 120,660 Train scenes, and Train/Val resource libraries |
 | Leaderboard Evaluation Inputs | `██████████` 100%       | Released     | All public task inputs released; ground truth excluded |
-| Baseline code         | `███████▌░░` 75%              | In progress  | Task-specific implementations; see [Baselines](#baselines) below |
+| Baseline code         | `██████████` 99%              | In progress  | Task-specific implementations and tutorials |
 | Data processing       | `██████████` 100%              | Released     | Camera placement, UE rendering, EXR conversion, and point-cloud generation |
 
 ## Links
@@ -197,6 +197,7 @@ All user-facing evaluation inputs for the four PhysInOne Leaderboard tasks are p
 - [Read the Leaderboard download guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/LEADERBOARD_DOWNLOAD.md)
 - [Read the Tutorial of Video Generation](baselines/Physics-aware_Video_Generation/README.md)
 - [Read the Tutorial of Future Frame Prediction](baselines/Future_Frame_Prediction/README.md)
+- [Read the Tutorial of Physical Properties Estimation](baselines/Physical_Properties_Estimation/README.md)
 - [Read the Tutorial of Motion Transfer](baselines/Motion_Transfer/README.md)
 
 ### 🛠️ Data Processing
@@ -257,6 +258,7 @@ Baseline implementations are organized by task under [`baselines/`](./baselines)
 
 - [Physics-aware Video Generation](./baselines/Physics-aware_Video_Generation)
 - [Future Frame Prediction](./baselines/Future_Frame_Prediction)
+- [Physical Properties Estimation](./baselines/Physical_Properties_Estimation)
 - [Motion Transfer](./baselines/Motion_Transfer)
 
 Refer to each task or model's README for environment setup, checkpoint requirements, training (where supported), and inference or evaluation instructions. Available implementations and supported workflows vary by task. Public evaluation inputs and download instructions are available on [Hugging Face](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/LEADERBOARD_DOWNLOAD.md); benchmark ground-truth targets remain private.
