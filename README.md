@@ -6,8 +6,9 @@
   <p align="center">
     <a href="https://arxiv.org/pdf/2604.09415"><img src="https://img.shields.io/badge/arXiv-2604.09415-b31b1b.svg" alt="arXiv"></a>
     <a href="https://vlar-group.github.io/PhysInOne.html"><img src="https://img.shields.io/badge/Project-Page-blue" alt="Project Page"></a>
-    <a href="https://huggingface.co/datasets/vLAR/PhysInOne"><img src="https://img.shields.io/badge/🤗-Dataset-yellow" alt="Dataset"></a>
-    <a href="https://huggingface.co/datasets/vLAR/PhysInOne"><img src="https://img.shields.io/badge/All%20repo%20downloads-1%2C280%2C414-FFD21E?logo=huggingface" alt="All PhysInOne repositories: 1,280,414 historical downloads (snapshot Oct 1, 2026)"></a>
+    <a href="https://huggingface.co/datasets/vLAR/PhysInOne#rendered-data"><img src="https://img.shields.io/badge/🤗-Dataset-yellow" alt="Dataset"></a>
+    <a href="#dataset-repositories"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FvLAR-group%2FPhysInOne%2Fdownload-stats%2Fdownloads.json&amp;logo=huggingface&amp;cacheSeconds=3600" alt="Automatically updated aggregate downloads across 17 PhysInOne repositories"></a>
+    <a href="https://huggingface.co/spaces/vLAR/PhysInOne-Leaderboard"><img src="https://img.shields.io/badge/Leaderboard-View_Rankings-brightgreen" alt="Open the PhysInOne Leaderboard"></a>
     <a href="#license"><img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg" alt="License"></a>
   </p>
 </p>
@@ -59,10 +60,10 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | Component             | Progress                      | Status       | Notes                             |
 | --------------------- | ----------------------------- | ------------ | --------------------------------- |
 | Rendered Data - Train | `██████████` 100%(122988/122988) | Released     | Last updated: Aug 21              |
-| Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  |                                   |
+| Rendered Data - Test (Leaderboard Inputs) | `██████████` 100% | Released | Public evaluation inputs released; ground-truth targets remain private. |
+| Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  | Full validation renderings expected by the end of November 2026. |
 | 3D Assets             | `██████████` 100%              | Released     | 14,847 Val scenes, 120,660 Train scenes, and Train/Val resource libraries |
-| Leaderboard Evaluation Inputs | `██████████` 100%       | Released     | All public task inputs released; ground truth excluded |
-| Baseline code         | `██████████` 100%              | Released     | Task-specific implementations and tutorials |
+| Baseline code         | `██████████` 100%              | Released | Six long-term future prediction baselines released; updated Oct 8 |
 | Data processing       | `██████████` 100%              | Released     | Camera placement, UE rendering, EXR conversion, and point-cloud generation |
 
 ## Links
@@ -77,11 +78,15 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | 🏆 Leaderboard Data | [Evaluation input download guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/LEADERBOARD_DOWNLOAD.md) |
 | 🛠️ Data Processing | [Camera, rendering, and post-processing usage guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/data_processing/README.md) |
 
+<a name="dataset-repositories"></a>
+
 ### 📦 Dataset Repositories & Downloads
 
 Due to the large scale of PhysInOne, the rendered data and annotations are split across 16 Hugging Face repositories. Each entry shows the shard size, release status, live all-time downloads, live downloads in the last 30 days, and its repository link.
 
-> **Combined snapshot (Oct 1, 2026):** P01–P16 have **1,233,150** all-time downloads and **408,806** downloads in the last 30 days. Including the main repository, the per-repository sums are **1,280,414** and **442,702**.
+The combined badge automatically refreshes from Hugging Face every six hours (subject to API and image caching). It sums the main repository and P01–P16; these are repository-level download events, not unique users or complete-dataset downloads. Failed polls retain the last complete snapshot and its timestamp.
+
+<img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FvLAR-group%2FPhysInOne%2Fdownload-stats%2Fupdated.json&amp;cacheSeconds=3600" alt="Last successful aggregate statistics update in UTC">
 
 <table>
 <tr>
