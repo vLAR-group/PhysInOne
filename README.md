@@ -61,8 +61,8 @@ We present **PhysInOne**, the largest dataset addressing the critical scarcity o
 | --------------------- | ----------------------------- | ------------ | --------------------------------- |
 | Rendered Data - Train | `██████████` 100%(122988/122988) | Released     | Last updated: Aug 21              |
 | Rendered Data - Test (Leaderboard Inputs) | `██████████` 100% | Released | Public evaluation inputs released; ground-truth targets remain private. |
-| Leaderboard (Evaluation Platform) | `██████████` 100% | Released | Online submission, automated evaluation, and public rankings. |
 | Rendered Data - Val   | `░░░░░░░░░░` 1%(103/15411)    | In progress  | Full validation renderings expected by the end of November 2026. |
+| Leaderboard (Evaluation Platform) | `██████████` 100% | Released | Online submission, automated evaluation, and public rankings. |
 | 3D Assets             | `██████████` 100%              | Released     | 14,847 Val scenes, 120,660 Train scenes, and Train/Val resource libraries |
 | Baseline code         | `██████████` 100%              | Released | Six long-term future prediction baselines released; updated Oct 8 |
 | Data processing       | `██████████` 100%              | Released     | Camera placement, UE rendering, EXR conversion, and point-cloud generation |
