@@ -1,0 +1,94 @@
+{
+  "updated_at": "2026-11-04T05:05:37+00:00",
+  "repository_count": 17,
+  "counting_note": "Sum of HF repository download events; not unique users or complete-dataset downloads.",
+  "all_time": 1493721,
+  "last_30_days": 205372,
+  "repositories": [
+    {
+      "repo": "vLAR/PhysInOne",
+      "all_time": 71935,
+      "last_30_days": 23321
+    },
+    {
+      "repo": "PhysInOneP01/PhysInOneP01",
+      "all_time": 109310,
+      "last_30_days": 10413
+    },
+    {
+      "repo": "PhysInOneP02/PhysInOneP02",
+      "all_time": 124531,
+      "last_30_days": 11477
+    },
+    {
+      "repo": "PhysInOneP03/PhysInOneP03",
+      "all_time": 125009,
+      "last_30_days": 14826
+    },
+    {
+      "repo": "PhysInOneP04/PhysInOneP04",
+      "all_time": 123218,
+      "last_30_days": 14991
+    },
+    {
+      "repo": "PhysInOneP05/PhysInOneP05",
+      "all_time": 117989,
+      "last_30_days": 15057
+    },
+    {
+      "repo": "PhysInOneP06/PhysInOneP06",
+      "all_time": 116139,
+      "last_30_days": 13763
+    },
+    {
+      "repo": "PhysInOneP07/PhysInOneP07",
+      "all_time": 96651,
+      "last_30_days": 11937
+    },
+    {
+      "repo": "PhysInOneP08/PhysInOneP08",
+      "all_time": 99783,
+      "last_30_days": 12500
+    },
+    {
+      "repo": "PhysInOneP09/PhysInOneP09",
+      "all_time": 97157,
+      "last_30_days": 12707
+    },
+    {
+      "repo": "PhysInOneP10/PhysInOneP10",
+      "all_time": 105777,
+      "last_30_days": 14151
+    },
+    {
+      "repo": "PhysInOneP11/PhysInOneP11",
+      "all_time": 85468,
+      "last_30_days": 9021
+    },
+    {
+      "repo": "PhysInOneP12/PhysInOneP12",
+      "all_time": 45662,
+      "last_30_days": 7804
+    },
+    {
+      "repo": "PhysInOneP13/PhysInOneP13",
+      "all_time": 48477,
+      "last_30_days": 8532
+    },
+    {
+      "repo": "PhysInOneP14/PhysInOneP14",
+      "all_time": 47749,
+      "last_30_days": 8190
+    },
+    {
+      "repo": "PhysInOneP15/PhysInOneP15",
+      "all_time": 54455,
+      "last_30_days": 10418
+    },
+    {
+      "repo": "PhysInOneP16/PhysInOneP16",
+      "all_time": 24411,
+      "last_30_days": 6264
+    }
+  ]
+}
