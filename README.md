@@ -210,9 +210,12 @@ All user-facing evaluation inputs for the four PhysInOne Leaderboard tasks are p
 
 The public toolkit covers static and moving camera generation, Level Sequence creation, unattended Unreal Engine rendering, EXR conversion, and multi-view point-cloud generation. The guides describe the Unreal Engine 5.5.4 setup, required project assets, commands, outputs, and safety behavior.
 
+**New: Re-simulate your scenes and export custom trajectories with PhysInOne Trajectory Recorder, with flexible control over target objects, sampling rate, and recording duration.**
+
 - [Browse the data-processing source](https://huggingface.co/datasets/vLAR/PhysInOne/tree/main/Utils/data_processing)
 - [Read the quick-start guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/data_processing/README.md)
 - [Read the complete camera and rendering guide](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/data_processing/docs/CAMERA_AND_RENDERING.md)
+- [Install the trajectory recording plugin (UE 5.5.4 / Windows)](https://huggingface.co/datasets/vLAR/PhysInOne/blob/main/Utils/data_processing/trajectory/README.md)
 
 ## 💻 Code
 
