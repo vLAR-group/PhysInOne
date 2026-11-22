@@ -1,94 +1,94 @@
 {
-  "updated_at": "2026-11-22T07:05:51+00:00",
+  "updated_at": "2026-11-22T19:50:37+00:00",
   "repository_count": 17,
   "counting_note": "Sum of HF repository download events; not unique users or complete-dataset downloads.",
-  "all_time": 1639703,
-  "last_30_days": 224539,
+  "all_time": 1640397,
+  "last_30_days": 223429,
   "repositories": [
     {
       "repo": "vLAR/PhysInOne",
-      "all_time": 75900,
-      "last_30_days": 7279
+      "all_time": 76356,
+      "last_30_days": 7448
     },
     {
       "repo": "PhysInOneP01/PhysInOneP01",
-      "all_time": 117859,
-      "last_30_days": 12935
+      "all_time": 117863,
+      "last_30_days": 12894
     },
     {
       "repo": "PhysInOneP02/PhysInOneP02",
-      "all_time": 134605,
-      "last_30_days": 14507
+      "all_time": 134630,
+      "last_30_days": 14427
     },
     {
       "repo": "PhysInOneP03/PhysInOneP03",
-      "all_time": 135416,
-      "last_30_days": 16986
+      "all_time": 135457,
+      "last_30_days": 16953
     },
     {
       "repo": "PhysInOneP04/PhysInOneP04",
-      "all_time": 133553,
-      "last_30_days": 17048
+      "all_time": 133577,
+      "last_30_days": 16982
     },
     {
       "repo": "PhysInOneP05/PhysInOneP05",
-      "all_time": 128096,
-      "last_30_days": 16421
+      "all_time": 128107,
+      "last_30_days": 16322
     },
     {
       "repo": "PhysInOneP06/PhysInOneP06",
-      "all_time": 126123,
-      "last_30_days": 16286
+      "all_time": 126126,
+      "last_30_days": 16217
     },
     {
       "repo": "PhysInOneP07/PhysInOneP07",
-      "all_time": 106130,
-      "last_30_days": 14589
+      "all_time": 106133,
+      "last_30_days": 14576
     },
     {
       "repo": "PhysInOneP08/PhysInOneP08",
-      "all_time": 109546,
-      "last_30_days": 15235
+      "all_time": 109557,
+      "last_30_days": 15220
     },
     {
       "repo": "PhysInOneP09/PhysInOneP09",
-      "all_time": 106685,
-      "last_30_days": 15113
+      "all_time": 106702,
+      "last_30_days": 15097
     },
     {
       "repo": "PhysInOneP10/PhysInOneP10",
-      "all_time": 115355,
-      "last_30_days": 15168
+      "all_time": 115357,
+      "last_30_days": 15071
     },
     {
       "repo": "PhysInOneP11/PhysInOneP11",
-      "all_time": 93168,
-      "last_30_days": 11102
+      "all_time": 93172,
+      "last_30_days": 10966
     },
     {
       "repo": "PhysInOneP12/PhysInOneP12",
-      "all_time": 53187,
-      "last_30_days": 10716
+      "all_time": 53189,
+      "last_30_days": 10591
     },
     {
       "repo": "PhysInOneP13/PhysInOneP13",
-      "all_time": 56795,
-      "last_30_days": 11595
+      "all_time": 56823,
+      "last_30_days": 11467
     },
     {
       "repo": "PhysInOneP14/PhysInOneP14",
-      "all_time": 55179,
-      "last_30_days": 10615
+      "all_time": 55181,
+      "last_30_days": 10464
     },
     {
       "repo": "PhysInOneP15/PhysInOneP15",
-      "all_time": 63259,
-      "last_30_days": 13111
+      "all_time": 63307,
+      "last_30_days": 13002
     },
     {
       "repo": "PhysInOneP16/PhysInOneP16",
-      "all_time": 28847,
-      "last_30_days": 5833
+      "all_time": 28860,
+      "last_30_days": 5732
     }
   ]
 }
